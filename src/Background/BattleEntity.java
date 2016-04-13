@@ -137,20 +137,30 @@ public class BattleEntity {
         }
     //effect controlling
     public void addEffect(Effect e){
+        e.assign(this);
         effects.add(e);
     }
     public void removeEffect(Effect e){
+        e.remove(this);
         effects.remove(e);
-    }
+    }   
     public void removeEffect(int i){
-        effects.remove(i);
+        effects.get(i-1).remove(this);
+        effects.remove(i-1);
     }
     public void tickAllEffects(){
         for(Effect effect:effects){
             effect.onTick(this);
         }
+        updateEffectsList();
     }
-    
+    public void updateEffectsList(){
+        for(int i=effects.size();i>0;i--){
+            if(effects.get(i-1).getDuration()==0){
+                removeEffect(i);
+            }
+        }
+    }
     //level controlling
     public void xpToLevel(){
         //doing this for now. subject to change later
@@ -236,6 +246,23 @@ public class BattleEntity {
         stats[StatID].setModifiedStat(value);
     }
     //prints
+    public void printAllEffectDurations(){
+        if(effects.isEmpty()){
+            System.out.println("No Effects");
+            return;
+        }
+        for(int i=0;i<effects.size();i++){
+            System.out.println(getEffectDuration(i));
+            System.out.println(getEffectName(i));
+        }
+    }
+    public void printAllBaseStats(){
+        for(int i=0;i<stats.length;i++){
+            System.out.printf("%s: %d", StatID.getStatName(i),getBaseStat(i));
+            
+        }
+        System.out.println();
+    }
     public void printAllStats(){
         for(int i=0;i<stats.length;i++){
             System.out.printf("%s: %d", StatID.getStatName(i),getStat(i));
@@ -249,12 +276,30 @@ public class BattleEntity {
         if(isDead)
             System.out.println("Dead");
         }
+    public void printAllEffects(){
+        for(Effect effect:effects){
+            System.out.println(effect.toString());
+        }
+    }
     //gets from effects list
     public String getEffectName(int i){return effects.get(i).getName();}
     public int getEffectDuration(int i){return effects.get(i).getDuration();}
     public String getEffectSource(int i){return effects.get(i).getSource();}
-    //i need to go deeper for this. reading a subclass after refenecing a superclass
-    //public int getBuffMultiplier(int i){return};
+    public Buff getBuffFromList(int i){
+        if(effects.get(i).getClass()==Effect.effectLoader(Effect.BUFF, StatID.MAXHP, Buff.TENP, name).getClass()){
+            return (Buff)effects.get(i);
+        }
+        return null;
+    }
+    public Debuff getDebuffFromList(int i){
+        if(effects.get(i).getClass()==Effect.effectLoader(Effect.DEBUFF, StatID.MAXHP, Buff.TENP, name).getClass()){
+            return (Debuff)effects.get(i);
+        }
+        return null;
+    }
+    //gets an effect from the list, and ensures it is a  buff/debuff/effect
+    public int getBuffStatIncrease(int i){return getBuffFromList(i).getSavedIncrease();}
+    public int getDebuffStatDecrease(int i){return getDebuffFromList(i).getSavedDecrease();}
     //gets from entity
     public boolean getIsDead(){return isDead;}
     public String getName(){return name;}

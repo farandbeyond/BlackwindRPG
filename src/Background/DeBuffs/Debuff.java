@@ -6,6 +6,7 @@
 package Background.DeBuffs;
 
 import Background.BattleEntity;
+import Background.StatID;
 
 /**
  *
@@ -20,8 +21,14 @@ public class Debuff extends Effect{
             
     int stat;
     double decrease;
-    int savedIncrease;
-    
+    int savedDecrease;
+    public int getStat(){return stat;}
+    public double getDecrease(){return decrease;}
+    public int getSavedDecrease(){
+        if(savedDecrease!=0)
+            return savedDecrease;
+        return 0;
+    }
     public Debuff(String name, String source, int duration, int stat, double decrease){
         super(name,source,duration);
         this.stat=stat;
@@ -30,19 +37,28 @@ public class Debuff extends Effect{
     
     @Override
     public void assign(BattleEntity e) {
-        savedIncrease = (int)(e.getStat(stat)*decrease);
-        System.out.println(savedIncrease);
-        e.reduceStat(stat,savedIncrease);
+        savedDecrease = (int)(e.getStat(stat)*decrease);
+        System.out.println(savedDecrease);
+        e.reduceStat(stat,savedDecrease);
     }
 
     @Override
     public void remove(BattleEntity e) {
-        e.increaseStat(stat, savedIncrease);
+        e.increaseStat(stat, savedDecrease);
+        //e.removeEffect(this);
     }
 
     @Override
     public void onTick(BattleEntity e) {
        duration--;
+       if(duration<0)
+           duration=0;
+       //if(duration==0){
+       //    remove(e);
+       //}
+    }
+    public String toString(){
+        return String.format("%s, from %s. Currently decreasing %s by %d\n", getName(),getSource(),StatID.getStatName(stat),getSavedDecrease());
     }
     
     

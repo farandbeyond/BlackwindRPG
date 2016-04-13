@@ -6,6 +6,7 @@
 package Background.DeBuffs;
 
 import Background.BattleEntity;
+import Background.StatID;
 
 /**
  *
@@ -26,8 +27,16 @@ public class Buff extends Effect{
         super(name,source,duration);
         this.stat=stat;
         this.increase=increase;
+        savedIncrease=0;
     }
     
+    public int getStat(){return stat;}
+    public double getIncrease(){return increase;}
+    public int getSavedIncrease(){
+        if(savedIncrease!=0)
+            return savedIncrease;
+        return 0;
+    }
     @Override
     public void assign(BattleEntity e) {
         savedIncrease = (int)(e.getStat(stat)*increase);
@@ -38,12 +47,20 @@ public class Buff extends Effect{
     @Override
     public void remove(BattleEntity e) {
         e.reduceStat(stat, savedIncrease);
+        //e.removeEffect(this);
     }
 
     @Override
     public void onTick(BattleEntity e) {
        duration--;
+       if(duration<0)
+           duration=0;
+       //if(duration==0){
+       //    remove(e);
+       //}
     }
-    
+    public String toString(){
+        return String.format("%s, from %s. Currently increasing %s by %d\n", getName(),getSource(),StatID.getStatName(stat),getSavedIncrease());
+    }
     
 }
