@@ -74,6 +74,9 @@ public class Party {
     public void usePartyMemberMp(int member,int mpUsed){
         getMemberFromParty(member).useMp(mpUsed);
     }
+    public void raisePartyMember(int member, int healValue){
+        getMemberFromParty(member).raise(healValue);
+    }
     //prints
     public void printAllMembersHpAndMp(){
         

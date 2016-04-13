@@ -10,6 +10,9 @@
  */
 package Background;
 
+import Background.DeBuffs.*;
+import java.util.ArrayList;
+
 
 public class BattleEntity {
     
@@ -20,6 +23,7 @@ public class BattleEntity {
                 expRequiredToLevel,
                 exp;
     private boolean isDead;
+    private ArrayList<Effect> effects;
     
     /**
      * assumes the entity will be at less than full health. used for recreation
@@ -59,6 +63,7 @@ public class BattleEntity {
         this.level=level;
         expRequiredToLevel=0;
         isDead = hp==0?true:false;
+        effects = new ArrayList<>();
     }
     /**
      * assumes the entity will be at full health. used for creation and recreation within guild.
@@ -97,6 +102,7 @@ public class BattleEntity {
         this.level=level;
         expRequiredToLevel=0;
         isDead=false;
+        effects = new ArrayList<>();
     }
     /**
          * SHOULD ONLY BE CALLED FOR ENEMIES. stats are not meant to grow after being set
@@ -126,14 +132,25 @@ public class BattleEntity {
             this.exp=exp;
             this.level=level;
             isDead=false;
+            effects = new ArrayList<>();
             //expRequiredToLevel=0;
         }
-    //voids
-    public void healToFull(){
-        isDead=false;
-        setStat(StatID.HP,getStat(StatID.MAXHP));
-        setStat(StatID.MP,getStat(StatID.MAXMP));
+    //effect controlling
+    public void addEffect(Effect e){
+        effects.add(e);
     }
+    public void removeEffect(Effect e){
+        effects.remove(e);
+    }
+    public void removeEffect(int i){
+        effects.remove(i);
+    }
+    public void tickAllEffects(){
+        for(Effect effect:effects){
+            effect.onTick(this);
+        }
+    }
+    
     //level controlling
     public void xpToLevel(){
         //doing this for now. subject to change later
@@ -160,6 +177,11 @@ public class BattleEntity {
         }
     }
     //hp controlling
+    public void healToFull(){
+        isDead=false;
+        setStat(StatID.HP,getStat(StatID.MAXHP));
+        setStat(StatID.MP,getStat(StatID.MAXMP));
+    }
     public void damage(int damage){
         reduceStat(StatID.HP,damage);
         if(getStat(StatID.HP)<=0){
@@ -204,10 +226,10 @@ public class BattleEntity {
         reduceStat(StatID.MP,mpUsed);
     }
     //stat ajustments
-    private void reduceStat(int StatID, int reduction){
+    public void reduceStat(int StatID, int reduction){
         stats[StatID].reduceStat(reduction);
     }
-    private void increaseStat(int StatID, int increase){
+    public void increaseStat(int StatID, int increase){
         stats[StatID].increaseStat(increase);
     }
     private void setStat(int StatID, int value){
@@ -227,6 +249,12 @@ public class BattleEntity {
         if(isDead)
             System.out.println("Dead");
         }
+    //gets from effects list
+    public String getEffectName(int i){return effects.get(i).getName();}
+    public int getEffectDuration(int i){return effects.get(i).getDuration();}
+    public String getEffectSource(int i){return effects.get(i).getSource();}
+    //i need to go deeper for this. reading a subclass after refenecing a superclass
+    //public int getBuffMultiplier(int i){return};
     //gets from entity
     public boolean getIsDead(){return isDead;}
     public String getName(){return name;}

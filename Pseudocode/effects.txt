@@ -1,0 +1,22 @@
+abstract Effect:
+name
+source
+duration
+assign()
+remove()
+onTick()
+
+
+
+Buff:
+increase
+stat
+
+
+deBuff:
+decrease
+stat
+
+-Ailments can come later. extending effect still tho-
+Ailment:
+
