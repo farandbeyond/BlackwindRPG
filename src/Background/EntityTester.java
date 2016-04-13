@@ -13,7 +13,7 @@ public class EntityTester {
     public static void main(String[] args){
         text("----------Test01----------");
         text("Loading the first entity");
-        BattleEntity wilson = BattleEntityLoader.entityLoader(BattleEntityLoader.TESTENTITY);
+        BattleEntity wilson = BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY);
         text("----------Test02----------");
         text("XP checker");
         wilson.xpToLevel();
@@ -25,7 +25,7 @@ public class EntityTester {
         wilson.printAllStats();
         text("----------Test04----------");
         text("Reset wilson and give him enough xp to level twice");
-        wilson = BattleEntityLoader.entityLoader(BattleEntityLoader.TESTENTITY);
+        wilson = BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY);
         wilson.giveExp(500);
         wilson.printAllStats();
         text("----------Test05----------");

@@ -186,6 +186,23 @@ public class BattleEntity {
         }
             
     }
+    //mp controlling
+    public void regainMp(int mpHeal){
+        if(!isDead){
+            increaseStat(StatID.MP,mpHeal);
+            if(getStat(StatID.MP)>getStat(StatID.MAXMP))
+                setStat(StatID.MP,getStat(StatID.MAXMP));
+            return;
+        }
+        System.out.println("Target is dead and cannot regain mana");
+    }
+    public void useMp(int mpUsed){
+        if(mpUsed>getStat(StatID.MP)){
+            System.out.println("Not enough mana");
+            return;
+        }
+        reduceStat(StatID.MP,mpUsed);
+    }
     //stat ajustments
     private void reduceStat(int StatID, int reduction){
         stats[StatID].reduceStat(reduction);
@@ -253,8 +270,6 @@ public class BattleEntity {
             modifiedStat=baseStat;
             growthOverflow=0;
         }
-        //void functions
-        
         //sets
         public void setBaseStat(int stat){
             baseStat=stat;
@@ -262,7 +277,6 @@ public class BattleEntity {
         public void setModifiedStat(int stat){
             modifiedStat=stat;
         }
-                
         //ajustments
         public void levelUp(){
             growthOverflow+=statGrowth;

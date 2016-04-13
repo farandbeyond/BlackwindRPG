@@ -1,0 +1,24 @@
+BaseStat
+modifiedStat
+
+
+Str, etc:
+baseStat=10
+modifiedStat=10+armormodifiers+buffModifiers
+
+HP, HPMAX:
+
+baseStat=40
+modifiedStat=40
+
+modifiedStat for HP goes up and down often
+
+hp buff:
+baseStat=40
+modifiedStat=46
+
+any stat buffs/debuffs have to happen to both hp and maxhp.
+
+
+growthOverflow
+statGrowth
