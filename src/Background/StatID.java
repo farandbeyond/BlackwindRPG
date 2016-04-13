@@ -21,4 +21,18 @@ public class StatID {
             VIT=6,
             INT=7,
             RES=8;
+    public static String getStatName(int statID){
+        switch(statID){
+            case HP:return "Hp";
+            case MAXHP:return "Max Hp";
+            case MP:return "Mp";
+            case MAXMP:return "Max Mp";
+            case STR:return "Str";
+            case DEX:return "Dex";
+            case VIT:return "Vit";
+            case INT:return "Int";
+            case RES:return "Res";
+        }
+        return "";
+    }
 }
