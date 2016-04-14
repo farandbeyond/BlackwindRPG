@@ -46,7 +46,8 @@ public class BattleEntity {
      * @param name 
      */
     BattleEntity(int hp,int maxhp,double hpgrowth, int mp, int maxmp, double mpgrowth, int str, double strgrowth, 
-            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, String name, int element, int level, int exp){
+            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, 
+            String name, int element, int level, int exp){
         stats = new Stat[9];
         stats[StatID.HP]=new Stat(hp,hpgrowth);
         stats[StatID.MAXHP]=new Stat(maxhp,hpgrowth);
@@ -84,7 +85,8 @@ public class BattleEntity {
      * @param name 
      */
     BattleEntity(int maxhp,double hpgrowth, int maxmp, double mpgrowth, int str, double strgrowth, 
-            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, String name, int element, int level, int exp){
+            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, 
+            String name, int element, int level, int exp){
         
         stats = new Stat[9];
         stats[StatID.HP]=new Stat(maxhp,hpgrowth);
