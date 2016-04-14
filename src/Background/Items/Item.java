@@ -28,6 +28,15 @@ public abstract class Item {
     public void reduceQuantity(){
         quantity--;
     }
+    public boolean restock(int numberToRestock){
+        quantity+=numberToRestock;
+        if(quantity>maxQuantity){
+            System.out.println("Too many items");
+            quantity=maxQuantity;
+            return false;
+        }
+        return true;
+    }
     
     //gets
     public String getName(){return name;}

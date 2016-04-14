@@ -12,12 +12,17 @@ import Background.BattleEntity;
  * @author Connor
  */
 public class HealingItem extends Item{
-    private final int healValue;
+    public static final int
+            HP=0,
+            MP=1,
+            HPMP=2;
+    private final int healValue,type;
     private final boolean revives;
-    public HealingItem(int id,String name, String description, int quantity, int maxQuantity, int shopValue, int healValue, boolean revives){
+    public HealingItem(int id,String name, String description, int quantity, int maxQuantity, int healValue, int type, boolean revives, int shopValue){
         super(id,name,description,quantity,maxQuantity,shopValue);
         this.healValue=healValue;
         this.revives=revives;
+        this.type=type;
     }
     
     @Override
@@ -26,7 +31,12 @@ public class HealingItem extends Item{
         if(revives){
             target.raise(healValue);
         }else{
-            target.heal(healValue);
+            switch(type){
+                case HPMP:target.regainMp(healValue);
+                case HP:target.heal(healValue);break;
+                case MP:target.regainMp(healValue);break;
+                
+            }
         }
     }
     
