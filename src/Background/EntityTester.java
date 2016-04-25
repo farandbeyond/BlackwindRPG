@@ -5,6 +5,9 @@
  */
 package Background;
 
+import Background.DeBuffs.Debuff;
+import Background.DeBuffs.Effect;
+
 /**
  *
  * @author Connor
@@ -45,12 +48,28 @@ public class EntityTester {
         wilson.printHpAndMp();
         wilson.raise(40);
         wilson.printHpAndMp();
-        text("----------Test06----------");
+        text("----------Test07----------");
         text("Heal to full");
         wilson.damage(50);
         wilson.printHpAndMp();
         wilson.healToFull();
         wilson.printHpAndMp();
+        text("----------Test07----------");
+        text("Load an enemy");
+        BattleEntity enemy = BattleEntityLoader.loadEntity(BattleEntityLoader.ENEMYONE);
+        enemy.printAllStats();
+        text("----------Test07----------");
+        text("Do some battle stuff");
+        wilson.damage(4);
+        enemy.addEffect(Effect.effectLoader(Effect.DEBUFF, StatID.VIT, Debuff.TWENTYFIVEP, wilson.getName()));
+        enemy.damage(10);
+        wilson.printHpAndMp();
+        wilson.printAllEffects();
+        wilson.printAllEffectDurations();
+        enemy.printHpAndMp();
+        enemy.printAllEffects();
+        enemy.printAllEffectDurations();
+        
     }
     public static void text(String text){
         System.out.println(text);

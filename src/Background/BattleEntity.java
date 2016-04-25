@@ -11,6 +11,9 @@
 package Background;
 
 import Background.DeBuffs.*;
+import Background.Items.Equipment;
+import Background.Items.Item;
+import Background.Items.ItemLoader;
 import java.util.ArrayList;
 
 
@@ -24,6 +27,7 @@ public class BattleEntity {
                 exp;
     private boolean isDead;
     private ArrayList<Effect> effects;
+    private Equipment[] equipment;
     
     /**
      * assumes the entity will be at less than full health. used for recreation
@@ -46,7 +50,8 @@ public class BattleEntity {
      * @param name 
      */
     BattleEntity(int hp,int maxhp,double hpgrowth, int mp, int maxmp, double mpgrowth, int str, double strgrowth, 
-            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, String name, int element, int level, int exp){
+            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, 
+            String name, int element, int level, int exp){
         stats = new Stat[9];
         stats[StatID.HP]=new Stat(hp,hpgrowth);
         stats[StatID.MAXHP]=new Stat(maxhp,hpgrowth);
@@ -64,6 +69,7 @@ public class BattleEntity {
         expRequiredToLevel=0;
         isDead = hp==0?true:false;
         effects = new ArrayList<>();
+        equipment = new Equipment[4];
     }
     /**
      * assumes the entity will be at full health. used for creation and recreation within guild.
@@ -84,7 +90,8 @@ public class BattleEntity {
      * @param name 
      */
     BattleEntity(int maxhp,double hpgrowth, int maxmp, double mpgrowth, int str, double strgrowth, 
-            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, String name, int element, int level, int exp){
+            int dex, double dexgrowth, int vit, double vitgrowth, int intel, double intgrowth, int res, double resgrowth, 
+            String name, int element, int level, int exp){
         
         stats = new Stat[9];
         stats[StatID.HP]=new Stat(maxhp,hpgrowth);
@@ -103,6 +110,7 @@ public class BattleEntity {
         expRequiredToLevel=0;
         isDead=false;
         effects = new ArrayList<>();
+        equipment = new Equipment[4];
     }
     /**
          * SHOULD ONLY BE CALLED FOR ENEMIES. stats are not meant to grow after being set
@@ -133,6 +141,7 @@ public class BattleEntity {
             this.level=level;
             isDead=false;
             effects = new ArrayList<>();
+            equipment = new Equipment[4];
             //expRequiredToLevel=0;
         }
     //effect controlling
@@ -185,6 +194,31 @@ public class BattleEntity {
             }
             xpToLevel();
         }
+    }
+    //equipment controlling
+    public void equip(Equipment e, int equipSlot){
+        if(e.getClass()==ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1).getClass()&&equipSlot==0){
+            equipment[0]=(Equipment)ItemLoader.loadItem(e.getId(), 1);
+            equipment[0].equip(this);
+            e.reduceQuantity();
+            heal(0);
+            return;
+        }
+        if(e.getClass()==ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1).getClass()&&equipSlot>0&&equipSlot<4){
+            equipment[equipSlot]=(Equipment)ItemLoader.loadItem(e.getId(), 1);
+            equipment[equipSlot].equip(this);
+            e.reduceQuantity();
+            heal(0);
+            return;
+        }
+        System.out.println("Did not equip. Error occured");
+    }
+    public Item unEquip(int equipSlot){
+        equipment[equipSlot].unEquip();
+        Item unequipped = equipment[equipSlot];
+        equipment[equipSlot]=null;
+        heal(0);
+        return unequipped;
     }
     //hp controlling
     public void healToFull(){
@@ -246,6 +280,15 @@ public class BattleEntity {
         stats[StatID].setModifiedStat(value);
     }
     //prints
+    public void printAllEquipment(){
+        for(Equipment e:equipment){
+            try{
+                System.out.println("-"+e.toString());
+            }catch(NullPointerException r){
+                System.out.println("----");
+            }
+        }
+    }
     public void printAllEffectDurations(){
         if(effects.isEmpty()){
             System.out.println("No Effects");
@@ -271,6 +314,7 @@ public class BattleEntity {
         System.out.println();
     }
     public void printHpAndMp(){
+        System.out.println(name);
         System.out.printf("HP: %d/%d\n", getStat(StatID.HP),getStat(StatID.MAXHP));
         System.out.printf("MP: %d/%d\n", getStat(StatID.MP),getStat(StatID.MAXMP));
         if(isDead)
@@ -278,7 +322,7 @@ public class BattleEntity {
         }
     public void printAllEffects(){
         for(Effect effect:effects){
-            System.out.println(effect.toString());
+            System.out.println("-"+effect.toString());
         }
     }
     //gets from effects list
@@ -315,6 +359,9 @@ public class BattleEntity {
     public double getStatGrowth(int StatID) {return stats[StatID].getStatGrowth();}
     public double getGrowthOverflow(int StatID){return stats[StatID].getGrowthOverflow();}
     
+    public String toString(){
+        return name;
+    }
     
     
     private class Stat{

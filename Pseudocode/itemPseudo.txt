@@ -1,0 +1,22 @@
+Abstract Item
+
+id
+name
+quantity
+maxquantity
+description
+
+use()
+
+HealingItem
+i healValue
+b revives
+
+DamageItem
+i damage
+i element
+
+Equipment
+
+
+KeyItem
