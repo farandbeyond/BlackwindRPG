@@ -13,8 +13,8 @@ import Background.StatID;
  * @author Connor
  */
 public class Armor extends Equipment{
-    int primaryStat,secondaryStat;
-    int primaryValue,secondaryValue;
+    private int primaryStat,secondaryStat;
+    private int primaryValue,secondaryValue;
     public Armor(int id, String name, String description, int quantity, int maxQuantity, int primaryStat, int primaryIncrease, int secondaryStat, int secondaryIncrease, int shopValue){
         super(id,name,description,quantity,maxQuantity,shopValue);
         this.primaryStat=primaryStat;
@@ -24,16 +24,16 @@ public class Armor extends Equipment{
     }
     @Override
     public void equip(BattleEntity target) {
-        this.equipper=target;
-        equipper.increaseStat(primaryStat, primaryValue);
-        equipper.increaseStat(secondaryStat, secondaryValue);
+        this.setEquipper(target);
+        getEquipper().increaseStat(primaryStat, primaryValue);
+        getEquipper().increaseStat(secondaryStat, secondaryValue);
     }
 
     @Override
     public void unEquip() {
-        equipper.reduceStat(primaryStat, primaryValue);
-        equipper.reduceStat(secondaryStat, secondaryValue);
-        this.equipper=null;
+        getEquipper().reduceStat(primaryStat, primaryValue);
+        getEquipper().reduceStat(secondaryStat, secondaryValue);
+        this.setEquipper(null);
     }
 
     @Override

@@ -19,9 +19,9 @@ public class Debuff extends Effect{
             FIFTYP=3;
             
             
-    int stat;
-    double decrease;
-    int savedDecrease;
+    private int stat;
+    private double decrease;
+    private int savedDecrease;
     public int getStat(){return stat;}
     public double getDecrease(){return decrease;}
     public int getSavedDecrease(){
@@ -50,9 +50,9 @@ public class Debuff extends Effect{
 
     @Override
     public void onTick(BattleEntity e) {
-       duration--;
-       if(duration<0)
-           duration=0;
+       setDuration(getDuration()-1);
+       if(getDuration()<0)
+           setDuration(0);
        //if(duration==0){
        //    remove(e);
        //}

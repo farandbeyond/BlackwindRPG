@@ -12,8 +12,8 @@ import Background.BattleEntity;
  * @author Connor
  */
 public class Party {
-    BattleEntity[] party;
-    int maxPartySize;
+    private BattleEntity[] party;
+    private int maxPartySize;
     public Party(int partySize){
         party = new BattleEntity[partySize];
         this.maxPartySize=partySize;

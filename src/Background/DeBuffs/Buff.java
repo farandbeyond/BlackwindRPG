@@ -19,9 +19,9 @@ public class Buff extends Effect{
             FIFTYP=3;
             
             
-    int stat;
-    double increase;
-    int savedIncrease;
+    private int stat;
+    private double increase;
+    private int savedIncrease;
     
     public Buff(String name, String source, int duration, int stat, double increase){
         super(name,source,duration);
@@ -52,9 +52,9 @@ public class Buff extends Effect{
 
     @Override
     public void onTick(BattleEntity e) {
-       duration--;
-       if(duration<0)
-           duration=0;
+       setDuration(getDuration()-1);
+       if(getDuration()<0)
+           setDuration(0);
        //if(duration==0){
        //    remove(e);
        //}
