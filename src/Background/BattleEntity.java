@@ -12,6 +12,7 @@ package Background;
 
 import Background.DeBuffs.*;
 import Background.Items.Equipment;
+import Background.Items.Item;
 import Background.Items.ItemLoader;
 import java.util.ArrayList;
 
@@ -197,23 +198,27 @@ public class BattleEntity {
     //equipment controlling
     public void equip(Equipment e, int equipSlot){
         if(e.getClass()==ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1).getClass()&&equipSlot==0){
-            equipment[0]=e;
-            e.equip(this);
+            equipment[0]=(Equipment)ItemLoader.loadItem(e.getId(), 1);
+            equipment[0].equip(this);
+            e.reduceQuantity();
             heal(0);
             return;
         }
         if(e.getClass()==ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1).getClass()&&equipSlot>0&&equipSlot<4){
-            equipment[equipSlot]=e;
-            e.equip(this);
+            equipment[equipSlot]=(Equipment)ItemLoader.loadItem(e.getId(), 1);
+            equipment[equipSlot].equip(this);
+            e.reduceQuantity();
             heal(0);
             return;
         }
         System.out.println("Did not equip. Error occured");
     }
-    public void unEquip(int equipSlot){
+    public Item unEquip(int equipSlot){
         equipment[equipSlot].unEquip();
+        Item unequipped = equipment[equipSlot];
         equipment[equipSlot]=null;
         heal(0);
+        return unequipped;
     }
     //hp controlling
     public void healToFull(){
@@ -278,7 +283,7 @@ public class BattleEntity {
     public void printAllEquipment(){
         for(Equipment e:equipment){
             try{
-                System.out.println(e.toString());
+                System.out.println("-"+e.toString());
             }catch(NullPointerException r){
                 System.out.println("----");
             }

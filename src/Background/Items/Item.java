@@ -36,8 +36,7 @@ public abstract class Item {
             return false;
         }
         return true;
-    }
-    
+    }    
     //gets
     public String getName(){return name;}
     public String getDescription(){return description;}
@@ -47,6 +46,9 @@ public abstract class Item {
     public int getShopValue(){return shopValue;}
     
     public String toString(){
+        return String.format("%s x%d/%d. costs: %d", name,quantity,maxQuantity,shopValue);
+    }
+    public String superToString(){
         return String.format("%s x%d/%d. costs: %d", name,quantity,maxQuantity,shopValue);
     }
     

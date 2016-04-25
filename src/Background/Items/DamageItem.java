@@ -27,6 +27,7 @@ public class DamageItem extends Item{
         damage+=this.damage;
         damage*=ElementHandler.handler(target.getElement(), element);
         target.damage(damage);
+        reduceQuantity();
     }
     
 }

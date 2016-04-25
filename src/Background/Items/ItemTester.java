@@ -45,7 +45,7 @@ public class ItemTester {
         tester.printAllEquipment();
         tester.printAllStats();
         tester.printHpAndMp();
-        text("----------Test05----------");
+        text("----------Test06----------");
         text("now unequip");
         tester.unEquip(0);
         tester.heal(20);
@@ -54,6 +54,28 @@ public class ItemTester {
         tester.printAllEquipment();
         tester.printAllStats();
         tester.printHpAndMp();
+        text("----------Test07----------");
+        text("The addition of inventory");
+        Inventory inv = new Inventory(4);
+        text("----------Test08----------");
+        text("Adding items to inv.");
+        if(inv.canAdd(ItemLoader.loadItem(ItemLoader.FIREBOMB, 5)))
+            inv.add(ItemLoader.loadItem(ItemLoader.FIREBOMB, 5));
+        if(inv.canAdd(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 3)))
+            inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 3));
+        if(inv.canAdd(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1)))
+            inv.add(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1));
+        inv.printAllItems();
+        text("----------Test09----------");
+        text("Item behavior in the inventory");
+        tester.equip((Equipment)inv.getItem(1), 0);
+        tester.equip((Equipment)inv.getItem(2), 1);
+        inv.updateInventory();
+        inv.useItem(0, tester);
+        text("------");
+        inv.printAllItems();
+        text("------");
+        tester.printAllEquipment();
     }
     public static void text(String text){
         System.out.println(text);
