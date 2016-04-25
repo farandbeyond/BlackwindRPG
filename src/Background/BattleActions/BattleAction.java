@@ -13,4 +13,7 @@ import Background.BattleEntity;
  */
 public abstract class BattleAction {
     private BattleEntity caster;
+    public BattleAction(BattleEntity caster){
+        this.caster = caster;
+    }
 }
