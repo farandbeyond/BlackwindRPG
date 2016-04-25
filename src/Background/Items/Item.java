@@ -46,5 +46,8 @@ public abstract class Item {
     public int getMaxQuantity(){return maxQuantity;}
     public int getShopValue(){return shopValue;}
     
+    public String toString(){
+        return String.format("%s x%d/%d. costs: %d", name,quantity,maxQuantity,shopValue);
+    }
     
 }

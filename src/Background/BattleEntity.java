@@ -11,6 +11,8 @@
 package Background;
 
 import Background.DeBuffs.*;
+import Background.Items.Equipment;
+import Background.Items.ItemLoader;
 import java.util.ArrayList;
 
 
@@ -24,6 +26,7 @@ public class BattleEntity {
                 exp;
     private boolean isDead;
     private ArrayList<Effect> effects;
+    private Equipment[] equipment;
     
     /**
      * assumes the entity will be at less than full health. used for recreation
@@ -65,6 +68,7 @@ public class BattleEntity {
         expRequiredToLevel=0;
         isDead = hp==0?true:false;
         effects = new ArrayList<>();
+        equipment = new Equipment[4];
     }
     /**
      * assumes the entity will be at full health. used for creation and recreation within guild.
@@ -105,6 +109,7 @@ public class BattleEntity {
         expRequiredToLevel=0;
         isDead=false;
         effects = new ArrayList<>();
+        equipment = new Equipment[4];
     }
     /**
          * SHOULD ONLY BE CALLED FOR ENEMIES. stats are not meant to grow after being set
@@ -135,6 +140,7 @@ public class BattleEntity {
             this.level=level;
             isDead=false;
             effects = new ArrayList<>();
+            equipment = new Equipment[4];
             //expRequiredToLevel=0;
         }
     //effect controlling
@@ -187,6 +193,27 @@ public class BattleEntity {
             }
             xpToLevel();
         }
+    }
+    //equipment controlling
+    public void equip(Equipment e, int equipSlot){
+        if(e.getClass()==ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1).getClass()&&equipSlot==0){
+            equipment[0]=e;
+            e.equip(this);
+            heal(0);
+            return;
+        }
+        if(e.getClass()==ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1).getClass()&&equipSlot>0&&equipSlot<4){
+            equipment[equipSlot]=e;
+            e.equip(this);
+            heal(0);
+            return;
+        }
+        System.out.println("Did not equip. Error occured");
+    }
+    public void unEquip(int equipSlot){
+        equipment[equipSlot].unEquip();
+        equipment[equipSlot]=null;
+        heal(0);
     }
     //hp controlling
     public void healToFull(){
@@ -248,6 +275,15 @@ public class BattleEntity {
         stats[StatID].setModifiedStat(value);
     }
     //prints
+    public void printAllEquipment(){
+        for(Equipment e:equipment){
+            try{
+                System.out.println(e.toString());
+            }catch(NullPointerException r){
+                System.out.println("----");
+            }
+        }
+    }
     public void printAllEffectDurations(){
         if(effects.isEmpty()){
             System.out.println("No Effects");
@@ -280,7 +316,7 @@ public class BattleEntity {
         }
     public void printAllEffects(){
         for(Effect effect:effects){
-            System.out.println(effect.toString());
+            System.out.println("-"+effect.toString());
         }
     }
     //gets from effects list

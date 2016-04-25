@@ -26,8 +26,34 @@ public class ItemTester {
         potion.use(tester);
         text(potion.getQuantity()+"");
         tester.printHpAndMp();
-        
-        
+        text("----------Test03----------");
+        text("Damage Item");
+        Item bomb = ItemLoader.loadItem(ItemLoader.FIREBOMB, 5);
+        tester.printHpAndMp();
+        bomb.use(tester);
+        tester.printHpAndMp();
+        text("----------Test04----------");
+        text("Weapon");
+        Item sword = ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1);
+        tester.printAllStats();
+        tester.equip((Equipment)sword, 0);
+        tester.printAllEquipment();
+        text("----------Test05----------");
+        text("Armor");
+        Item armor = ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1);
+        tester.equip((Equipment)armor, 1);
+        tester.printAllEquipment();
+        tester.printAllStats();
+        tester.printHpAndMp();
+        text("----------Test05----------");
+        text("now unequip");
+        tester.unEquip(0);
+        tester.heal(20);
+        tester.printHpAndMp();
+        tester.unEquip(1);
+        tester.printAllEquipment();
+        tester.printAllStats();
+        tester.printHpAndMp();
     }
     public static void text(String text){
         System.out.println(text);
