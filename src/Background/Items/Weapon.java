@@ -14,8 +14,8 @@ import java.util.Random;
  * @author Connor
  */
 public class Weapon extends Equipment{
-    int baseDamage, rollDamage;
-    int secondStatToIncrease, increase;
+    private int baseDamage, rollDamage;
+    private int secondStatToIncrease, increase;
     Random rand;
     public Weapon(int id, String name, String description, int quantity, int maxQuantity, int baseDamage, int rollDamage, int statToIncrease, int increase, int shopValue){
         super(id,name,description,quantity,maxQuantity,shopValue);
@@ -27,15 +27,15 @@ public class Weapon extends Equipment{
     }
     @Override
     public void equip(BattleEntity target) {
-        this.equipper=target;
-        equipper.increaseStat(secondStatToIncrease, increase);
+        this.setEquipper(target);
+        getEquipper().increaseStat(secondStatToIncrease, increase);
         
     }
 
     @Override
     public void unEquip() {
-        equipper.reduceStat(secondStatToIncrease, increase);
-        equipper=null;
+        getEquipper().reduceStat(secondStatToIncrease, increase);
+        setEquipper(null);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class Weapon extends Equipment{
         System.out.println("No use");
     }
     public int attackDamage(){
-        return baseDamage+rand.nextInt(rollDamage)+equipper.getStat(StatID.STR)/3;
+        return baseDamage+rand.nextInt(rollDamage)+getEquipper().getStat(StatID.STR)/3;
     }
     public String toString(){
         return String.format("%s\nDeals %d to %d damage\nincreases %s by %d",super.toString(),baseDamage, baseDamage+rollDamage,StatID.getStatName(secondStatToIncrease),increase);

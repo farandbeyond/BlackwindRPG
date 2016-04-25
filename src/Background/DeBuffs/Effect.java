@@ -13,8 +13,8 @@ import Background.StatID;
  * @author Connor
  */
 public abstract class Effect {
-    String name, source;
-    int duration;
+    private String name, source;
+    private int duration;
     public abstract void assign(BattleEntity e);
     public abstract void remove(BattleEntity e);
     public abstract void onTick(BattleEntity e);
@@ -27,6 +27,7 @@ public abstract class Effect {
     public String getName(){return name;}
     public String getSource(){return source;}
     public int getDuration(){return duration;}
+    public void setDuration(int duration){this.duration=duration;}
     
     //effect loader information
     public static final int

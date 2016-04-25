@@ -12,12 +12,13 @@ import Background.BattleEntity;
  * @author Connor
  */
 public abstract class Equipment extends Item{
-    BattleEntity equipper;
+    private BattleEntity equipper;
     public Equipment(int id, String name, String description, int quantity, int maxQuantity, int shopValue){
         super(id,name,description,quantity,maxQuantity,shopValue);
     }
     public abstract void equip(BattleEntity target);
     public abstract void unEquip();
+    public void setEquipper(BattleEntity equipper){this.equipper=equipper;}
     public BattleEntity getEquipper(){return equipper;}
     public String toString(){
         return super.toString();
