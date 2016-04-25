@@ -309,6 +309,7 @@ public class BattleEntity {
         System.out.println();
     }
     public void printHpAndMp(){
+        System.out.println(name);
         System.out.printf("HP: %d/%d\n", getStat(StatID.HP),getStat(StatID.MAXHP));
         System.out.printf("MP: %d/%d\n", getStat(StatID.MP),getStat(StatID.MAXMP));
         if(isDead)
@@ -353,6 +354,9 @@ public class BattleEntity {
     public double getStatGrowth(int StatID) {return stats[StatID].getStatGrowth();}
     public double getGrowthOverflow(int StatID){return stats[StatID].getGrowthOverflow();}
     
+    public String toString(){
+        return name;
+    }
     
     
     private class Stat{
