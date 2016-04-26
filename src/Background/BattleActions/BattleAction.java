@@ -13,4 +13,14 @@ import Background.BattleEntity;
  */
 public abstract class BattleAction {
     private BattleEntity caster;
+    public abstract void execute(BattleEntity target);
+    public BattleAction(BattleEntity caster){
+        this.caster=caster;
+    }
+    public BattleEntity getCaster(){
+        return caster;
+    }
+    public int getCasterStat(int statID){
+        return caster.getStat(statID);
+    }
 }
