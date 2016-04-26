@@ -15,19 +15,17 @@ import java.util.Random;
  * @author Connor
  */
 public class DamageSpell extends Spell{
-    private final int baseDamage, rollDamage, element, cost;
+    private final int baseDamage, rollDamage, element;
     Random rand;
-    public DamageSpell(BattleEntity caster, int baseDamage, int rollDamage, int element, int cost){
-        super(caster);
-        this.cost=cost;
+    public DamageSpell(BattleEntity caster,String name, String description, int baseDamage, int rollDamage, int element, int cost){
+        super(caster,name,description,cost);
         this.baseDamage=baseDamage;
         this.rollDamage=rollDamage;
         this.element=element;
         rand = new Random();
     }
-    public DamageSpell(int baseDamage, int rollDamage, int element, int cost){
-        super(null);
-        this.cost=cost;
+    public DamageSpell(String name, String description,int baseDamage, int rollDamage, int element, int cost){
+        super(null,name,description,cost);
         this.baseDamage=baseDamage;
         this.rollDamage=rollDamage;
         this.element=element;
@@ -36,7 +34,7 @@ public class DamageSpell extends Spell{
     @Override
     public void cast(BattleEntity target) {
         int damage = 0;
-        getCaster().useMp(cost);
+        getCaster().useMp(getCost());
         damage+=getCaster().getStat(StatID.INT)/3;
         damage+=baseDamage+rand.nextInt(rollDamage);
         damage-=target.getStat(StatID.RES);

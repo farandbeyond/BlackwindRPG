@@ -16,20 +16,17 @@ import Background.DeBuffs.Effect;
  */
 public class EffectSpell extends Spell{
     private Effect effect;
-    private int cost;
-    public EffectSpell(BattleEntity caster,int cost, Effect effect){
-        super(caster);
+    public EffectSpell(BattleEntity caster,String name, String description,int cost, Effect effect){
+        super(caster,name,description,cost);
         this.effect=effect;
-        this.cost=cost;
     }
-    public EffectSpell(int cost, Effect effect){
-        super(null);
+    public EffectSpell(String name, String description,int cost, Effect effect){
+        super(null,name,description,cost);
         this.effect=effect;
-        this.cost=cost;
     }
     @Override
     public void cast(BattleEntity target) {
-        getCaster().useMp(cost);
+        getCaster().useMp(getCost());
         if(effect.getType()==Effect.BUFF)
             target.addEffect(Effect.effectLoader(((Buff)effect).getType(), ((Buff)effect).getStat(), ((Buff)effect).getIncreaseLevel(), getCaster().getName()));
         else if(effect.getType()==Effect.DEBUFF)

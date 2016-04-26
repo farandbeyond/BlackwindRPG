@@ -10,6 +10,7 @@
  */
 package Background;
 
+import Background.BattleActions.Spell;
 import Background.DeBuffs.*;
 import Background.Items.*;
 import java.util.ArrayList;
@@ -343,6 +344,9 @@ public class BattleEntity {
     public int getBuffStatIncrease(int i){return getBuffFromList(i).getSavedIncrease();}
     public int getDebuffStatDecrease(int i){return getDebuffFromList(i).getSavedDecrease();}
     //gets from entity
+    public boolean canCast(Spell s){
+        return s.getCost()<=getStat(StatID.MP);
+    }
     public Weapon getWeapon(){
         return (Weapon)equipment[0];
     }

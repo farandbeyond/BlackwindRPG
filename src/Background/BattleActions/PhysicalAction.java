@@ -19,8 +19,8 @@ public class PhysicalAction extends BattleAction{
     private int element;
     private int damageStat, resistStat;
     
-    public PhysicalAction(BattleEntity caster,int baseDamage, int rollDamage, int damageStat, int resistStat, int element){
-        super(caster);
+    public PhysicalAction(BattleEntity caster,String name, String description,int baseDamage, int rollDamage, int damageStat, int resistStat, int element){
+        super(caster,name,description);
         this.damageStat=damageStat;
         this.resistStat=resistStat;
         this.baseDamage=baseDamage;
