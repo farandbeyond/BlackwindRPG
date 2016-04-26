@@ -27,6 +27,7 @@ public class PauseMenu extends JPanel{
     OptionsMenu options;
     PartyMenu partyView;
     boolean[] visible;
+    Joystick joystick;
     /*
     private static final int
             USE=0,
@@ -45,7 +46,7 @@ public class PauseMenu extends JPanel{
             DESCRIPTION=2;
             */
     
-    public PauseMenu(Party p, Inventory inv){
+    PauseMenu(Party p, Inventory inv){
         //local variables
         menuPosition=0;
         confirmEvent=false;
@@ -56,6 +57,7 @@ public class PauseMenu extends JPanel{
             visible[i]=false;
         }
         //menu panels
+        
     }
     PauseMenu(JFrame frame,Party p, Inventory inv){
         //local variables
@@ -70,15 +72,58 @@ public class PauseMenu extends JPanel{
         //menu panels
         partyView = new PartyMenu(p);
         options = new OptionsMenu();
-        
-        
+        //set up this panel
+        this.setLayout(null);
+        this.setSize(612,480);
+        this.setLocation(0, 0);
+        this.setVisible(true);
+        //add panels to frame
+        this.add(partyView);
+        this.add(options);
+        joystick = new Joystick();
+        frame.addKeyListener(joystick);
         frame.add(this);
     }
     
-    public void run(){
-        
+    public void run(Party p, Inventory inv){
+        visible[OPTIONS]=true;
+        visible[PARTYMENU]=true;
+        //System.out.println("Got here");
+        while(!cancelEvent){
+            resetEvents();
+            menuLoop();
+        }
     }
-    public void paint(Graphics g){
+    //main menu loop
+    public void menuLoop(){
+        repaint();
+        confirmMenuPosition(options.getSelectorMaxPosition());
+        options.updateSelectorPosition(menuPosition);
+        options.setSelectorVisible();
+        
+        //System.out.println("Looping");
+        if(confirmEvent){
+            switch(menuPosition){
+                
+            }
+        }
+    }
+    //menuPositionControlling
+    private void confirmMenuPosition(int maxPos){
+        if(menuPosition<0){
+            menuPosition=maxPos;
+        }
+        if(menuPosition>=maxPos){
+            menuPosition=0;
+        }
+    }
+    //key event controlling
+    private void resetEvents(){
+        confirmEvent=false;
+        cancelEvent=false;
+    }
+    //paint
+     public void paint(Graphics g){
         if(visible[OPTIONS])
             options.paint(g);
         if(visible[PARTYMENU])
@@ -101,6 +146,7 @@ public class PauseMenu extends JPanel{
                 case KeyEvent.VK_A:leftEvent();break;
                 case KeyEvent.VK_S:downEvent();break;
                 case KeyEvent.VK_D:rightEvent();break;
+                case KeyEvent.VK_ENTER:menuEvent();break;
             }
         }
 
@@ -129,4 +175,5 @@ public class PauseMenu extends JPanel{
     public void rightEvent(){
         
     }
+    public void menuEvent(){System.exit(0);}
 }

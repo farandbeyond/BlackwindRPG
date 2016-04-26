@@ -5,6 +5,9 @@
  */
 package Foreground.Menu;
 
+import javax.swing.*;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
+
 /**
  *
  * @author Connor
@@ -12,6 +15,12 @@ package Foreground.Menu;
 public class InventoryTester {
     
     public static void main(String[] args){
-        
+        JFrame frame = new JFrame();
+        frame.setLayout(null);
+        frame.setSize(618, 480);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        PauseMenu menu = new PauseMenu(frame,null,null);
+        menu.run(null, null);
     }
 }
