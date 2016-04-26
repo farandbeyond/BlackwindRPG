@@ -24,6 +24,7 @@ public abstract class Effect {
         this.source=source;
         this.duration=duration;
     }
+    public abstract int getType();
     public String getName(){return name;}
     public String getSource(){return source;}
     public int getDuration(){return duration;}

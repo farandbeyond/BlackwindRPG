@@ -29,7 +29,15 @@ public class Buff extends Effect{
         this.increase=increase;
         savedIncrease=0;
     }
-    
+    public int getIncreaseLevel(){
+        if(increase==.1)
+            return TENP;
+        if(increase==.25)
+            return TWENTYFIVEP;
+        if(increase==.5)
+            return FIFTYP;
+        return 0;
+    }
     public int getStat(){return stat;}
     public double getIncrease(){return increase;}
     public int getSavedIncrease(){
@@ -37,6 +45,7 @@ public class Buff extends Effect{
             return savedIncrease;
         return 0;
     }
+    public int getType(){return BUFF;}
     @Override
     public void assign(BattleEntity e) {
         savedIncrease = (int)(e.getStat(stat)*increase);

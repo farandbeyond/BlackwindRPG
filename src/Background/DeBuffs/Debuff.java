@@ -22,6 +22,16 @@ public class Debuff extends Effect{
     private int stat;
     private double decrease;
     private int savedDecrease;
+    public int getDecreaseLevel(){
+        if(decrease==.1)
+            return TENP;
+        if(decrease==.25)
+            return TWENTYFIVEP;
+        if(decrease==.5)
+            return FIFTYP;
+        return 0;
+    }
+    public int getType(){return DEBUFF;}
     public int getStat(){return stat;}
     public double getDecrease(){return decrease;}
     public int getSavedDecrease(){
