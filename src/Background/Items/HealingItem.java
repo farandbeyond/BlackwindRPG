@@ -39,7 +39,8 @@ public class HealingItem extends Item{
             }
         }
     }
-    
+    //gets
     public int getHealValue(){return healValue;}
+    public int getType(){return type;}
     public boolean getRevives(){return revives;}
 }

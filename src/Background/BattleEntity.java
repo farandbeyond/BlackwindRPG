@@ -10,10 +10,9 @@
  */
 package Background;
 
+import Background.BattleActions.Spell;
 import Background.DeBuffs.*;
-import Background.Items.Equipment;
-import Background.Items.Item;
-import Background.Items.ItemLoader;
+import Background.Items.*;
 import java.util.ArrayList;
 
 
@@ -345,6 +344,20 @@ public class BattleEntity {
     public int getBuffStatIncrease(int i){return getBuffFromList(i).getSavedIncrease();}
     public int getDebuffStatDecrease(int i){return getDebuffFromList(i).getSavedDecrease();}
     //gets from entity
+    public boolean canCast(Spell s){
+        return s.getCost()<=getStat(StatID.MP);
+    }
+    public Weapon getWeapon(){
+        return (Weapon)equipment[0];
+    }
+    public Equipment getEquipment(int slot){
+        if(slot<4&&slot>0)
+            return equipment[slot];
+        if(slot==0)
+            return getWeapon();
+        return null;
+        
+    }
     public boolean getIsDead(){return isDead;}
     public String getName(){return name;}
     public int getElement(){return element;}

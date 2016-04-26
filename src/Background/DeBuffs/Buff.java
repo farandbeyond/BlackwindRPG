@@ -17,8 +17,6 @@ public class Buff extends Effect{
             TENP=1,
             TWENTYFIVEP=2,
             FIFTYP=3;
-            
-            
     private int stat;
     private double increase;
     private int savedIncrease;
@@ -29,27 +27,17 @@ public class Buff extends Effect{
         this.increase=increase;
         savedIncrease=0;
     }
-    
-    public int getStat(){return stat;}
-    public double getIncrease(){return increase;}
-    public int getSavedIncrease(){
-        if(savedIncrease!=0)
-            return savedIncrease;
-        return 0;
-    }
     @Override
     public void assign(BattleEntity e) {
         savedIncrease = (int)(e.getStat(stat)*increase);
         System.out.println(savedIncrease);
         e.increaseStat(stat,savedIncrease);
     }
-
     @Override
     public void remove(BattleEntity e) {
         e.reduceStat(stat, savedIncrease);
         //e.removeEffect(this);
     }
-
     @Override
     public void onTick(BattleEntity e) {
        setDuration(getDuration()-1);
@@ -59,6 +47,24 @@ public class Buff extends Effect{
        //    remove(e);
        //}
     }
+    //gets
+    public int getIncreaseLevel(){
+        if(increase==.1)
+            return TENP;
+        if(increase==.25)
+            return TWENTYFIVEP;
+        if(increase==.5)
+            return FIFTYP;
+        return 0;
+    }
+    public int getStat(){return stat;}
+    public double getIncrease(){return increase;}
+    public int getSavedIncrease(){
+        if(savedIncrease!=0)
+            return savedIncrease;
+        return 0;
+    }
+    public int getType(){return BUFF;}
     public String toString(){
         return String.format("%s, from %s. Currently increasing %s by %d\n", getName(),getSource(),StatID.getStatName(stat),getSavedIncrease());
     }

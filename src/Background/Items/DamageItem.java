@@ -29,5 +29,7 @@ public class DamageItem extends Item{
         target.damage(damage);
         reduceQuantity();
     }
-    
+    //gets
+    public int getDamage(){return damage;}
+    public int getElement(){return element;}
 }

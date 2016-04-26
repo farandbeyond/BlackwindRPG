@@ -109,6 +109,7 @@ public class Party {
     public int getPartyMembersStat(int member, int StatID){
         return getMemberFromParty(member).getStat(StatID);
     }
+    public int getMaxPartySize(){return maxPartySize;}
     //sets
     private void setPartyMember(BattleEntity entity, int position){
         party[position]=entity;
