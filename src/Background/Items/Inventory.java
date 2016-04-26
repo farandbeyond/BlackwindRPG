@@ -83,8 +83,14 @@ public class Inventory {
         }
     }   
     //gets
-    public Item getItem(int i){
-        return inventory.get(i);
-    }
+    public Item getItem(int i){return inventory.get(i);}
     public int getInvSize(){return invSize;}
+    //item subclass gets
+    public HealingItem getHealingItem(int i){return (HealingItem)inventory.get(i);}
+    public DamageItem getDamageItem(int i){return (DamageItem)inventory.get(i);}
+    public Equipment getEquipmentItem(int i){return (Equipment)inventory.get(i);}
+    public Weapon getWeaponItem(int i){return (Weapon)inventory.get(i);}
+    public Armor getArmorItem(int i){return (Armor)inventory.get(i);}
+    
+    
 }
