@@ -20,6 +20,7 @@ public class Inventory {
         this.invSize=size;
         inventory = new ArrayList<>();
     }
+    //inventory managers
     public boolean canAdd(Item i){
         if(inventory.size()<invSize){
                 return true;
@@ -74,14 +75,14 @@ public class Inventory {
             }
         }
     }
-    
+    //prints
     public void printAllItems(){
         for(Item i:inventory){
             System.out.print("-");
             System.out.println(i.superToString());
         }
     }   
-    
+    //gets
     public Item getItem(int i){
         return inventory.get(i);
     }

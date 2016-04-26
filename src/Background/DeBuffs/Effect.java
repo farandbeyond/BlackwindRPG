@@ -15,20 +15,21 @@ import Background.StatID;
 public abstract class Effect {
     private String name, source;
     private int duration;
-    public abstract void assign(BattleEntity e);
-    public abstract void remove(BattleEntity e);
-    public abstract void onTick(BattleEntity e);
-    
     public Effect(String name, String source, int duration){
         this.name=name;
         this.source=source;
         this.duration=duration;
     }
+    //abstracts
+    public abstract void assign(BattleEntity e);
+    public abstract void remove(BattleEntity e);
+    public abstract void onTick(BattleEntity e);
+    public abstract int getType();
+    //gets
     public String getName(){return name;}
     public String getSource(){return source;}
     public int getDuration(){return duration;}
     public void setDuration(int duration){this.duration=duration;}
-    
     //effect loader information
     public static final int
             BUFF=1,

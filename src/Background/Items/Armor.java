@@ -28,18 +28,21 @@ public class Armor extends Equipment{
         getEquipper().increaseStat(primaryStat, primaryValue);
         getEquipper().increaseStat(secondaryStat, secondaryValue);
     }
-
     @Override
     public void unEquip() {
         getEquipper().reduceStat(primaryStat, primaryValue);
         getEquipper().reduceStat(secondaryStat, secondaryValue);
         this.setEquipper(null);
     }
-
     @Override
     public void use(BattleEntity target) {
         System.out.println("No use");
     }
+    //gets
+    public int getPrimaryStat(){return primaryStat;}
+    public int getSecondaryStat(){return secondaryStat;}
+    public int getPrimaryValue(){return primaryValue;}
+    public int getSecondaryValue(){return secondaryValue;}
     public String toString(){
         return String.format("%s\nincreases %s by %d\nincreases %s by %d", 
                 super.toString(),
