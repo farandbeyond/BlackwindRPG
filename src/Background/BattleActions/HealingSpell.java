@@ -39,4 +39,8 @@ public class HealingSpell extends Spell{
         heal-=target.getStat(StatID.RES);
         target.damage(heal);
     }
+    //gets
+    public int getBaseHeal(){return baseHeal;}
+    public int getRollHeal(){return rollHeal;}
+    public int getMaxHeal(){return baseHeal+rollHeal;}
 }

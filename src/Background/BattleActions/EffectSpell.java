@@ -32,5 +32,6 @@ public class EffectSpell extends Spell{
         else if(effect.getType()==Effect.DEBUFF)
             target.addEffect(Effect.effectLoader(((Debuff)effect).getType(), ((Debuff)effect).getStat(), ((Debuff)effect).getDecreaseLevel(), getCaster().getName()));
     }
-    
+    //gets
+    public Effect getEffect(){return effect;}
 }

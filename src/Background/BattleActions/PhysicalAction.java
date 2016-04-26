@@ -39,4 +39,11 @@ public class PhysicalAction extends BattleAction{
         System.out.println(damage);
         target.damage(damage);
     }
+    //gets
+    public int getBaseDamage(){return baseDamage;}
+    public int getRollDamage(){return rollDamage;}
+    public int getMaxDamage(){return baseDamage+rollDamage;}
+    public int getElement(){return element;}
+    public int getDamageStat(){return damageStat;}
+    public int getResistStat(){return resistStat;}
 }

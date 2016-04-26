@@ -18,10 +18,10 @@ public abstract class Spell extends BattleAction{
         this.cost=cost;
     }
     public abstract void cast(BattleEntity target);
-    public int getCost(){return cost;}
     @Override
     public void execute(BattleEntity target) {
         cast(target);
     }
-    
+    //gets
+    public int getCost(){return cost;}
 }

@@ -41,5 +41,10 @@ public class DamageSpell extends Spell{
         damage*=ElementHandler.handler(element, target.getElement());
         target.damage(damage);
     }
+    //gets
+    public int getBaseDamage(){return baseDamage;}
+    public int getRollDamage(){return rollDamage;}
+    public int getMaxDamage(){return baseDamage+rollDamage;}
+    public int getElement(){return element;}
     
 }

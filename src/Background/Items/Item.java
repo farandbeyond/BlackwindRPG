@@ -15,8 +15,6 @@ public abstract class Item {
     private final String name, description;
     private int quantity;
     private final int id, maxQuantity, shopValue;
-    public abstract void use(BattleEntity target);
-    
     public Item(int id,String name, String description, int quantity, int maxQuantity, int shopValue){
         this.id=id;
         this.name=name;
@@ -25,6 +23,9 @@ public abstract class Item {
         this.maxQuantity=maxQuantity;
         this.shopValue=shopValue;
     }
+    //abstracts
+    public abstract void use(BattleEntity target);
+    //item handlers
     public void reduceQuantity(){
         quantity--;
     }
@@ -44,7 +45,6 @@ public abstract class Item {
     public int getId(){return id;}
     public int getMaxQuantity(){return maxQuantity;}
     public int getShopValue(){return shopValue;}
-    
     public String toString(){
         return String.format("%s x%d/%d. costs: %d", name,quantity,maxQuantity,shopValue);
     }

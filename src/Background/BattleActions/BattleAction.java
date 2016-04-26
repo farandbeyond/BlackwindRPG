@@ -20,10 +20,9 @@ public abstract class BattleAction {
         this.description=description;
         this.caster=caster;
     }
-    public BattleEntity getCaster(){
-        return caster;
-    }
-    public int getCasterStat(int statID){
-        return caster.getStat(statID);
-    }
+    //gets
+    public BattleEntity getCaster(){return caster;}
+    public int getCasterStat(int statID){return caster.getStat(statID);}
+    public String getName(){return name;}
+    public String getDescription(){return description;}
 }

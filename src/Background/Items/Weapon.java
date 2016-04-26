@@ -31,22 +31,23 @@ public class Weapon extends Equipment{
         getEquipper().increaseStat(secondStatToIncrease, increase);
         
     }
-
     @Override
     public void unEquip() {
         getEquipper().reduceStat(secondStatToIncrease, increase);
         setEquipper(null);
     }
-
     @Override
     public void use(BattleEntity target) {
         System.out.println("No use");
     }
+    //getsWeaponDamage
     public int attackDamage(){
         return baseDamage+rand.nextInt(rollDamage)+getEquipper().getStat(StatID.STR)/6;
     }
+    //gets
     public int getBaseDamage(){return baseDamage;}
     public int getrollDamage(){return rollDamage;}
+    public int getMaxDamage(){return baseDamage+rollDamage;}
     public int getsecondStatToIncrease(){return secondStatToIncrease;}
     public int getincrease(){return increase;}
     public String toString(){
