@@ -53,7 +53,7 @@ public class OptionsMenu extends JPanel{
         selectorVisible = true;
     }
     //gets
-    public int getSelectorMaxPosition(){return 6;}
+    public int getSelectorMaxPosition(){return 5;}
     public int getSelectorPosition(){return selectorPosition;}
     public boolean isSelectorVisible(){return selectorVisible;}
     //controls the options displayed
@@ -107,7 +107,7 @@ public class OptionsMenu extends JPanel{
             g.drawString(optionsDisplayed[i], distFromLeft+400, distFromTop+40*i);
         }
         if(selectorVisible){
-            g.drawString(">", 400, distFromTop+50*selectorPosition);
+            g.drawString(">", 400, distFromTop+40*selectorPosition);
         }
         
     }

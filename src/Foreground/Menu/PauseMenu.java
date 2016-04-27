@@ -113,7 +113,7 @@ public class PauseMenu extends JPanel{
         if(menuPosition<0){
             menuPosition=maxPos;
         }
-        if(menuPosition>=maxPos){
+        if(menuPosition>maxPos){
             menuPosition=0;
         }
     }
@@ -164,7 +164,9 @@ public class PauseMenu extends JPanel{
         cancelEvent=true;
     }
     public void upEvent(){
+        System.out.println(menuPosition);
         menuPosition--;
+        System.out.println(menuPosition);
     }
     public void downEvent(){
         menuPosition++;
