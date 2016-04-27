@@ -93,6 +93,7 @@ public class PauseMenu extends JPanel{
             resetEvents();
             menuLoop();
         }
+        System.exit(0);
     }
     //main menu loop
     public void menuLoop(){
@@ -104,7 +105,12 @@ public class PauseMenu extends JPanel{
         //System.out.println("Looping");
         if(confirmEvent){
             switch(menuPosition){
-                
+                case OptionsMenu.INVENTORY:
+                case OptionsMenu.STATUS:
+                case OptionsMenu.SPELLS:
+                case OptionsMenu.EQUIPMENT:
+                case OptionsMenu.SWAPMEMBERS:
+                case OptionsMenu.SAVE:System.out.println("Not Yet Implemented");
             }
         }
     }
@@ -164,9 +170,7 @@ public class PauseMenu extends JPanel{
         cancelEvent=true;
     }
     public void upEvent(){
-        System.out.println(menuPosition);
         menuPosition--;
-        System.out.println(menuPosition);
     }
     public void downEvent(){
         menuPosition++;

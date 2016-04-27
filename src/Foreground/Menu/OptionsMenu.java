@@ -107,6 +107,7 @@ public class OptionsMenu extends JPanel{
             g.drawString(optionsDisplayed[i], distFromLeft+400, distFromTop+40*i);
         }
         if(selectorVisible){
+            g.setFont(new Font("Serif",Font.BOLD, 25));
             g.drawString(">", 400, distFromTop+40*selectorPosition);
         }
         
