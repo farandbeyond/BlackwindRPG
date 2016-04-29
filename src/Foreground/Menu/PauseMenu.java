@@ -18,14 +18,16 @@ import javax.swing.*;
  * @author Connor
  */
 public class PauseMenu extends JPanel{
-    private final int menus = 2;
+    private final int menus = 3;
     private final int 
             OPTIONS=0,
-            PARTYMENU=1;
+            PARTYMENU=1,
+            INVENTORYMENU=2;
     int menuPosition;
     boolean confirmEvent, cancelEvent;
     OptionsMenu options;
     PartyMenu partyView;
+    InventoryMenu inventoryView;
     boolean[] visible;
     Joystick joystick;
     /*
@@ -71,6 +73,7 @@ public class PauseMenu extends JPanel{
         }
         //menu panels
         partyView = new PartyMenu(p);
+        inventoryView = new InventoryMenu(inv);
         options = new OptionsMenu();
         //set up this panel
         this.setLayout(null);
@@ -80,6 +83,7 @@ public class PauseMenu extends JPanel{
         //add panels to frame
         this.add(partyView);
         this.add(options);
+        this.add(inventoryView);
         joystick = new Joystick();
         frame.addKeyListener(joystick);
         frame.add(this);
@@ -105,7 +109,7 @@ public class PauseMenu extends JPanel{
         //System.out.println("Looping");
         if(confirmEvent){
             switch(menuPosition){
-                case OptionsMenu.INVENTORY:
+                case OptionsMenu.INVENTORY:LoadInvFromMainMenu();break;
                 case OptionsMenu.STATUS:
                 case OptionsMenu.SPELLS:
                 case OptionsMenu.EQUIPMENT:
@@ -113,6 +117,38 @@ public class PauseMenu extends JPanel{
                 case OptionsMenu.SAVE:System.out.println("Not Yet Implemented");
             }
         }
+    }
+    //inventory loop
+    private void LoadInvFromMainMenu(){
+        int save = menuPosition;
+        menuPosition=0;
+        toggleViews(PARTYMENU,INVENTORYMENU);
+        options.loadInventoryMenuOptions();
+        while(!cancelEvent){
+            inventoryLoop();
+        }
+        toggleViews(PARTYMENU,INVENTORYMENU);
+        options.loadMainMenuOptions();
+        menuPosition = save;
+    }
+    private void toggleViews(int view1, int view2){
+        resetEvents();
+        if(visible[view1]){
+            visible[view1]=false;
+        }else{
+            visible[view1]=true;
+        }
+        if(visible[view2]){
+            visible[view2]=false;
+        }else{
+            visible[view2]=true;
+        }
+    }
+    private void inventoryLoop(){
+        repaint();
+        confirmMenuPosition(options.getSelectorMaxPosition());
+        options.updateSelectorPosition(menuPosition);
+        options.setSelectorVisible();
     }
     //menuPositionControlling
     private void confirmMenuPosition(int maxPos){
@@ -134,6 +170,8 @@ public class PauseMenu extends JPanel{
             options.paint(g);
         if(visible[PARTYMENU])
             partyView.paint(g);
+        if(visible[INVENTORYMENU])
+            inventoryView.paint(g);
     }
     //key events
     public class Joystick implements KeyListener{
@@ -162,24 +200,11 @@ public class PauseMenu extends JPanel{
         }
         
     }
-    public void confirmEvent(){
-        confirmEvent=true;
-        System.out.println("confirmed");
-    }
-    public void cancelEvent(){
-        cancelEvent=true;
-    }
-    public void upEvent(){
-        menuPosition--;
-    }
-    public void downEvent(){
-        menuPosition++;
-    }
-    public void leftEvent(){
-        
-    }
-    public void rightEvent(){
-        
-    }
+    public void confirmEvent(){confirmEvent=true;}
+    public void cancelEvent(){cancelEvent=true;}
+    public void upEvent(){menuPosition--;}
+    public void downEvent(){menuPosition++;}
+    public void leftEvent(){}
+    public void rightEvent(){}
     public void menuEvent(){System.exit(0);}
 }

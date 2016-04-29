@@ -85,6 +85,13 @@ public class Inventory {
     //gets
     public Item getItem(int i){return inventory.get(i);}
     public int getInvSize(){return invSize;}
+    public int getNumberOfItemsInInventory(){
+        int items=0;
+        for(Item item:inventory){
+            items++;
+        }
+        return items;
+    }
     //item subclass gets
     public HealingItem getHealingItem(int i){return (HealingItem)inventory.get(i);}
     public DamageItem getDamageItem(int i){return (DamageItem)inventory.get(i);}

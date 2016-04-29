@@ -26,10 +26,11 @@ public class OptionsMenu extends JPanel{
             maxOptions=6,
             distFromLeft = 40,
             distFromTop = 50;
-    private int selectorPosition;
+    private int selectorPosition, selectorMaxPos;
     private boolean selectorVisible;
     public int currentOptions;
     private String[] optionsDisplayed;
+    
     
     public OptionsMenu(){
         optionsDisplayed = new String[6];
@@ -53,7 +54,7 @@ public class OptionsMenu extends JPanel{
         selectorVisible = true;
     }
     //gets
-    public int getSelectorMaxPosition(){return 5;}
+    public int getSelectorMaxPosition(){return selectorMaxPos;}
     public int getSelectorPosition(){return selectorPosition;}
     public boolean isSelectorVisible(){return selectorVisible;}
     //controls the options displayed
@@ -64,6 +65,7 @@ public class OptionsMenu extends JPanel{
         optionsDisplayed[3]="Equipment";
         optionsDisplayed[4]="Swap Members";
         optionsDisplayed[5]="Save";
+        selectorMaxPos=5;
     }
     public void loadInventoryMenuOptions(){
         optionsDisplayed[0]="Use";
@@ -72,6 +74,7 @@ public class OptionsMenu extends JPanel{
         optionsDisplayed[3]="Drop";
         optionsDisplayed[4]="";
         optionsDisplayed[5]="";
+        selectorMaxPos=3;
     }
     public void loadStatusMenuOptions(){
         optionsDisplayed[0]="Exit";
@@ -80,6 +83,7 @@ public class OptionsMenu extends JPanel{
         optionsDisplayed[3]="";
         optionsDisplayed[4]="";
         optionsDisplayed[5]="";
+        selectorMaxPos=0;
     }
     public void loadSpellsMenuOptions(){
         optionsDisplayed[0]="Cast";
@@ -88,6 +92,7 @@ public class OptionsMenu extends JPanel{
         optionsDisplayed[3]="";
         optionsDisplayed[4]="";
         optionsDisplayed[5]="";
+        selectorMaxPos=2;
     }
     public void loadEquipmentMenuOptions(){
         optionsDisplayed[0]="Equip";
@@ -96,6 +101,7 @@ public class OptionsMenu extends JPanel{
         optionsDisplayed[3]="";
         optionsDisplayed[4]="";
         optionsDisplayed[5]="";
+        selectorMaxPos=2;
     }
     public void paint(Graphics g){
         g.setColor(Color.red);
