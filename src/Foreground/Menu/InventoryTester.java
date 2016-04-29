@@ -6,6 +6,7 @@
 package Foreground.Menu;
 
 import Background.Items.Inventory;
+import Background.Items.ItemLoader;
 import Background.Party.Party;
 import javax.swing.*;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
@@ -24,6 +25,17 @@ public class InventoryTester {
         frame.setSize(618, 480);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.FIREBOMB, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.ICEBOMB, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.MUDBOMB, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.PHEONIXDOWN, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.POTION, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.REJUVI, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.WINDBOMB, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.IRONSWORD, 1));
         PauseMenu menu = new PauseMenu(frame,party,inv);
         menu.run(party, inv);
     }

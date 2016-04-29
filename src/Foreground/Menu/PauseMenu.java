@@ -31,11 +31,7 @@ public class PauseMenu extends JPanel{
     boolean[] visible;
     Joystick joystick;
     /*
-    private static final int
-            USE=0,
-            EQUIP=1,
-            EXAMINE=2,
-            DROP=3;
+    
     private static final int
             EXIT=0;
     private static final int
@@ -118,7 +114,6 @@ public class PauseMenu extends JPanel{
             }
         }
     }
-    //inventory loop
     private void LoadInvFromMainMenu(){
         int save = menuPosition;
         menuPosition=0;
@@ -131,6 +126,7 @@ public class PauseMenu extends JPanel{
         options.loadMainMenuOptions();
         menuPosition = save;
     }
+    //inventory loop
     private void toggleViews(int view1, int view2){
         resetEvents();
         if(visible[view1]){
@@ -149,6 +145,30 @@ public class PauseMenu extends JPanel{
         confirmMenuPosition(options.getSelectorMaxPosition());
         options.updateSelectorPosition(menuPosition);
         options.setSelectorVisible();
+        if(confirmEvent){
+            int save = menuPosition;
+            switch(menuPosition){
+                case InventoryMenu.USE:selectItemToUse();break;
+                case InventoryMenu.EXAMINE:
+                case InventoryMenu.EQUIP:
+                case InventoryMenu.DROP:System.out.println("Not Yet Implemented");break;
+            }
+            menuPosition=save;
+        }
+    }
+    private void selectItemToUse(){
+        options.toggleSelectorVisible();
+        inventoryView.toggleSelectorVisible();
+        resetEvents();
+        while(!cancelEvent){
+            repaint();
+            //System.out.println(menuPosition);
+            confirmMenuPosition(inventoryView.getSelectorMaxPosition());
+            menuPosition = inventoryView.updateOffsetSelectorPosition(menuPosition);
+        }
+        resetEvents();
+        options.toggleSelectorVisible();
+        inventoryView.toggleSelectorVisible();
     }
     //menuPositionControlling
     private void confirmMenuPosition(int maxPos){
