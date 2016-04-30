@@ -47,6 +47,9 @@ public class InventoryMenu extends JPanel{
     public void refreshInventory(){
         inv.updateInventory();
     }
+    public void AddToInventory(Item itemToAdd){
+        inv.add(itemToAdd);
+    }
     //gets
     public Item getItemAtPosition(){
         return inv.getItem(selectorPosition+currOffset);

@@ -69,6 +69,9 @@ public class BattleEntity {
         isDead = hp==0?true:false;
         effects = new ArrayList<>();
         equipment = new Equipment[4];
+        for(int i=0;i<4;i++){
+            equipment[i]=null;
+        }
     }
     /**
      * assumes the entity will be at full health. used for creation and recreation within guild.
@@ -110,6 +113,9 @@ public class BattleEntity {
         isDead=false;
         effects = new ArrayList<>();
         equipment = new Equipment[4];
+        for(int i=0;i<4;i++){
+            equipment[i]=null;
+        }
     }
     /**
          * SHOULD ONLY BE CALLED FOR ENEMIES. stats are not meant to grow after being set

@@ -44,19 +44,6 @@ public class PauseMenu extends JPanel{
             DESCRIPTION=2;
             */
     
-    PauseMenu(Party p, Inventory inv){
-        //local variables
-        menuPosition=0;
-        confirmEvent=false;
-        cancelEvent=false;
-        //menu visibility
-        visible = new boolean[menus];
-        for(int i=0;i<menus;i++){
-            visible[i]=false;
-        }
-        //menu panels
-        
-    }
     PauseMenu(JFrame frame,Party p, Inventory inv){
         //local variables
         menuPosition=0;
@@ -137,10 +124,16 @@ public class PauseMenu extends JPanel{
         confirmMenuPosition(inventoryView.getSelectorMaxPosition());
         menuPosition = inventoryView.updateOffsetSelectorPosition(menuPosition);
         if(confirmEvent){
-            int save = menuPosition;
-            menuPosition=0;
-            openItemOptions();
-            menuPosition=save;
+            try{
+                inventoryView.getItemAtPosition();
+                int save = menuPosition;
+                menuPosition=0;
+                openItemOptions();
+                menuPosition=save;
+            }catch(IndexOutOfBoundsException e){
+                System.out.println("Invalid Item");
+                resetEvents();
+            }
         }
     }
     private void openItemOptions(){
@@ -148,6 +141,7 @@ public class PauseMenu extends JPanel{
         inventoryView.toggleSelectorVisible();
         resetEvents();
         while(!cancelEvent){
+            resetEvents();
             repaint();
             confirmMenuPosition(options.getSelectorMaxPosition());
             options.updateSelectorPosition(menuPosition);
@@ -155,11 +149,15 @@ public class PauseMenu extends JPanel{
             if(confirmEvent){
                 Item selection = inventoryView.getItemAtPosition();
                 int save = menuPosition;
-                switch(menuPosition){
-                    case InventoryMenu.USE:selectItemTarget(selection);break;
-                    case InventoryMenu.EXAMINE:
-                    case InventoryMenu.EQUIP:
-                    case InventoryMenu.DROP:System.out.println("Not Yet Implemented");break;
+                try{
+                    switch(menuPosition){
+                        case InventoryMenu.USE:selectItemTarget(selection);break;
+                        case InventoryMenu.EXAMINE:
+                        case InventoryMenu.EQUIP:selectEquipTarget((Equipment)selection);break;
+                        case InventoryMenu.DROP:System.out.println("Not Yet Implemented");break;
+                    }
+                }catch(ClassCastException e){
+                    System.out.printf("%s cannot do that\n",selection.getName());
                 }
                 if(selection.getQuantity()==0){
                     inventoryView.setMaxOffset();
@@ -186,13 +184,68 @@ public class PauseMenu extends JPanel{
             confirmMenuPosition(partyView.getSelectorMaxPosition());
             partyView.updateSelectorPosition(menuPosition);
             if(confirmEvent){
-                System.out.println(menuPosition);
-                i.use(partyView.getPartyMember(menuPosition));
-                inventoryView.refreshInventory();
-                resetEvents();
-                System.out.println("Used Item");
+                try{
+                    System.out.println(menuPosition);
+                    i.use(partyView.getPartyMember(menuPosition));
+                    inventoryView.refreshInventory();
+                    resetEvents();
+                    System.out.println("Used Item");
+                }catch(NullPointerException e){
+                    System.out.println("Invalid Target");
+                    resetEvents();
+                }
             }
             if(i.getQuantity()==0){
+                break;
+            }
+        }
+        toggleViews(INVENTORYMENU,PARTYMENU);
+        
+    }
+    private void selectEquipTarget(Equipment equipment){
+        toggleViews(INVENTORYMENU,PARTYMENU);
+        if(!partyView.isSelectorVisible()){
+            partyView.toggleSelectorVisible();
+        }
+        while(!cancelEvent){
+            repaint();
+            //System.out.println("in the loop");
+            confirmMenuPosition(partyView.getSelectorMaxPosition());
+            partyView.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                try{
+                    System.out.println(menuPosition);
+                    //i.use(partyView.getPartyMember(menuPosition));
+                    BattleEntity equipper = partyView.getPartyMember(menuPosition);
+                    try{
+                        equipper.getWeapon().getId();
+                        inventoryView.AddToInventory(equipper.getWeapon());
+                        //inventoryView.refreshInventory();
+                        equipper.equip((Weapon)equipment, 0);
+                    }catch(NullPointerException t){
+                        equipper.equip((Weapon)equipment, 0);
+                    }catch(ClassCastException e){
+                        System.out.println("Is armor");
+                        for(int armorSlot=1;armorSlot<=3;armorSlot++){
+                            try{
+                                System.out.println(equipper.getEquipment(armorSlot).toString());
+                            }catch(NullPointerException c){
+                                equipper.equip(equipment, armorSlot);
+                                break;
+                            }
+                        }
+                        equipper.printAllEquipment();
+                        //break;
+                    }
+                    inventoryView.refreshInventory();
+                    resetEvents();
+                    System.out.println("Equipped Item");
+                }catch(NullPointerException e){
+                    System.out.println("Invalid Target");
+                    resetEvents();
+                }
+            }
+            if(equipment.getQuantity()==0){
                 break;
             }
         }
