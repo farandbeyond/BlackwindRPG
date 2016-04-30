@@ -119,56 +119,85 @@ public class PauseMenu extends JPanel{
         menuPosition=0;
         toggleViews(PARTYMENU,INVENTORYMENU);
         options.loadInventoryMenuOptions();
+        options.toggleSelectorVisible();
+        inventoryView.toggleSelectorVisible();
         while(!cancelEvent){
             inventoryLoop();
         }
         toggleViews(PARTYMENU,INVENTORYMENU);
+        options.toggleSelectorVisible();
+        inventoryView.toggleSelectorVisible();
         options.loadMainMenuOptions();
         menuPosition = save;
     }
     //inventory loop
-    private void toggleViews(int view1, int view2){
-        resetEvents();
-        if(visible[view1]){
-            visible[view1]=false;
-        }else{
-            visible[view1]=true;
-        }
-        if(visible[view2]){
-            visible[view2]=false;
-        }else{
-            visible[view2]=true;
-        }
-    }
     private void inventoryLoop(){
         repaint();
-        confirmMenuPosition(options.getSelectorMaxPosition());
-        options.updateSelectorPosition(menuPosition);
-        options.setSelectorVisible();
+        //System.out.println(menuPosition);
+        confirmMenuPosition(inventoryView.getSelectorMaxPosition());
+        menuPosition = inventoryView.updateOffsetSelectorPosition(menuPosition);
         if(confirmEvent){
             int save = menuPosition;
-            switch(menuPosition){
-                case InventoryMenu.USE:selectItemToUse();break;
-                case InventoryMenu.EXAMINE:
-                case InventoryMenu.EQUIP:
-                case InventoryMenu.DROP:System.out.println("Not Yet Implemented");break;
-            }
+            menuPosition=0;
+            openItemOptions();
             menuPosition=save;
         }
     }
-    private void selectItemToUse(){
+    private void openItemOptions(){
         options.toggleSelectorVisible();
         inventoryView.toggleSelectorVisible();
         resetEvents();
         while(!cancelEvent){
             repaint();
-            //System.out.println(menuPosition);
-            confirmMenuPosition(inventoryView.getSelectorMaxPosition());
-            menuPosition = inventoryView.updateOffsetSelectorPosition(menuPosition);
+            confirmMenuPosition(options.getSelectorMaxPosition());
+            options.updateSelectorPosition(menuPosition);
+            options.setSelectorVisible();
+            if(confirmEvent){
+                Item selection = inventoryView.getItemAtPosition();
+                int save = menuPosition;
+                switch(menuPosition){
+                    case InventoryMenu.USE:selectItemTarget(selection);break;
+                    case InventoryMenu.EXAMINE:
+                    case InventoryMenu.EQUIP:
+                    case InventoryMenu.DROP:System.out.println("Not Yet Implemented");break;
+                }
+                if(selection.getQuantity()==0){
+                    inventoryView.setMaxOffset();
+                    resetEvents();
+                    options.toggleSelectorVisible();
+                    inventoryView.toggleSelectorVisible();
+                    return;
+                }
+                menuPosition=save;
+            }
         }
         resetEvents();
         options.toggleSelectorVisible();
         inventoryView.toggleSelectorVisible();
+    }
+    private void selectItemTarget(Item i){
+        toggleViews(INVENTORYMENU,PARTYMENU);
+        if(!partyView.isSelectorVisible()){
+            partyView.toggleSelectorVisible();
+        }
+        while(!cancelEvent){
+            repaint();
+            //System.out.println("in the loop");
+            confirmMenuPosition(partyView.getSelectorMaxPosition());
+            partyView.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                System.out.println(menuPosition);
+                i.use(partyView.getPartyMember(menuPosition));
+                inventoryView.refreshInventory();
+                resetEvents();
+                System.out.println("Used Item");
+            }
+            if(i.getQuantity()==0){
+                break;
+            }
+        }
+        toggleViews(INVENTORYMENU,PARTYMENU);
+        
     }
     //menuPositionControlling
     private void confirmMenuPosition(int maxPos){
@@ -183,6 +212,19 @@ public class PauseMenu extends JPanel{
     private void resetEvents(){
         confirmEvent=false;
         cancelEvent=false;
+    }
+    private void toggleViews(int view1, int view2){
+        resetEvents();
+        if(visible[view1]){
+            visible[view1]=false;
+        }else{
+            visible[view1]=true;
+        }
+        if(visible[view2]){
+            visible[view2]=false;
+        }else{
+            visible[view2]=true;
+        }
     }
     //paint
      public void paint(Graphics g){

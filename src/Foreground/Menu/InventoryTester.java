@@ -5,6 +5,7 @@
  */
 package Foreground.Menu;
 
+import Background.BattleEntityLoader;
 import Background.Items.Inventory;
 import Background.Items.ItemLoader;
 import Background.Party.Party;
@@ -25,6 +26,7 @@ public class InventoryTester {
         frame.setSize(618, 480);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.WILSON));
         inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.FIREBOMB, 1));

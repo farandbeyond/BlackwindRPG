@@ -5,6 +5,7 @@
  */
 package Foreground.Menu;
 
+import Background.BattleEntity;
 import Background.Party.Party;
 import Background.StatID;
 import java.awt.Color;
@@ -47,6 +48,9 @@ public class PartyMenu extends JPanel{
     public int getSelectorMaxPosition(){return 4;}
     public int getSelectorPosition(){return selectorPosition;}
     public boolean isSelectorVisible(){return selectorVisible;}
+    public BattleEntity getPartyMember(int member){
+        return party.getMemberFromParty(member);
+    }
     //paint
     public void paint(Graphics g){
         g.setColor(Color.yellow);

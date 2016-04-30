@@ -5,7 +5,7 @@
  */
 package Foreground.Menu;
 
-import Background.Items.Inventory;
+import Background.Items.*;
 import java.awt.*;
 import javax.swing.*;
 
@@ -32,7 +32,7 @@ public class InventoryMenu extends JPanel{
         selectorMaxPos = 9;
         selectorVisible=false;
     }
-    private void setMaxOffset(){
+    public void setMaxOffset(){
         maxOffset=0;
         while(true){
             try{
@@ -44,8 +44,13 @@ public class InventoryMenu extends JPanel{
             }
         }
     }
-    
+    public void refreshInventory(){
+        inv.updateInventory();
+    }
     //gets
+    public Item getItemAtPosition(){
+        return inv.getItem(selectorPosition+currOffset);
+    }
     public int getSelectorMaxPosition(){return selectorMaxPos;}
     public int getSelectorPosition(){return selectorPosition;}
     public boolean isSelectorVisible(){return selectorVisible;}
