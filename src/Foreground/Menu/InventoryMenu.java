@@ -57,6 +57,9 @@ public class InventoryMenu extends JPanel{
     public int getSelectorMaxPosition(){return selectorMaxPos;}
     public int getSelectorPosition(){return selectorPosition;}
     public boolean isSelectorVisible(){return selectorVisible;}
+    public void dropItem(int position){
+        inv.dropItem(position);
+    }
     //selector controllers
     public int updateOffsetSelectorPosition(int newPos){
         //if you scroll down far enough and there are more options to load, scroll the inventory and add to the offset
@@ -108,7 +111,7 @@ public class InventoryMenu extends JPanel{
         g.fillRect(0, 0, 400, 480);
         g.setColor(Color.black);
         g.drawRect(0, 0, 400, 480);
-        g.setFont(new Font("Serif",Font.BOLD, 18));
+        g.setFont(new Font("Courier New", Font.BOLD, 20));
         for(int i=0;i<10;i++){
             try{
                 g.drawString(inv.getItem(i+currOffset).getName(), distFromLeft, distFromTop+35*i);

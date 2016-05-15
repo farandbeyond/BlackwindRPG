@@ -16,7 +16,7 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
  *
  * @author Connor
  */
-public class InventoryTester {
+public class PauseMenuTester {
     
     public static void main(String[] args){
         JFrame frame = new JFrame();
@@ -27,6 +27,7 @@ public class InventoryTester {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.WILSON));
+        party.getMemberFromParty(0).checkForLevelUp();
         inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.FIREBOMB, 11));
@@ -34,9 +35,9 @@ public class InventoryTester {
         inv.add(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.MUDBOMB, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.PHEONIXDOWN, 1));
-        //inv.add(ItemLoader.loadItem(ItemLoader.POTION, 1));
-        //inv.add(ItemLoader.loadItem(ItemLoader.REJUVI, 1));
-        //inv.add(ItemLoader.loadItem(ItemLoader.WINDBOMB, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.POTION, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.REJUVI, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.WINDBOMB, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.IRONSWORD, 1));
         PauseMenu menu = new PauseMenu(frame,party,inv);
         menu.run(party, inv);

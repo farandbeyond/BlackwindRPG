@@ -20,7 +20,7 @@ public class EntityTester {
         text("----------Test02----------");
         text("XP checker");
         wilson.xpToLevel();
-        System.out.printf("Wilson has %d exp until his next level\n",wilson.getExpRequiredToLevel());
+        System.out.printf("Wilson has %d exp until his next level\n",wilson.getTotalExpRequiredToLevel());
         text("----------Test03----------");
         text("Level up Wilson");
         wilson.printAllStats();

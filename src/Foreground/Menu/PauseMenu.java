@@ -8,6 +8,8 @@ package Foreground.Menu;
 import Background.Items.*;
 import Background.Party.*;
 import Background.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -18,16 +20,19 @@ import javax.swing.*;
  * @author Connor
  */
 public class PauseMenu extends JPanel{
-    private final int menus = 3;
+    private final int menus = 4;
     private final int 
             OPTIONS=0,
             PARTYMENU=1,
-            INVENTORYMENU=2;
+            INVENTORYMENU=2,
+            STATUSMENU=3;
+    String assistText;
     int menuPosition;
     boolean confirmEvent, cancelEvent;
     OptionsMenu options;
     PartyMenu partyView;
     InventoryMenu inventoryView;
+    StatusMenu statusView;
     boolean[] visible;
     Joystick joystick;
     /*
@@ -57,6 +62,7 @@ public class PauseMenu extends JPanel{
         //menu panels
         partyView = new PartyMenu(p);
         inventoryView = new InventoryMenu(inv);
+        statusView = new StatusMenu(p.getMemberFromParty(0));
         options = new OptionsMenu();
         //set up this panel
         this.setLayout(null);
@@ -67,6 +73,7 @@ public class PauseMenu extends JPanel{
         this.add(partyView);
         this.add(options);
         this.add(inventoryView);
+        this.add(statusView);
         joystick = new Joystick();
         frame.addKeyListener(joystick);
         frame.add(this);
@@ -88,20 +95,20 @@ public class PauseMenu extends JPanel{
         confirmMenuPosition(options.getSelectorMaxPosition());
         options.updateSelectorPosition(menuPosition);
         options.setSelectorVisible();
-        
+        setAssistText("");
         //System.out.println("Looping");
         if(confirmEvent){
             switch(menuPosition){
-                case OptionsMenu.INVENTORY:LoadInvFromMainMenu();break;
-                case OptionsMenu.STATUS:
+                case OptionsMenu.INVENTORY:loadInvFromMainMenu();break;
+                case OptionsMenu.STATUS:loadStatusFromMainMenu();break;
                 case OptionsMenu.SPELLS:
                 case OptionsMenu.EQUIPMENT:
                 case OptionsMenu.SWAPMEMBERS:
-                case OptionsMenu.SAVE:System.out.println("Not Yet Implemented");
+                case OptionsMenu.SAVE:setAssistText("Not Yet Implemented");
             }
         }
     }
-    private void LoadInvFromMainMenu(){
+    private void loadInvFromMainMenu(){
         int save = menuPosition;
         menuPosition=0;
         toggleViews(PARTYMENU,INVENTORYMENU);
@@ -117,12 +124,38 @@ public class PauseMenu extends JPanel{
         options.loadMainMenuOptions();
         menuPosition = save;
     }
+    private void loadStatusFromMainMenu(){
+        int save = menuPosition;
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
+        resetEvents();
+        while(!cancelEvent){
+            repaint();
+            confirmMenuPosition(partyView.getSelectorMaxPosition()-1);
+            partyView.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                try{
+                    BattleEntity view = partyView.getPartyMember(menuPosition);
+                    view.getName();
+                    viewMember(view);
+                }catch(NullPointerException e){
+                    setAssistText("Invalid Party Member");
+                    resetEvents();
+                }
+            }
+        }
+        resetEvents();
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
+        menuPosition = save;
+    }
     //inventory loop
     private void inventoryLoop(){
         repaint();
         //System.out.println(menuPosition);
         confirmMenuPosition(inventoryView.getSelectorMaxPosition());
         menuPosition = inventoryView.updateOffsetSelectorPosition(menuPosition);
+        setAssistText("Select an item");
         if(confirmEvent){
             try{
                 inventoryView.getItemAtPosition();
@@ -139,6 +172,8 @@ public class PauseMenu extends JPanel{
     private void openItemOptions(){
         options.toggleSelectorVisible();
         inventoryView.toggleSelectorVisible();
+        Item selection = inventoryView.getItemAtPosition();
+        setAssistText(selection.getName()+" selected");
         resetEvents();
         while(!cancelEvent){
             resetEvents();
@@ -147,14 +182,13 @@ public class PauseMenu extends JPanel{
             options.updateSelectorPosition(menuPosition);
             options.setSelectorVisible();
             if(confirmEvent){
-                Item selection = inventoryView.getItemAtPosition();
                 int save = menuPosition;
                 try{
                     switch(menuPosition){
-                        case InventoryMenu.USE:selectItemTarget(selection);break;
-                        case InventoryMenu.EXAMINE:
+                        case InventoryMenu.USE:selectUseItemTarget(selection);break;
+                        case InventoryMenu.EXAMINE:setAssistText(selection.getDescription());break;
                         case InventoryMenu.EQUIP:selectEquipTarget((Equipment)selection);break;
-                        case InventoryMenu.DROP:System.out.println("Not Yet Implemented");break;
+                        case InventoryMenu.DROP:inventoryView.dropItem(inventoryView.getSelectorPosition());break;
                     }
                 }catch(ClassCastException e){
                     System.out.printf("%s cannot do that\n",selection.getName());
@@ -173,11 +207,12 @@ public class PauseMenu extends JPanel{
         options.toggleSelectorVisible();
         inventoryView.toggleSelectorVisible();
     }
-    private void selectItemTarget(Item i){
+    private void selectUseItemTarget(Item i){
         toggleViews(INVENTORYMENU,PARTYMENU);
         if(!partyView.isSelectorVisible()){
             partyView.toggleSelectorVisible();
         }
+        setAssistText("Use "+i.getName()+" on who?");
         while(!cancelEvent){
             repaint();
             //System.out.println("in the loop");
@@ -207,6 +242,7 @@ public class PauseMenu extends JPanel{
         if(!partyView.isSelectorVisible()){
             partyView.toggleSelectorVisible();
         }
+        setAssistText("Who will equip "+equipment.getName());
         while(!cancelEvent){
             repaint();
             //System.out.println("in the loop");
@@ -252,6 +288,14 @@ public class PauseMenu extends JPanel{
         toggleViews(INVENTORYMENU,PARTYMENU);
         
     }
+    //status loop
+    private void viewMember(BattleEntity member){
+        toggleViews(PARTYMENU,STATUSMENU);
+        while(!cancelEvent&&!confirmEvent){
+            repaint();
+        }
+        toggleViews(PARTYMENU,STATUSMENU);
+    }
     //menuPositionControlling
     private void confirmMenuPosition(int maxPos){
         if(menuPosition<0){
@@ -279,14 +323,26 @@ public class PauseMenu extends JPanel{
             visible[view2]=true;
         }
     }
+    public void setAssistText(String assistText){
+        this.assistText = assistText;
+    }
     //paint
-     public void paint(Graphics g){
+    public void paint(Graphics g){
+        
         if(visible[OPTIONS])
             options.paint(g);
         if(visible[PARTYMENU])
             partyView.paint(g);
         if(visible[INVENTORYMENU])
             inventoryView.paint(g);
+        if(visible[STATUSMENU])
+            statusView.paint(g);
+        try{
+            g.setFont(new Font("Courier New", Font.BOLD, 20));
+            g.setColor(Color.black);
+            g.drawString(assistText, 15, 25);
+        }catch(NullPointerException e){
+        }
     }
     //key events
     public class Joystick implements KeyListener{
@@ -322,4 +378,7 @@ public class PauseMenu extends JPanel{
     public void leftEvent(){}
     public void rightEvent(){}
     public void menuEvent(){System.exit(0);}
+    public static void main(String[] args){
+        PauseMenuTester.main(args);
+    }
 }

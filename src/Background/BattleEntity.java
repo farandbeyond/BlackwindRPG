@@ -369,8 +369,8 @@ public class BattleEntity {
     public int getElement(){return element;}
     public int getLevel(){return level;}
     public int getExp(){return exp;}
-    public int getExpRequiredToLevel(){return expRequiredToLevel;}
-    public int getExpUntilLevel(){return exp-expRequiredToLevel;}
+    public int getTotalExpRequiredToLevel(){return expRequiredToLevel;}
+    public int getExpUntilLevel(){return expRequiredToLevel-exp;}
     //gets from the nested stats. goes hand-in-hand with StatID.java
     public int getBaseStat(int StatID)      {return stats[StatID].getBaseStat();}
     public int getStatModifier(int StatID)  {return stats[StatID].getStatModifier();}

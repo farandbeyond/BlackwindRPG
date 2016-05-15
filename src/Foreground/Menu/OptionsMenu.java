@@ -108,12 +108,12 @@ public class OptionsMenu extends JPanel{
         g.fillRect(400, 0, 618, 480);
         g.setColor(Color.black);
         g.drawRect(400, 0, 618, 410);
-        g.setFont(new Font("Serif",Font.BOLD, 18));
+        g.setFont(new Font("Monospaced", Font.BOLD, 20));
         for(int i=0;i<maxOptions;i++){
-            g.drawString(optionsDisplayed[i], distFromLeft+400, distFromTop+40*i);
+            g.drawString(optionsDisplayed[i], distFromLeft+390, distFromTop+40*i);
         }
         if(selectorVisible){
-            g.setFont(new Font("Serif",Font.BOLD, 25));
+            g.setFont(new Font("Courier New", Font.BOLD, 25));
             g.drawString(">", 400, distFromTop+40*selectorPosition);
         }
         

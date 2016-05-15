@@ -57,7 +57,7 @@ public class PartyMenu extends JPanel{
         g.fillRect(0, 0, 400, 480);
         g.setColor(Color.black);
         g.drawRect(0, 0, 400, 480);
-        g.setFont(new Font("Serif",Font.BOLD, 18));
+        g.setFont(new Font("Courier New", Font.BOLD, 18));
         for(int i=0;i<partySize;i++){
             try{
                 g.drawString(party.getMemberFromParty(i).getName(), distFromLeft, distFromTop+85*i);
