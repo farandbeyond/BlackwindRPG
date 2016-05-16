@@ -37,8 +37,20 @@ public class StatusMenu extends JPanel{
         g.drawString(String.format("%d/%d HP", displayed.getStat(StatID.HP),displayed.getStat(StatID.MAXHP)), 30, 130);
         g.drawString(String.format("%d/%d MP", displayed.getStat(StatID.MP),displayed.getStat(StatID.MAXMP)), 230, 130);
         for(int i=StatID.STR;i<=StatID.RES;i++){
-            //                                                                                  i starts at 4
-            g.drawString(String.format("%s:\t%d", StatID.getStatName(i),displayed.getStat(i)), 30, 45+30*i);
+            //            4              9                                                        i starts at 4
+            g.drawString(String.format("%s:%d | %d", StatID.getStatName(i),displayed.getBaseStat(i),displayed.getStat(i)), 30, 45+30*i);
+        }
+        try{
+            g.drawString(String.format("Weapon: %s",displayed.getEquipment(0).getName()), 30, 325);
+        }catch(NullPointerException e){
+            g.drawString(String.format("Weapon: ---"), 30, 325);
+        }
+        for(int i=1;i<4;i++){
+            try{
+                g.drawString(String.format("Armor:  %s",displayed.getEquipment(i).getName()), 30, 325+30*i);
+            }catch(NullPointerException e){
+                g.drawString(String.format("Armor:  ---"), 30, 325+30*i);
+            }
         }
     }
     public static void main(String[] args){

@@ -6,6 +6,7 @@
 package Foreground.Menu;
 
 import Background.BattleEntityLoader;
+import Background.Items.Equipment;
 import Background.Items.Inventory;
 import Background.Items.ItemLoader;
 import Background.Party.Party;
@@ -28,6 +29,7 @@ public class PauseMenuTester {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.WILSON));
         party.getMemberFromParty(0).checkForLevelUp();
+        party.getMemberFromParty(0).equip((Equipment)ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1), 1);
         inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.FIREBOMB, 11));
