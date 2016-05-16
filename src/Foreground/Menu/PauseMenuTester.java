@@ -28,7 +28,9 @@ public class PauseMenuTester {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.WILSON));
+        party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
         party.getMemberFromParty(0).checkForLevelUp();
+        party.getMemberFromParty(1).checkForLevelUp();
         party.getMemberFromParty(0).equip((Equipment)ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1), 1);
         inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 1));

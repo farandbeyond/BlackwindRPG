@@ -134,14 +134,21 @@ public class PauseMenu extends JPanel{
             confirmMenuPosition(partyView.getSelectorMaxPosition()-1);
             partyView.updateSelectorPosition(menuPosition);
             if(confirmEvent){
+                int save2 = menuPosition;
+                menuPosition = 0;
                 try{
-                    BattleEntity view = partyView.getPartyMember(menuPosition);
+                    BattleEntity view = partyView.getPartyMember(save2);
                     view.getName();
+                    options.loadStatusMenuOptions();
+                    options.toggleSelectorVisible();
                     viewMember(view);
+                    options.toggleSelectorVisible();
+                    options.loadMainMenuOptions();
                 }catch(NullPointerException e){
                     setAssistText("Invalid Party Member");
                     resetEvents();
                 }
+                menuPosition = save2;
             }
         }
         resetEvents();
@@ -291,7 +298,10 @@ public class PauseMenu extends JPanel{
     //status loop
     private void viewMember(BattleEntity member){
         toggleViews(PARTYMENU,STATUSMENU);
+        statusView.setDisplayedEntity(member);
         while(!cancelEvent&&!confirmEvent){
+            confirmMenuPosition(0);
+            options.updateSelectorPosition(menuPosition);
             repaint();
         }
         toggleViews(PARTYMENU,STATUSMENU);
