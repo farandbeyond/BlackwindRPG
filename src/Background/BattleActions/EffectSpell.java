@@ -9,6 +9,7 @@ import Background.BattleEntity;
 import Background.DeBuffs.Buff;
 import Background.DeBuffs.Debuff;
 import Background.DeBuffs.Effect;
+import Background.StatID;
 
 /**
  *
@@ -25,12 +26,16 @@ public class EffectSpell extends Spell{
         this.effect=effect;
     }
     @Override
-    public void cast(BattleEntity target) {
+    public String cast(BattleEntity target) {
         getCaster().useMp(getCost());
-        if(effect.getType()==Effect.BUFF)
+        if(effect.getType()==Effect.BUFF){
             target.addEffect(Effect.effectLoader(((Buff)effect).getType(), ((Buff)effect).getStat(), ((Buff)effect).getIncreaseLevel(), getCaster().getName()));
-        else if(effect.getType()==Effect.DEBUFF)
+            return String.format("%s bolstered %s's %s",getCaster().getName(),target.getName(),StatID.getStatName(((Buff)effect).getStat()));
+        }else if(effect.getType()==Effect.DEBUFF){
             target.addEffect(Effect.effectLoader(((Debuff)effect).getType(), ((Debuff)effect).getStat(), ((Debuff)effect).getDecreaseLevel(), getCaster().getName()));
+            return String.format("%s reduced %s's %s",getCaster().getName(),target.getName(),StatID.getStatName(((Debuff)effect).getStat()));
+        }
+        return "something went wrong";
     }
     //gets
     public Effect getEffect(){return effect;}

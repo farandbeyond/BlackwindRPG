@@ -10,6 +10,7 @@
  */
 package Background;
 
+import Background.BattleActions.BattleAction;
 import Background.BattleActions.Spell;
 import Background.DeBuffs.*;
 import Background.Items.*;
@@ -26,6 +27,7 @@ public class BattleEntity {
                 exp;
     private boolean isDead;
     private ArrayList<Effect> effects;
+    private ArrayList<BattleAction> skills;
     private Equipment[] equipment;
     
     /**
@@ -68,6 +70,7 @@ public class BattleEntity {
         expRequiredToLevel=0;
         isDead = hp==0?true:false;
         effects = new ArrayList<>();
+        skills = new ArrayList<>();
         equipment = new Equipment[4];
         for(int i=0;i<4;i++){
             equipment[i]=null;
@@ -112,6 +115,7 @@ public class BattleEntity {
         expRequiredToLevel=0;
         isDead=false;
         effects = new ArrayList<>();
+        skills = new ArrayList<>();
         equipment = new Equipment[4];
         for(int i=0;i<4;i++){
             equipment[i]=null;
@@ -146,6 +150,7 @@ public class BattleEntity {
             this.level=level;
             isDead=false;
             effects = new ArrayList<>();
+            skills = new ArrayList<>();
             equipment = new Equipment[4];
             //expRequiredToLevel=0;
         }
@@ -371,6 +376,7 @@ public class BattleEntity {
     public int getExp(){return exp;}
     public int getTotalExpRequiredToLevel(){return expRequiredToLevel;}
     public int getExpUntilLevel(){return expRequiredToLevel-exp;}
+    public BattleAction getSkill(int skillToGet){return skills.get(skillToGet);}
     //gets from the nested stats. goes hand-in-hand with StatID.java
     public int getBaseStat(int StatID)      {return stats[StatID].getBaseStat();}
     public int getStatModifier(int StatID)  {return stats[StatID].getStatModifier();}

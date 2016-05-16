@@ -32,7 +32,7 @@ public class DamageSpell extends Spell{
         rand = new Random();
     }
     @Override
-    public void cast(BattleEntity target) {
+    public String cast(BattleEntity target) {
         int damage = 0;
         getCaster().useMp(getCost());
         damage+=getCaster().getStat(StatID.INT)/3;
@@ -40,6 +40,7 @@ public class DamageSpell extends Spell{
         damage-=target.getStat(StatID.RES);
         damage*=ElementHandler.handler(element, target.getElement());
         target.damage(damage);
+        return String.format("%s dealt %d damage to %s with %s", getCaster().getName(),damage, target.getName(), getName());
     }
     //gets
     public int getBaseDamage(){return baseDamage;}

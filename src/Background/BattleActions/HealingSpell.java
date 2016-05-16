@@ -31,13 +31,14 @@ public class HealingSpell extends Spell{
     }
 
     @Override
-    public void cast(BattleEntity target) {
+    public String cast(BattleEntity target) {
         int heal = 0;
         getCaster().useMp(getCost());
         heal+=getCaster().getStat(StatID.INT)/3;
         heal+=baseHeal+rand.nextInt(rollHeal);
         heal-=target.getStat(StatID.RES);
         target.damage(heal);
+        return String.format("%s healed %s for %d with %s", getCaster().getName(),target.getName(),heal,getName());
     }
     //gets
     public int getBaseHeal(){return baseHeal;}
