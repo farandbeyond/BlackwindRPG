@@ -20,12 +20,13 @@ import javax.swing.*;
  * @author Connor
  */
 public class PauseMenu extends JPanel{
-    private final int menus = 4;
+    private final int menus = 5;
     private final int 
             OPTIONS=0,
             PARTYMENU=1,
             INVENTORYMENU=2,
-            STATUSMENU=3;
+            STATUSMENU=3,
+            SPELLSMENU=4;
     String assistText;
     int menuPosition;
     boolean confirmEvent, cancelEvent;
@@ -33,6 +34,7 @@ public class PauseMenu extends JPanel{
     PartyMenu partyView;
     InventoryMenu inventoryView;
     StatusMenu statusView;
+    SpellsMenu spellsView;
     boolean[] visible;
     Joystick joystick;
     /*
@@ -63,6 +65,7 @@ public class PauseMenu extends JPanel{
         partyView = new PartyMenu(p);
         inventoryView = new InventoryMenu(inv);
         statusView = new StatusMenu(p.getMemberFromParty(0));
+        spellsView = new SpellsMenu(p.getMemberFromParty(0));
         options = new OptionsMenu();
         //set up this panel
         this.setLayout(null);
@@ -74,6 +77,7 @@ public class PauseMenu extends JPanel{
         this.add(options);
         this.add(inventoryView);
         this.add(statusView);
+        this.add(spellsView);
         joystick = new Joystick();
         frame.addKeyListener(joystick);
         frame.add(this);
@@ -101,7 +105,7 @@ public class PauseMenu extends JPanel{
             switch(menuPosition){
                 case OptionsMenu.INVENTORY:loadInvFromMainMenu();break;
                 case OptionsMenu.STATUS:loadStatusFromMainMenu();break;
-                case OptionsMenu.SPELLS:
+                case OptionsMenu.SPELLS:loadSpellsFromMainMenu();break;
                 case OptionsMenu.EQUIPMENT:
                 case OptionsMenu.SWAPMEMBERS:
                 case OptionsMenu.SAVE:setAssistText("Not Yet Implemented");
@@ -142,6 +146,39 @@ public class PauseMenu extends JPanel{
                     options.loadStatusMenuOptions();
                     options.toggleSelectorVisible();
                     viewMember(view);
+                    options.toggleSelectorVisible();
+                    options.loadMainMenuOptions();
+                }catch(NullPointerException e){
+                    setAssistText("Invalid Party Member");
+                    resetEvents();
+                }
+                menuPosition = save2;
+            }
+        }
+        resetEvents();
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
+        menuPosition = save;
+    }
+    private void loadSpellsFromMainMenu(){
+        int save = menuPosition;
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
+        resetEvents();
+        while(!cancelEvent){
+            setAssistText("Choose a party member");
+            repaint();
+            confirmMenuPosition(partyView.getSelectorMaxPosition()-1);
+            partyView.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                int save2 = menuPosition;
+                menuPosition = 0;
+                try{
+                    BattleEntity view = partyView.getPartyMember(save2);
+                    view.getName();
+                    options.loadSpellsMenuOptions();
+                    options.toggleSelectorVisible();
+                    spellsLoop(view);
                     options.toggleSelectorVisible();
                     options.loadMainMenuOptions();
                 }catch(NullPointerException e){
@@ -306,6 +343,21 @@ public class PauseMenu extends JPanel{
         }
         toggleViews(PARTYMENU,STATUSMENU);
     }
+    //spells loop
+    private void spellsLoop(BattleEntity e){
+        spellsView.setDisplayedEntity(e);
+        toggleViews(SPELLSMENU,PARTYMENU);
+        spellsView.toggleSelectorVisible();
+        resetEvents();
+        while(!cancelEvent){
+            repaint();
+            confirmMenuPosition(spellsView.getSelectorMaxPosition());
+            menuPosition = spellsView.updateOffsetSelectorPosition(menuPosition);
+            setAssistText("Select a spell");
+        }
+        toggleViews(SPELLSMENU,PARTYMENU);
+        spellsView.toggleSelectorVisible();
+    }
     //menuPositionControlling
     private void confirmMenuPosition(int maxPos){
         if(menuPosition<0){
@@ -338,7 +390,6 @@ public class PauseMenu extends JPanel{
     }
     //paint
     public void paint(Graphics g){
-        
         if(visible[OPTIONS])
             options.paint(g);
         if(visible[PARTYMENU])
@@ -347,6 +398,8 @@ public class PauseMenu extends JPanel{
             inventoryView.paint(g);
         if(visible[STATUSMENU])
             statusView.paint(g);
+        if(visible[SPELLSMENU])
+            spellsView.paint(g);
         try{
             g.setFont(new Font("Courier New", Font.BOLD, 20));
             g.setColor(Color.black);

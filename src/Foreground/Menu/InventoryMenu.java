@@ -50,6 +50,9 @@ public class InventoryMenu extends JPanel{
     public void AddToInventory(Item itemToAdd){
         inv.add(itemToAdd);
     }
+    public void dropItem(int position){
+        inv.dropItem(position);
+    }
     //gets
     public Item getItemAtPosition(){
         return inv.getItem(selectorPosition+currOffset);
@@ -57,9 +60,6 @@ public class InventoryMenu extends JPanel{
     public int getSelectorMaxPosition(){return selectorMaxPos;}
     public int getSelectorPosition(){return selectorPosition;}
     public boolean isSelectorVisible(){return selectorVisible;}
-    public void dropItem(int position){
-        inv.dropItem(position);
-    }
     //selector controllers
     public int updateOffsetSelectorPosition(int newPos){
         //if you scroll down far enough and there are more options to load, scroll the inventory and add to the offset

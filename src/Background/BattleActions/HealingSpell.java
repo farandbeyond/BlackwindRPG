@@ -16,17 +16,20 @@ import java.util.Random;
  */
 public class HealingSpell extends Spell{
     private final int baseHeal, rollHeal;
+    private final boolean revives;
     Random rand;
-    public HealingSpell(BattleEntity caster,String name, String description, int baseHeal, int rollHeal, int cost){
+    public HealingSpell(BattleEntity caster,String name, String description, int baseHeal, int rollHeal,boolean revives, int cost){
         super(caster,name,description,cost);
         this.baseHeal=baseHeal;
         this.rollHeal=rollHeal;
+        this.revives=revives;
         rand = new Random();
     }
-    public HealingSpell(String name, String description,int baseHeal, int rollHeal, int cost){
+    public HealingSpell(String name, String description,int baseHeal, int rollHeal,boolean revives, int cost){
         super(null,name,description,cost);
         this.baseHeal=baseHeal;
         this.rollHeal=rollHeal;
+        this.revives=revives;
         rand = new Random();
     }
 
@@ -36,9 +39,14 @@ public class HealingSpell extends Spell{
         getCaster().useMp(getCost());
         heal+=getCaster().getStat(StatID.INT)/3;
         heal+=baseHeal+rand.nextInt(rollHeal);
-        heal-=target.getStat(StatID.RES);
-        target.damage(heal);
-        return String.format("%s healed %s for %d with %s", getCaster().getName(),target.getName(),heal,getName());
+        if(revives){
+            target.raise(heal);
+            return String.format("%s raised %s for %d with %s", getCaster().getName(),target.getName(),heal,getName());
+        }
+        else{
+            target.heal(heal);
+            return String.format("%s healed %s for %d with %s", getCaster().getName(),target.getName(),heal,getName());
+        }
     }
     //gets
     public int getBaseHeal(){return baseHeal;}

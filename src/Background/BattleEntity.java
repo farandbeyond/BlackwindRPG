@@ -289,6 +289,11 @@ public class BattleEntity {
     private void setStat(int StatID, int value){
         stats[StatID].setModifiedStat(value);
     }
+    //skill controlling
+    public void addSkill(BattleAction e){
+        skills.add(e);
+        e.setCaster(this);
+    }
     //prints
     public void printAllEquipment(){
         for(Equipment e:equipment){
@@ -377,6 +382,7 @@ public class BattleEntity {
     public int getTotalExpRequiredToLevel(){return expRequiredToLevel;}
     public int getExpUntilLevel(){return expRequiredToLevel-exp;}
     public BattleAction getSkill(int skillToGet){return skills.get(skillToGet);}
+    public int getNumberOfSkills(){return skills.size();}
     //gets from the nested stats. goes hand-in-hand with StatID.java
     public int getBaseStat(int StatID)      {return stats[StatID].getBaseStat();}
     public int getStatModifier(int StatID)  {return stats[StatID].getStatModifier();}

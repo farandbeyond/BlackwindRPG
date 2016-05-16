@@ -5,6 +5,7 @@
  */
 package Foreground.Menu;
 
+import Background.BattleActions.BattleAction;
 import Background.BattleEntity;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,9 +20,79 @@ public class SpellsMenu extends JPanel{
     private int selectorPosition, selectorMaxPos;
     private boolean selectorVisible;
     private BattleEntity viewed;
-    private final int distFromTop = 50, distFromLeft = 30;
+    private final int distFromTop = 70, distFromLeft = 30;
     private int currOffset, maxOffset;
-    
+    public SpellsMenu(BattleEntity viewed){
+        this.viewed=viewed;
+        currOffset = 0;
+        setMaxOffset();
+        selectorMaxPos = 9;
+        selectorPosition = 0;
+    }
+    //sets
+    public void setMaxOffset(){
+        maxOffset=0;
+        while(true){
+            try{
+                viewed.getSkill(maxOffset+10).toString();
+                maxOffset++;
+            }catch(IndexOutOfBoundsException e){
+                System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",maxOffset,viewed.getName(),viewed.getNumberOfSkills()));
+                return;
+            }
+        }
+    }
+    public void setDisplayedEntity(BattleEntity e){
+        viewed = e;
+    }
+    //gets
+    public BattleAction getSkillAtPosition(){return viewed.getSkill(selectorPosition);}
+    public int getSelectorMaxPosition(){return selectorMaxPos;}
+    public int getSelectorPosition(){return selectorPosition;}
+    public boolean isSelectorVisible(){return selectorVisible;}
+    //selector controlling
+    public int updateOffsetSelectorPosition(int newPos){
+        //if you scroll down far enough and there are more options to load, scroll the inventory and add to the offset
+        try{
+            if(newPos!=selectorPosition){
+                if(newPos==9){
+                    currOffset = maxOffset;
+                }
+                if(newPos==0){
+                    currOffset = 0;
+                }
+                //-1 is intened to throw null error if not exist
+                if(newPos>=7&&viewed.getSkill(10+currOffset)!=null){
+                    currOffset++;
+                    //System.out.println(currOffset+"vv"+newPos);
+                    return newPos-1;
+                }
+                if(newPos<=4&&viewed.getSkill(currOffset-1)!=null){
+                    currOffset--;
+                    //System.out.println(currOffset+"^^"+newPos);
+                    return newPos+1;
+                }
+
+                selectorPosition = newPos;
+            }
+            //System.out.println(currOffset+">>"+newPos);
+            return newPos;
+        }catch(IndexOutOfBoundsException e){
+            //System.out.println("Handling an error");
+            
+            //System.out.println(currOffset+">>"+newPos);
+            selectorPosition = newPos;
+            return newPos;
+        }
+    }
+    public void toggleSelectorVisible(){
+        if(selectorVisible){
+            selectorVisible=false;
+            return;
+        }
+        selectorVisible=true;
+    }
+    //paint
     public void paint(Graphics g){
         g.setColor(Color.green);
         g.fillRect(0, 0, 400, 480);
@@ -31,12 +102,10 @@ public class SpellsMenu extends JPanel{
         for(int i=0;i<10;i++){
             try{
                 g.drawString(viewed.getSkill(i+currOffset).getName(),distFromLeft,distFromTop+35*i);
-                g.drawString(viewed.getSkill(i+currOffset), i, i);
-                //g.drawString(inv.getItem(i+currOffset).getName(), distFromLeft, distFromTop+35*i);
-                //g.drawString("x"+inv.getItem(i+currOffset).getQuantity(), 370, distFromTop+35*i);
+                g.drawString(viewed.getSkill(i+currOffset).getCost()+"mp", 340, distFromTop+35*i);
             }catch(IndexOutOfBoundsException e){
-                //g.drawString("---", distFromLeft, distFromTop+35*i);
-                //g.drawString("x-", 370, distFromTop+35*i);
+                g.drawString("---", distFromLeft, distFromTop+35*i);
+                g.drawString("--mp", 340, distFromTop+35*i);
             }
         }
         if(selectorVisible){
