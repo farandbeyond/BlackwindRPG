@@ -9,6 +9,7 @@ import Background.BattleEntity;
 import Background.DeBuffs.Buff;
 import Background.DeBuffs.Debuff;
 import Background.DeBuffs.Effect;
+import Background.ElementHandler;
 import Background.StatID;
 
 /**
@@ -17,6 +18,7 @@ import Background.StatID;
  */
 public class EffectSpell extends Spell{
     private Effect effect;
+    
     public EffectSpell(BattleEntity caster,String name, String description,int cost, Effect effect){
         super(caster,name,description,cost);
         this.effect=effect;
@@ -39,4 +41,5 @@ public class EffectSpell extends Spell{
     }
     //gets
     public Effect getEffect(){return effect;}
+    public int getElement(){return ElementHandler.NEUTRAL;}
 }

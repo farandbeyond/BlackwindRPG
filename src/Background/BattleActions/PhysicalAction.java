@@ -28,6 +28,15 @@ public class PhysicalAction extends BattleAction{
         this.element=element;
         rand = new Random();
     }
+    public PhysicalAction(String name, String description,int baseDamage, int rollDamage, int damageStat, int resistStat, int element){
+        super(null,name,description);
+        this.damageStat=damageStat;
+        this.resistStat=resistStat;
+        this.baseDamage=baseDamage;
+        this.rollDamage = rollDamage;
+        this.element=element;
+        rand = new Random();
+    }
     public String execute(BattleEntity target){
         int damage = 0;
         if(getCaster().getWeapon()!=null){

@@ -17,6 +17,10 @@ import javax.swing.JPanel;
  * @author Connor
  */
 public class SpellsMenu extends JPanel{
+    public static final int
+            CAST=0,
+            DESCRIPTION=1,
+            ELEMENT=2;
     private int selectorPosition, selectorMaxPos;
     private boolean selectorVisible;
     private BattleEntity viewed;
@@ -102,10 +106,10 @@ public class SpellsMenu extends JPanel{
         for(int i=0;i<10;i++){
             try{
                 g.drawString(viewed.getSkill(i+currOffset).getName(),distFromLeft,distFromTop+35*i);
-                g.drawString(viewed.getSkill(i+currOffset).getCost()+"mp", 340, distFromTop+35*i);
+                g.drawString("mp: "+viewed.getSkill(i+currOffset).getCost(), 310, distFromTop+35*i);
             }catch(IndexOutOfBoundsException e){
                 g.drawString("---", distFromLeft, distFromTop+35*i);
-                g.drawString("--mp", 340, distFromTop+35*i);
+                g.drawString("mp: --", 310, distFromTop+35*i);
             }
         }
         if(selectorVisible){

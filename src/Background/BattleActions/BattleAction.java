@@ -17,6 +17,7 @@ public abstract class BattleAction {
     private String name,description;
     public abstract String execute(BattleEntity target);
     public abstract int getCost();
+    public abstract int getElement();
     public BattleAction(BattleEntity caster,String name, String description){
         this.name=name;
         this.description=description;

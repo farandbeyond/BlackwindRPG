@@ -8,6 +8,8 @@ package Foreground.Menu;
 import Background.Items.*;
 import Background.Party.*;
 import Background.*;
+import Background.BattleActions.HealingSpell;
+import Background.BattleActions.Spell;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -41,10 +43,7 @@ public class PauseMenu extends JPanel{
     
     private static final int
             EXIT=0;
-    private static final int
-            CAST=0,
-            DESCRIPTION=1,
-            ELEMENT=2;
+
     private static final int
             EQUIP=0,
             UNEQUIP=1,
@@ -348,15 +347,87 @@ public class PauseMenu extends JPanel{
         spellsView.setDisplayedEntity(e);
         toggleViews(SPELLSMENU,PARTYMENU);
         spellsView.toggleSelectorVisible();
+        options.toggleSelectorVisible();
         resetEvents();
         while(!cancelEvent){
             repaint();
             confirmMenuPosition(spellsView.getSelectorMaxPosition());
             menuPosition = spellsView.updateOffsetSelectorPosition(menuPosition);
             setAssistText("Select a spell");
+            if(confirmEvent){
+                resetEvents();
+                int save = menuPosition;
+                //spellsView.toggleSelectorVisible();
+                //options.toggleSelectorVisible();
+                spellOptions();
+                spellsView.toggleSelectorVisible();
+                //options.toggleSelectorVisible();
+                menuPosition = save;
+            }
         }
         toggleViews(SPELLSMENU,PARTYMENU);
         spellsView.toggleSelectorVisible();
+        if(!partyView.isSelectorVisible())
+            partyView.toggleSelectorVisible();
+    }
+    private void spellOptions(){
+        resetEvents();
+        spellsView.toggleSelectorVisible();
+        if(!options.isSelectorVisible())
+            options.toggleSelectorVisible();
+        while(!cancelEvent){
+            repaint();
+            confirmMenuPosition(options.getSelectorMaxPosition());
+            options.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                resetEvents();
+                int save = menuPosition;
+                switch(menuPosition){
+                    case SpellsMenu.DESCRIPTION :setAssistText(spellsView.getSkillAtPosition().getDescription());break;
+                    case SpellsMenu.ELEMENT     :setAssistText(String.format("Element: %s", ElementHandler.getElementName(spellsView.getSkillAtPosition().getElement())));break;
+                    case SpellsMenu.CAST        :
+                        try{
+                            
+                            if(((Spell)spellsView.getSkillAtPosition()).getCaster().canCast((Spell)spellsView.getSkillAtPosition()))
+                                try{
+                                    ((HealingSpell)spellsView.getSkillAtPosition()).getBaseHeal();
+                                    castSpellOn((Spell)spellsView.getSkillAtPosition());
+                                    //catch for non healing spells
+                                }catch(ClassCastException r){
+                                    setAssistText("That spell is dangerous!");
+                                }
+                            //catch for spells with too high a mana cost
+                            else
+                                setAssistText("Not Enough Mana");
+                            //catch for non spells
+                        }catch(ClassCastException e){
+                            setAssistText("This ability cannot be cast");
+                        }
+                    
+                }   
+                menuPosition = save;
+            }
+        }
+        options.toggleSelectorVisible();
+        resetEvents();
+    }
+    private void castSpellOn(Spell s){
+        toggleViews(SPELLSMENU,PARTYMENU);
+        spellsView.toggleSelectorVisible();
+        //partyView.toggleSelectorVisible();
+        resetEvents();
+        while(!cancelEvent){
+            resetEvents();
+            repaint();
+            confirmMenuPosition(partyView.getSelectorMaxPosition());
+            partyView.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                s.cast(partyView.getPartyMember(menuPosition));
+            }
+        }
+        toggleViews(SPELLSMENU,PARTYMENU);
+        spellsView.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
     }
     //menuPositionControlling
     private void confirmMenuPosition(int maxPos){
