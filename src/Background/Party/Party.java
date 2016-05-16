@@ -117,6 +117,18 @@ public class Party {
         return String.format("%d/%d", getMemberFromParty(member).getStat(StatID.MP),getMemberFromParty(member).getStat(StatID.MAXMP));
     }
     public int getMaxPartySize(){return maxPartySize;}
+    public int getCurrentPartySize(){
+        int i=0;
+        for(BattleEntity member:party){
+            try{
+                member.getName();
+                i++;
+            }catch(NullPointerException e){
+                return i;
+            }
+        }
+        return i;
+    }
     //sets
     private void setPartyMember(BattleEntity entity, int position){
         party[position]=entity;

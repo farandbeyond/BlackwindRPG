@@ -33,6 +33,9 @@ public class PartyMenu extends JPanel{
     public void updateParty(Party p){
         this.party = p;
     }
+    public void swapMembers(int pos1,int pos2){
+        party.swapPartyMembers(pos1, pos2);
+    }
     //selector controllers
     public void updateSelectorPosition(int newPos){
         selectorPosition = newPos;
@@ -45,6 +48,9 @@ public class PartyMenu extends JPanel{
         selectorVisible=true;
     }
     //gets
+    public int getCurrentPartySize(){
+        return party.getCurrentPartySize();
+    }
     public int getSelectorMaxPosition(){return 4;}
     public int getSelectorPosition(){return selectorPosition;}
     public boolean isSelectorVisible(){return selectorVisible;}

@@ -95,7 +95,7 @@ public class PauseMenu extends JPanel{
                 case OptionsMenu.STATUS:loadStatusFromMainMenu();break;
                 case OptionsMenu.SPELLS:loadSpellsFromMainMenu();break;
                 case OptionsMenu.EQUIPMENT:loadEquipmentFromMainMenu();break;
-                case OptionsMenu.SWAPMEMBERS:
+                case OptionsMenu.SWAPMEMBERS:loadSwapFromMainMenu();break;
                 case OptionsMenu.SAVE:setAssistText("Not Yet Implemented");
             }
         }
@@ -215,6 +215,14 @@ public class PauseMenu extends JPanel{
         options.toggleSelectorVisible();
         partyView.toggleSelectorVisible();
         menuPosition = save;
+    }
+    private void loadSwapFromMainMenu(){
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
+        resetEvents();
+        swapMembers();
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
     }
     //inventory loop
     private void inventoryLoop(){
@@ -491,6 +499,34 @@ public class PauseMenu extends JPanel{
         toggleViews(INVENTORYMENU,STATUSMENU);
         statusView.toggleSelectorVisible();
         inventoryView.toggleSelectorVisible();
+        resetEvents();
+    }
+    //swap loop
+    private void swapMembers(){
+        while(!cancelEvent){
+            setAssistText("Who will swap?");
+            confirmMenuPosition(partyView.getCurrentPartySize()-1);
+            partyView.updateSelectorPosition(menuPosition);
+            resetEvents();
+            repaint();
+            if(confirmEvent&&partyView.getPartyMember(menuPosition)!=null){
+                int m1 = menuPosition;
+                menuPosition = 0;
+                resetEvents();
+                while(!cancelEvent){
+                    setAssistText("Who will be swapped with?");
+                    confirmMenuPosition(partyView.getCurrentPartySize()-1);
+                    partyView.updateSelectorPosition(menuPosition);
+                    repaint();
+                    if(confirmEvent&&partyView.getPartyMember(menuPosition)!=null){
+                        int m2 = menuPosition;
+                        partyView.swapMembers(m1, m2);
+                        resetEvents();
+                        break;
+                    }
+                }
+            }
+        }
         resetEvents();
     }
     //menuPositionControlling
