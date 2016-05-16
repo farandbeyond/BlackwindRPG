@@ -45,6 +45,7 @@ public class InventoryMenu extends JPanel{
     }
     public void refreshInventory(){
         inv.updateInventory();
+        setMaxOffset();
     }
     public void AddToInventory(Item itemToAdd){
         inv.add(itemToAdd);
@@ -53,6 +54,7 @@ public class InventoryMenu extends JPanel{
         inv.dropItem(position);
     }
     //gets
+    public boolean canAdd(Item i){return inv.canAdd(i);}
     public Item getItemAtPosition(){
         return inv.getItem(selectorPosition+currOffset);
     }

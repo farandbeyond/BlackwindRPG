@@ -44,7 +44,7 @@ public class PauseMenuTester {
         inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.FIREBOMB, 11));
         inv.add(ItemLoader.loadItem(ItemLoader.ICEBOMB, 99));
-        inv.add(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 99));
         inv.add(ItemLoader.loadItem(ItemLoader.MUDBOMB, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.PHEONIXDOWN, 1));
         inv.add(ItemLoader.loadItem(ItemLoader.POTION, 1));

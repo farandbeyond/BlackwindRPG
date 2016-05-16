@@ -22,30 +22,35 @@ public class Inventory {
     }
     //inventory managers
     public boolean canAdd(Item i){
-        if(inventory.size()<invSize){
-                return true;
-        }
+        //if item exists in inventory
         for(Item item:inventory){
             if(item.getId()==i.getId()){
                 if(item.getQuantity()+i.getQuantity()<=item.getMaxQuantity()){
+                    //and is not at max quantity, can add
                     return true;
                 }else{
+                    //is at max quantity, can not add
                     return false;
                 }
             }
         }
+        if(inventory.size()<invSize){
+            //if item is not in inventory, and inventory has room, can add
+            return true;
+        }
+        //if none of the above, cannot add
         return false;
     }
     public void add(Item i){
-        if(inventory.size()<invSize){
-              inventory.add(i);
-              return;
-        }
         for(Item item:inventory){
             if(item.getId()==i.getId()&&item.getQuantity()+i.getQuantity()<=item.getMaxQuantity()){
                 item.restock(i.getQuantity());
                 return;
             }
+        }
+        if(inventory.size()<invSize){
+              inventory.add(i);
+              return;
         }
         throw new Error("Couldnt add item");
     }

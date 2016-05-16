@@ -304,59 +304,6 @@ public class PauseMenu extends JPanel{
         toggleViews(INVENTORYMENU,PARTYMENU);
         
     }
-    /*
-    private void selectEquipTarget(Equipment equipment){
-        toggleViews(INVENTORYMENU,PARTYMENU);
-        if(!partyView.isSelectorVisible()){
-            partyView.toggleSelectorVisible();
-        }
-        setAssistText("Who will equip "+equipment.getName());
-        while(!cancelEvent){
-            repaint();
-            //System.out.println("in the loop");
-            confirmMenuPosition(partyView.getSelectorMaxPosition());
-            partyView.updateSelectorPosition(menuPosition);
-            if(confirmEvent){
-                try{
-                    System.out.println(menuPosition);
-                    //i.use(partyView.getPartyMember(menuPosition));
-                    BattleEntity equipper = partyView.getPartyMember(menuPosition);
-                    try{
-                        equipper.getWeapon().getId();
-                        inventoryView.AddToInventory(equipper.getWeapon());
-                        //inventoryView.refreshInventory();
-                        equipper.equip((Weapon)equipment, 0);
-                    }catch(NullPointerException t){
-                        equipper.equip((Weapon)equipment, 0);
-                    }catch(ClassCastException e){
-                        System.out.println("Is armor");
-                        for(int armorSlot=1;armorSlot<=3;armorSlot++){
-                            try{
-                                System.out.println(equipper.getEquipment(armorSlot).toString());
-                            }catch(NullPointerException c){
-                                equipper.equip(equipment, armorSlot);
-                                break;
-                            }
-                        }
-                        equipper.printAllEquipment();
-                        //break;
-                    }
-                    inventoryView.refreshInventory();
-                    resetEvents();
-                    System.out.println("Equipped Item");
-                }catch(NullPointerException e){
-                    System.out.println("Invalid Target");
-                    resetEvents();
-                }
-            }
-            if(equipment.getQuantity()==0){
-                break;
-            }
-        }
-        toggleViews(INVENTORYMENU,PARTYMENU);
-        
-    }
-    */
     //status loop
     private void viewMember(BattleEntity member){
         toggleViews(PARTYMENU,STATUSMENU);
@@ -495,8 +442,14 @@ public class PauseMenu extends JPanel{
                     case StatusMenu.DESCRIPTION :setAssistText(target.getEquipment(save).getDescription());break;
                     case StatusMenu.UNEQUIP     :
                         try{
-                            inventoryView.AddToInventory(target.unEquip(slot));
-                            break;
+                            if(inventoryView.canAdd(target.getEquipment(slot))){
+                                inventoryView.AddToInventory(target.unEquip(slot));
+                                inventoryView.refreshInventory();
+                                break;
+                            }else{
+                                setAssistText("Cannot unequip: Inventory Full");
+                                break;
+                            }
                         }catch(NullPointerException e){
                             setAssistText("Nothing Equipped");
                             break;
