@@ -39,17 +39,6 @@ public class PauseMenu extends JPanel{
     SpellsMenu spellsView;
     boolean[] visible;
     Joystick joystick;
-    /*
-    
-    private static final int
-            EXIT=0;
-
-    private static final int
-            EQUIP=0,
-            UNEQUIP=1,
-            DESCRIPTION=2;
-            */
-    
     PauseMenu(JFrame frame,Party p, Inventory inv){
         //local variables
         menuPosition=0;
@@ -105,7 +94,7 @@ public class PauseMenu extends JPanel{
                 case OptionsMenu.INVENTORY:loadInvFromMainMenu();break;
                 case OptionsMenu.STATUS:loadStatusFromMainMenu();break;
                 case OptionsMenu.SPELLS:loadSpellsFromMainMenu();break;
-                case OptionsMenu.EQUIPMENT:
+                case OptionsMenu.EQUIPMENT:loadEquipmentFromMainMenu();break;
                 case OptionsMenu.SWAPMEMBERS:
                 case OptionsMenu.SAVE:setAssistText("Not Yet Implemented");
             }
@@ -129,6 +118,7 @@ public class PauseMenu extends JPanel{
     }
     private void loadStatusFromMainMenu(){
         int save = menuPosition;
+        menuPosition = 0;
         options.toggleSelectorVisible();
         partyView.toggleSelectorVisible();
         resetEvents();
@@ -161,6 +151,7 @@ public class PauseMenu extends JPanel{
     }
     private void loadSpellsFromMainMenu(){
         int save = menuPosition;
+        menuPosition = 0;
         options.toggleSelectorVisible();
         partyView.toggleSelectorVisible();
         resetEvents();
@@ -178,6 +169,39 @@ public class PauseMenu extends JPanel{
                     options.loadSpellsMenuOptions();
                     options.toggleSelectorVisible();
                     spellsLoop(view);
+                    options.toggleSelectorVisible();
+                    options.loadMainMenuOptions();
+                }catch(NullPointerException e){
+                    setAssistText("Invalid Party Member");
+                    resetEvents();
+                }
+                menuPosition = save2;
+            }
+        }
+        resetEvents();
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
+        menuPosition = save;
+    }
+    private void loadEquipmentFromMainMenu(){
+        int save = menuPosition;
+        menuPosition = 0;
+        options.toggleSelectorVisible();
+        partyView.toggleSelectorVisible();
+        resetEvents();
+        while(!cancelEvent){
+            repaint();
+            confirmMenuPosition(partyView.getSelectorMaxPosition()-1);
+            partyView.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                int save2 = menuPosition;
+                menuPosition = 0;
+                try{
+                    BattleEntity view = partyView.getPartyMember(save2);
+                    view.getName();
+                    options.loadEquipmentMenuOptions();
+                    options.toggleSelectorVisible();
+                    adjustEquipment(view);
                     options.toggleSelectorVisible();
                     options.loadMainMenuOptions();
                 }catch(NullPointerException e){
@@ -230,7 +254,7 @@ public class PauseMenu extends JPanel{
                     switch(menuPosition){
                         case InventoryMenu.USE:selectUseItemTarget(selection);break;
                         case InventoryMenu.EXAMINE:setAssistText(selection.getDescription());break;
-                        case InventoryMenu.EQUIP:selectEquipTarget((Equipment)selection);break;
+                        //case InventoryMenu.EQUIP:selectEquipTarget((Equipment)selection);break;
                         case InventoryMenu.DROP:inventoryView.dropItem(inventoryView.getSelectorPosition());break;
                     }
                 }catch(ClassCastException e){
@@ -280,6 +304,7 @@ public class PauseMenu extends JPanel{
         toggleViews(INVENTORYMENU,PARTYMENU);
         
     }
+    /*
     private void selectEquipTarget(Equipment equipment){
         toggleViews(INVENTORYMENU,PARTYMENU);
         if(!partyView.isSelectorVisible()){
@@ -331,6 +356,7 @@ public class PauseMenu extends JPanel{
         toggleViews(INVENTORYMENU,PARTYMENU);
         
     }
+    */
     //status loop
     private void viewMember(BattleEntity member){
         toggleViews(PARTYMENU,STATUSMENU);
@@ -428,6 +454,91 @@ public class PauseMenu extends JPanel{
         toggleViews(SPELLSMENU,PARTYMENU);
         spellsView.toggleSelectorVisible();
         partyView.toggleSelectorVisible();
+    }
+    //equipment loop
+    private void adjustEquipment(BattleEntity target){
+        resetEvents();
+        toggleViews(PARTYMENU,STATUSMENU);
+        statusView.setDisplayedEntity(target);
+        statusView.toggleSelectorVisible();
+        options.toggleSelectorVisible();
+        while(!cancelEvent){
+            repaint();
+            confirmMenuPosition(statusView.getSelectorMaxPosition());
+            statusView.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                int save = menuPosition;
+                options.toggleSelectorVisible();
+                //statusView.toggleSelectorVisible();
+                equipmentOptions(target,save);
+                options.toggleSelectorVisible();
+                //statusView.toggleSelectorVisible();
+                menuPosition = save;
+                resetEvents();
+            }
+        }
+        resetEvents();
+        toggleViews(PARTYMENU,STATUSMENU);
+        statusView.toggleSelectorVisible();
+        options.toggleSelectorVisible();
+    }
+    private void equipmentOptions(BattleEntity target, int slot){
+        resetEvents();
+        while(!cancelEvent){
+            repaint();
+            confirmMenuPosition(options.getSelectorMaxPosition());
+            options.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
+                resetEvents();
+                int save = menuPosition;
+                switch(menuPosition){
+                    case StatusMenu.DESCRIPTION :setAssistText(target.getEquipment(save).getDescription());break;
+                    case StatusMenu.UNEQUIP     :
+                        try{
+                            inventoryView.AddToInventory(target.unEquip(slot));
+                            break;
+                        }catch(NullPointerException e){
+                            setAssistText("Nothing Equipped");
+                            break;
+                        }
+                    case StatusMenu.EQUIP       :
+                        selectItemToEquip(target,slot);
+                        inventoryView.refreshInventory();
+                        break;
+                }
+                menuPosition = save;
+            }
+        }
+    }
+    private void selectItemToEquip(BattleEntity target, int slot){
+        menuPosition = 0;
+        toggleViews(INVENTORYMENU,STATUSMENU);
+        statusView.toggleSelectorVisible();
+        inventoryView.toggleSelectorVisible();
+        resetEvents();
+        while(!cancelEvent){
+            confirmMenuPosition(inventoryView.getSelectorMaxPosition());
+            inventoryView.updateOffsetSelectorPosition(menuPosition);
+            repaint();
+            if(confirmEvent){
+                resetEvents();
+                try{
+                    switch(slot){
+                        case 0: target.equip((Weapon)inventoryView.getItemAtPosition(), slot);break;
+                        case 1:
+                        case 2:
+                        case 3: target.equip((Armor)inventoryView.getItemAtPosition(), slot);break;
+                    }
+                    break;
+                }catch(ClassCastException e){
+                    setAssistText("Cannot be equipped");
+                }
+            }
+        }
+        toggleViews(INVENTORYMENU,STATUSMENU);
+        statusView.toggleSelectorVisible();
+        inventoryView.toggleSelectorVisible();
+        resetEvents();
     }
     //menuPositionControlling
     private void confirmMenuPosition(int maxPos){

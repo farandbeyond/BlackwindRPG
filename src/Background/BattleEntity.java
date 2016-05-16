@@ -67,7 +67,7 @@ public class BattleEntity {
         this.element=element;
         this.exp=exp;
         this.level=level;
-        expRequiredToLevel=0;
+        xpToLevel();
         isDead = hp==0?true:false;
         effects = new ArrayList<>();
         skills = new ArrayList<>();
@@ -112,7 +112,7 @@ public class BattleEntity {
         this.element=element;
         this.exp=exp;
         this.level=level;
-        expRequiredToLevel=0;
+        xpToLevel();
         isDead=false;
         effects = new ArrayList<>();
         skills = new ArrayList<>();

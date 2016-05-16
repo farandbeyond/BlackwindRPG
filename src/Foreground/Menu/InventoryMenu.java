@@ -16,9 +16,8 @@ import javax.swing.*;
 public class InventoryMenu extends JPanel{
     public static final int
             USE=0,
-            EQUIP=1,
-            EXAMINE=2,
-            DROP=3;
+            EXAMINE=1,
+            DROP=2;
     private int selectorPosition, selectorMaxPos;
     private boolean selectorVisible;
     private Inventory inv;
@@ -115,10 +114,10 @@ public class InventoryMenu extends JPanel{
         for(int i=0;i<10;i++){
             try{
                 g.drawString(inv.getItem(i+currOffset).getName(), distFromLeft, distFromTop+35*i);
-                g.drawString("x"+inv.getItem(i+currOffset).getQuantity(), 370, distFromTop+35*i);
+                g.drawString("x"+inv.getItem(i+currOffset).getQuantity(), 350, distFromTop+35*i);
             }catch(IndexOutOfBoundsException e){
                 g.drawString("---", distFromLeft, distFromTop+35*i);
-                g.drawString("x-", 370, distFromTop+35*i);
+                g.drawString("x-", 350, distFromTop+35*i);
             }
         }
         if(selectorVisible){

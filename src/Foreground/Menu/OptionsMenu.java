@@ -69,12 +69,12 @@ public class OptionsMenu extends JPanel{
     }
     public void loadInventoryMenuOptions(){
         optionsDisplayed[0]="Use";
-        optionsDisplayed[1]="Equip";
-        optionsDisplayed[2]="Examine";
-        optionsDisplayed[3]="Drop";
+        optionsDisplayed[1]="Examine";
+        optionsDisplayed[2]="Drop";
+        optionsDisplayed[3]=" ";
         optionsDisplayed[4]="";
         optionsDisplayed[5]="";
-        selectorMaxPos=3;
+        selectorMaxPos=2;
     }
     public void loadStatusMenuOptions(){
         optionsDisplayed[0]="Exit";
