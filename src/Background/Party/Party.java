@@ -6,6 +6,7 @@
 package Background.Party;
 
 import Background.BattleEntity;
+import Background.StatID;
 
 /**
  *
@@ -109,7 +110,25 @@ public class Party {
     public int getPartyMembersStat(int member, int StatID){
         return getMemberFromParty(member).getStat(StatID);
     }
+    public String getHpMaxHp(int member){
+        return String.format("%d/%d", getMemberFromParty(member).getStat(StatID.HP),getMemberFromParty(member).getStat(StatID.MAXHP));
+    }
+    public String getMpMaxMp(int member){
+        return String.format("%d/%d", getMemberFromParty(member).getStat(StatID.MP),getMemberFromParty(member).getStat(StatID.MAXMP));
+    }
     public int getMaxPartySize(){return maxPartySize;}
+    public int getCurrentPartySize(){
+        int i=0;
+        for(BattleEntity member:party){
+            try{
+                member.getName();
+                i++;
+            }catch(NullPointerException e){
+                return i;
+            }
+        }
+        return i;
+    }
     //sets
     private void setPartyMember(BattleEntity entity, int position){
         party[position]=entity;

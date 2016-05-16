@@ -10,6 +10,7 @@
  */
 package Background;
 
+import Background.BattleActions.BattleAction;
 import Background.BattleActions.Spell;
 import Background.DeBuffs.*;
 import Background.Items.*;
@@ -26,6 +27,7 @@ public class BattleEntity {
                 exp;
     private boolean isDead;
     private ArrayList<Effect> effects;
+    private ArrayList<BattleAction> skills;
     private Equipment[] equipment;
     
     /**
@@ -65,10 +67,14 @@ public class BattleEntity {
         this.element=element;
         this.exp=exp;
         this.level=level;
-        expRequiredToLevel=0;
+        xpToLevel();
         isDead = hp==0?true:false;
         effects = new ArrayList<>();
+        skills = new ArrayList<>();
         equipment = new Equipment[4];
+        for(int i=0;i<4;i++){
+            equipment[i]=null;
+        }
     }
     /**
      * assumes the entity will be at full health. used for creation and recreation within guild.
@@ -106,10 +112,14 @@ public class BattleEntity {
         this.element=element;
         this.exp=exp;
         this.level=level;
-        expRequiredToLevel=0;
+        xpToLevel();
         isDead=false;
         effects = new ArrayList<>();
+        skills = new ArrayList<>();
         equipment = new Equipment[4];
+        for(int i=0;i<4;i++){
+            equipment[i]=null;
+        }
     }
     /**
          * SHOULD ONLY BE CALLED FOR ENEMIES. stats are not meant to grow after being set
@@ -140,6 +150,7 @@ public class BattleEntity {
             this.level=level;
             isDead=false;
             effects = new ArrayList<>();
+            skills = new ArrayList<>();
             equipment = new Equipment[4];
             //expRequiredToLevel=0;
         }
@@ -278,6 +289,11 @@ public class BattleEntity {
     private void setStat(int StatID, int value){
         stats[StatID].setModifiedStat(value);
     }
+    //skill controlling
+    public void addSkill(BattleAction e){
+        skills.add(e);
+        e.setCaster(this);
+    }
     //prints
     public void printAllEquipment(){
         for(Equipment e:equipment){
@@ -363,8 +379,10 @@ public class BattleEntity {
     public int getElement(){return element;}
     public int getLevel(){return level;}
     public int getExp(){return exp;}
-    public int getExpRequiredToLevel(){return expRequiredToLevel;}
-    public int getExpUntilLevel(){return exp-expRequiredToLevel;}
+    public int getTotalExpRequiredToLevel(){return expRequiredToLevel;}
+    public int getExpUntilLevel(){return expRequiredToLevel-exp;}
+    public BattleAction getSkill(int skillToGet){return skills.get(skillToGet);}
+    public int getNumberOfSkills(){return skills.size();}
     //gets from the nested stats. goes hand-in-hand with StatID.java
     public int getBaseStat(int StatID)      {return stats[StatID].getBaseStat();}
     public int getStatModifier(int StatID)  {return stats[StatID].getStatModifier();}

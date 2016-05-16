@@ -15,7 +15,9 @@ import Background.BattleEntity;
 public abstract class BattleAction {
     private BattleEntity caster;
     private String name,description;
-    public abstract void execute(BattleEntity target);
+    public abstract String execute(BattleEntity target);
+    public abstract int getCost();
+    public abstract int getElement();
     public BattleAction(BattleEntity caster,String name, String description){
         this.name=name;
         this.description=description;
@@ -26,6 +28,7 @@ public abstract class BattleAction {
     public int getCasterStat(int statID){return caster.getStat(statID);}
     public String getName(){return name;}
     public String getDescription(){return description;}
+    public void setCaster(BattleEntity caster){this.caster = caster;}
     public BattleAction(BattleEntity caster){
         this.caster = caster;
     }

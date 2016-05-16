@@ -22,30 +22,35 @@ public class Inventory {
     }
     //inventory managers
     public boolean canAdd(Item i){
-        if(inventory.size()<invSize){
-                return true;
-        }
+        //if item exists in inventory
         for(Item item:inventory){
             if(item.getId()==i.getId()){
                 if(item.getQuantity()+i.getQuantity()<=item.getMaxQuantity()){
+                    //and is not at max quantity, can add
                     return true;
                 }else{
+                    //is at max quantity, can not add
                     return false;
                 }
             }
         }
+        if(inventory.size()<invSize){
+            //if item is not in inventory, and inventory has room, can add
+            return true;
+        }
+        //if none of the above, cannot add
         return false;
     }
     public void add(Item i){
-        if(inventory.size()<invSize){
-              inventory.add(i);
-              return;
-        }
         for(Item item:inventory){
             if(item.getId()==i.getId()&&item.getQuantity()+i.getQuantity()<=item.getMaxQuantity()){
                 item.restock(i.getQuantity());
                 return;
             }
+        }
+        if(inventory.size()<invSize){
+              inventory.add(i);
+              return;
         }
         throw new Error("Couldnt add item");
     }
@@ -83,8 +88,21 @@ public class Inventory {
         }
     }   
     //gets
-    public Item getItem(int i){
-        return inventory.get(i);
-    }
+    public Item getItem(int i){return inventory.get(i);}
     public int getInvSize(){return invSize;}
+    public int getNumberOfItemsInInventory(){
+        int items=0;
+        for(Item item:inventory){
+            items++;
+        }
+        return items;
+    }
+    //item subclass gets
+    public HealingItem getHealingItem(int i){return (HealingItem)inventory.get(i);}
+    public DamageItem getDamageItem(int i){return (DamageItem)inventory.get(i);}
+    public Equipment getEquipmentItem(int i){return (Equipment)inventory.get(i);}
+    public Weapon getWeaponItem(int i){return (Weapon)inventory.get(i);}
+    public Armor getArmorItem(int i){return (Armor)inventory.get(i);}
+    
+    
 }
