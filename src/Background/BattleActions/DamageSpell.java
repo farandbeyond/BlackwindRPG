@@ -47,5 +47,6 @@ public class DamageSpell extends Spell{
     public int getRollDamage(){return rollDamage;}
     public int getMaxDamage(){return baseDamage+rollDamage;}
     public int getElement(){return element;}
+    public boolean targetsAllies(){return false;}
     
 }

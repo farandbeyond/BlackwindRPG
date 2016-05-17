@@ -57,4 +57,5 @@ public class PhysicalAction extends BattleAction{
     public int getElement(){return element;}
     public int getDamageStat(){return damageStat;}
     public int getResistStat(){return resistStat;}
+    public boolean targetsAllies(){return false;}
 }

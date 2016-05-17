@@ -5,6 +5,8 @@
  */
 package Foreground.Battle;
 
+import Background.BattleActions.BattleAction;
+import Background.BattleActions.BattleActionLoader;
 import Background.BattleEntity;
 import Background.Items.Inventory;
 import Background.Party.Party;
@@ -14,6 +16,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -26,24 +29,33 @@ public class Battle extends JPanel{
     private Inventory inventory;
     private displayBox[] enemiesDisplay, partyDisplay;
     private menuBox menu;
-    private int menuPosition;
+    private int menuPosition, enemyTargeted;
     private boolean confirmEvent, cancelEvent;
     private Joystick kb;
+    private ArrayList<BattleAction> actionsLoaded;
+    private ArrayList<BattleEntity> targetsLoaded;
+    private boolean battleOver;
     public Battle(Party party, Inventory inv, Party enemyParty,JFrame frame){
+        //panel setup
         this.setLayout(null);
         this.setSize(612,480);
         this.setLocation(0, 0);
         this.setVisible(true);
+        //instance variable setup
+        actionsLoaded = new ArrayList<>();
+        targetsLoaded = new ArrayList<>();
         confirmEvent = false;
         cancelEvent = false;
         menuPosition = 0;
+        enemyTargeted = 0;
+        enemiesDisplay = new displayBox[3];
+        partyDisplay = new displayBox[4];
         player = party;
         enemies = enemyParty;
         inventory = inv;
+        //panel setup
         menu = new menuBox(party.getMemberFromParty(0));
         this.add(menu);
-        enemiesDisplay = new displayBox[3];
-        partyDisplay = new displayBox[4];
         for(int i=0;i<3;i++){
             enemiesDisplay[i]=new displayBox(i*150+30,20,150,150,enemies.getMemberFromParty(i));
             this.add(enemiesDisplay[i]);
@@ -53,25 +65,80 @@ public class Battle extends JPanel{
             this.add(partyDisplay[i]);
         }
         kb = new Joystick();
+        battleOver = false;
         frame.addKeyListener(kb);
         frame.add(this);
     }
     public void loop(){
-        while(true){
-            repaint();
-            confirmMenuPosition(menu.getMaxSelectorPosition());
-            menu.updateMenuPosition(menuPosition);
-            if(confirmEvent){
-                switch(menuPosition){
-                    case 0:
-                    case 1:menu.switchMenu(menuBox.MAIN, menuBox.SKILLS);break;
-                    case 2:menu.switchMenu(menuBox.MAIN, menuBox.ITEMS);break;
-                    case 3:System.exit(0);
-                }
+        while(!battleOver){
+            prepareActions();
+            //getEnemyActions();
+            //sortByDex();
+            //executeAllActions();
+            //checkForBattleOver();
+        }
+    }
+    //battle loop
+    public void prepareActions(){
+        //int selectingAction = 0;
+        for(int selectingAction=0;selectingAction<player.getCurrentPartySize();selectingAction++){
+            menu.loadMainMenu();
+            partyDisplay[selectingAction].toggleActing();
+            while(!cancelEvent){
                 resetEvents();
+                repaint();
+                confirmMenuPosition(menu.getMaxSelectorPosition());
+                menu.updateSelectorPosition(menuPosition);
+                if(confirmEvent){
+                    int save = menuPosition;
+                    menuPosition = 0;
+                    switch(save){
+                        case 0:attackEnemy(selectingAction);break;
+                        case 1:
+                        case 2:
+                        case 3:System.exit(0);break;
+                    }
+                    resetEvents();
+                    menuPosition = save;
+                    break;
+                }
+            }
+            if(cancelEvent){
+                if(selectingAction!=0){
+                    selectingAction--;
+                }
+                selectingAction--;
+                
             }
         }
     }
+    public void attackEnemy(int memberActing){
+        resetEvents();
+        enemiesDisplay[enemyTargeted].toggleTargeted();
+        while(!cancelEvent){
+            repaint();
+            confirmEnemyTarget(enemies.getCurrentPartySize()-1);
+            showTargetedEnemy();
+            if(confirmEvent){
+                actionsLoaded.add(BattleActionLoader.loadAttack(player.getMemberFromParty(memberActing)));
+                targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
+                System.out.println("Got here");
+                return;
+            }
+        }
+    }
+    public void showTargetedEnemy(){
+        for(int i=0;i<enemies.getCurrentPartySize();i++){
+            if(i!=enemyTargeted&&enemiesDisplay[i].isTargeted()){
+                enemiesDisplay[i].toggleTargeted();
+            }
+            enemiesDisplay[i].updateColor();
+        }
+        if(!enemiesDisplay[enemyTargeted].isTargeted()){
+            enemiesDisplay[enemyTargeted].toggleTargeted();
+        }
+    }
+    //menu controlling
     public void confirmMenuPosition(int maxPosition){
         if(menuPosition<0){
             menuPosition = maxPosition;
@@ -80,10 +147,19 @@ public class Battle extends JPanel{
             menuPosition = 0;
         }
     }
+    public void confirmEnemyTarget(int maxPosition){
+        if(enemyTargeted<0){
+            enemyTargeted = maxPosition;
+        }
+        if(enemyTargeted>maxPosition){
+            enemyTargeted = 0;
+        }
+    }
     public void resetEvents(){
         confirmEvent = false;
         cancelEvent = false;
     }
+    //paint
     public void paint(Graphics g){
         g.setColor(Color.yellow);
         g.fillRect(0, 0, 612, 480);
@@ -95,17 +171,18 @@ public class Battle extends JPanel{
         }
         menu.paint(g);
     }
-    
+    //subclass jpanels
     private class displayBox extends JPanel{
         private int myX, myY, myWidth, myHeight;
         private BattleEntity displayed;
-        private boolean targeted;
+        private boolean targeted, acting;
         private Color currentColor;
         displayBox(int x, int y, int width, int height, BattleEntity displayTarget){
             myX = x;
             myY = y;
             myWidth = width;
             myHeight = height;
+            acting = false;
             this.setSize(x,y);
             this.setLocation(width, height);
             this.setVisible(true);
@@ -117,6 +194,8 @@ public class Battle extends JPanel{
             try{
                 if(displayed.getIsDead()){
                     currentColor = Color.red;
+                }else if(acting){
+                    currentColor = Color.green;
                 }else{
                     currentColor = Color.cyan;
                 }
@@ -128,7 +207,22 @@ public class Battle extends JPanel{
                 currentColor = Color.gray;
             }
         }
+        public void toggleTargeted(){
+            if(targeted){
+                targeted = false;
+                return;
+            }
+            targeted = true;
+        }
         public void updateDisplay(BattleEntity e){displayed = e;}
+        public void toggleActing(){
+            if(acting){
+                acting = false;
+                return;
+            }
+            acting = true;
+        }
+        public boolean isTargeted(){return targeted;}
         @Override
         public int getX(){return myX;}
         @Override
@@ -233,8 +327,14 @@ public class Battle extends JPanel{
             }
             maxMenuPosition = 7;
         }
+        public void loadMainMenu(){
+            menuLoaded[MAIN]=true;
+            menuLoaded[SKILLS]=false;
+            menuLoaded[ITEMS]=false;
+            loadMenus();
+        }
         //menu navigating
-        public void updateMenuPosition(int newPos){selectorPosition = newPos;}
+        public void updateSelectorPosition(int newPos){selectorPosition = newPos;}
         //sets
         public void setCurrent(BattleEntity current){this.current=current;}
         public void switchMenu(int currentMenu, int newMenu){
@@ -318,8 +418,8 @@ public class Battle extends JPanel{
     public void cancelEvent(){cancelEvent=true;}
     public void upEvent(){menuPosition--;}
     public void downEvent(){menuPosition++;}
-    public void leftEvent(){}
-    public void rightEvent(){}
+    public void leftEvent(){enemyTargeted--;}
+    public void rightEvent(){enemyTargeted++;}
     //public void menuEvent(){System.exit(0);}
     public static void main(String[] args){
         BattleTester.main(args);

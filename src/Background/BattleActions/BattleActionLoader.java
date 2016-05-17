@@ -5,6 +5,7 @@
  */
 package Background.BattleActions;
 
+import Background.BattleEntity;
 import Background.DeBuffs.Buff;
 import Background.DeBuffs.Effect;
 import Background.ElementHandler;
@@ -21,6 +22,9 @@ public class BattleActionLoader {
             ATTACK=200, SLICE=201,
             BRAVERY=300,
             SHELTER=301;
+    public static BattleAction loadAttack(BattleEntity caster){
+        return new PhysicalAction(caster,"Attack","The basic attack action everyone has",1,0,StatID.STR,StatID.VIT,ElementHandler.NEUTRAL);
+    }
     public static BattleAction loadAction(int actionID){
         switch(actionID){
             case FIREBALL   :return new DamageSpell("Fireball","deals 15-20 Fire damage",15,5,ElementHandler.FIRE,12);

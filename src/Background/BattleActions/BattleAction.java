@@ -18,6 +18,7 @@ public abstract class BattleAction {
     public abstract String execute(BattleEntity target);
     public abstract int getCost();
     public abstract int getElement();
+    public abstract boolean targetsAllies();
     public BattleAction(BattleEntity caster,String name, String description){
         this.name=name;
         this.description=description;
