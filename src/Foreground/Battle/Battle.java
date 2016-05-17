@@ -23,6 +23,7 @@ public class Battle extends JPanel{
     private Party enemies, player;
     private Inventory inventory;
     private displayBox[] enemiesDisplay, partyDisplay;
+    private menuBox menu;
     public Battle(Party party, Inventory inv, Party enemyParty,JFrame frame){
         this.setLayout(null);
         this.setSize(612,480);
@@ -31,6 +32,8 @@ public class Battle extends JPanel{
         player = party;
         enemies = enemyParty;
         inventory = inv;
+        menu = new menuBox(party.getMemberFromParty(0));
+        this.add(menu);
         enemiesDisplay = new displayBox[3];
         partyDisplay = new displayBox[4];
         for(int i=0;i<3;i++){
@@ -38,7 +41,7 @@ public class Battle extends JPanel{
             this.add(enemiesDisplay[i]);
         }
         for(int i=0;i<4;i++){
-            partyDisplay[i]=new displayBox(i*100,270,110,150,party.getMemberFromParty(i));
+            partyDisplay[i]=new displayBox(i*100,270,100,150,party.getMemberFromParty(i));
             this.add(partyDisplay[i]);
         }
         frame.add(this);
@@ -57,13 +60,14 @@ public class Battle extends JPanel{
         for(int i=0;i<4;i++){
             partyDisplay[i].paint(g);
         }
+        menu.paint(g);
     }
     
     private class displayBox extends JPanel{
-        int myX, myY, myWidth, myHeight;
-        BattleEntity displayed;
-        boolean targeted;
-        Color currentColor;
+        private int myX, myY, myWidth, myHeight;
+        private BattleEntity displayed;
+        private boolean targeted;
+        private Color currentColor;
         displayBox(int x, int y, int width, int height, BattleEntity displayTarget){
             myX = x;
             myY = y;
@@ -121,6 +125,112 @@ public class Battle extends JPanel{
                g.drawString("----",myX+10 ,myY+40);
                g.drawString("--/-- hp",myX+10 ,myY+70);
                g.drawString("--/-- hp",myX+10 ,myY+100);
+            }
+        }
+    }
+    private class menuBox extends JPanel{
+        public static final int MAIN=0, SKILLS=1,ITEMS=2;
+        private boolean[] menuLoaded;
+        private int myX, myY, myWidth, myHeight;
+        private int invOffset,invMaxOffset, skillsOffset,skillsMaxOffset;
+        private BattleEntity current;
+        private String[] menuOptions;
+        menuBox(BattleEntity current){
+            
+            invOffset = 0;
+            skillsOffset = 0;
+            menuLoaded = new boolean[3];
+            menuLoaded[MAIN]=true;
+            this.current = current;
+            menuOptions = new String[8];
+            loadMenus();
+            this.setSize(myWidth,myHeight);
+            this.setLocation(myX, myY);
+            this.setVisible(true);
+        }
+        public void loadMenus(){
+            myX = 400;
+            myWidth = 201;
+            if(menuLoaded[MAIN]){
+                myY = 300;
+                myHeight = 140;
+                loadMainMenuOptions();
+            }else if(menuLoaded[SKILLS]){
+                myY = 180;
+                myHeight = 260;
+                loadSkillsOptions();
+            }
+            else if(menuLoaded[ITEMS]){
+                myY = 180;
+                myHeight = 260;
+                loadItemOptions();
+            }
+        }
+        //menu option sets
+        public void loadMainMenuOptions(){
+            menuOptions[0]="Attack";
+            menuOptions[1]="Skills";
+            menuOptions[2]="Items";
+            menuOptions[3]="Flee";
+            menuOptions[4]="";
+            menuOptions[5]="";
+            menuOptions[6]="";
+            menuOptions[7]="";
+        }
+        public void loadItemOptions(){
+            for(int i=0;i<8;i++){
+                try{
+                    menuOptions[i] = "x"+inventory.getItem(i+invOffset).getQuantity()+" "+inventory.getItem(i+invOffset).getName();
+                }catch(IndexOutOfBoundsException e){
+                    menuOptions[i]="x-- ----";
+                }
+            }
+        }
+        public void loadSkillsOptions(){
+            for(int i=0;i<8;i++){
+                try{
+                    menuOptions[i] = current.getSkill(i+skillsOffset).getCost()+"mp "+current.getSkill(i+skillsOffset).getName();
+                }catch(IndexOutOfBoundsException e){
+                    menuOptions[i] = "--mp -----";
+                }
+            }
+        }
+        //sets
+        public void setCurrent(BattleEntity current){this.current=current;}
+        //offset handling
+        public void setInvMaxOffset(){
+        invMaxOffset=0;
+        while(true){
+            try{
+                inventory.getItem(invMaxOffset+10).toString();
+                invMaxOffset++;
+            }catch(IndexOutOfBoundsException e){
+                System.out.println(String.format("max offset is %d, from an inventory size %d, containing %d items", invMaxOffset, inventory.getInvSize(), inventory.getNumberOfItemsInInventory()));
+                return;
+            }
+        }
+    }
+        public void setSkillsMaxOffset(){
+            skillsMaxOffset=0;
+            while(true){
+                try{
+                    current.getSkill(skillsMaxOffset+10).toString();
+                    skillsMaxOffset++;
+                }catch(IndexOutOfBoundsException e){
+                    System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",skillsMaxOffset,current.getName(),current.getNumberOfSkills()));
+                    return;
+                }
+            }
+        }
+        //paint
+        public void paint(Graphics g){
+            g.setColor(Color.GREEN);
+            g.fillRect(myX, myY, myWidth, myHeight);
+            g.setColor(Color.black);
+            g.drawRect(myX, myY, myWidth, myHeight);
+            g.setFont(new Font("Courier New", Font.BOLD, 16));
+            for(int i=0;i<8;i++){
+                g.drawString(menuOptions[i], myX+20, myY+20+30*i);
             }
         }
     }
