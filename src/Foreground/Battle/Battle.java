@@ -12,6 +12,8 @@ import Background.StatID;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -24,11 +26,17 @@ public class Battle extends JPanel{
     private Inventory inventory;
     private displayBox[] enemiesDisplay, partyDisplay;
     private menuBox menu;
+    private int menuPosition;
+    private boolean confirmEvent, cancelEvent;
+    private Joystick kb;
     public Battle(Party party, Inventory inv, Party enemyParty,JFrame frame){
         this.setLayout(null);
         this.setSize(612,480);
         this.setLocation(0, 0);
         this.setVisible(true);
+        confirmEvent = false;
+        cancelEvent = false;
+        menuPosition = 0;
         player = party;
         enemies = enemyParty;
         inventory = inv;
@@ -44,12 +52,37 @@ public class Battle extends JPanel{
             partyDisplay[i]=new displayBox(i*100,270,100,150,party.getMemberFromParty(i));
             this.add(partyDisplay[i]);
         }
+        kb = new Joystick();
+        frame.addKeyListener(kb);
         frame.add(this);
     }
     public void loop(){
         while(true){
             repaint();
+            confirmMenuPosition(menu.getMaxSelectorPosition());
+            menu.updateMenuPosition(menuPosition);
+            if(confirmEvent){
+                switch(menuPosition){
+                    case 0:
+                    case 1:menu.switchMenu(menuBox.MAIN, menuBox.SKILLS);break;
+                    case 2:menu.switchMenu(menuBox.MAIN, menuBox.ITEMS);break;
+                    case 3:System.exit(0);
+                }
+                resetEvents();
+            }
         }
+    }
+    public void confirmMenuPosition(int maxPosition){
+        if(menuPosition<0){
+            menuPosition = maxPosition;
+        }
+        if(menuPosition>maxPosition){
+            menuPosition = 0;
+        }
+    }
+    public void resetEvents(){
+        confirmEvent = false;
+        cancelEvent = false;
     }
     public void paint(Graphics g){
         g.setColor(Color.yellow);
@@ -133,10 +166,12 @@ public class Battle extends JPanel{
         private boolean[] menuLoaded;
         private int myX, myY, myWidth, myHeight;
         private int invOffset,invMaxOffset, skillsOffset,skillsMaxOffset;
+        private int maxMenuPosition;
+        private int selectorPosition;
         private BattleEntity current;
         private String[] menuOptions;
         menuBox(BattleEntity current){
-            
+            selectorPosition = 0;
             invOffset = 0;
             skillsOffset = 0;
             menuLoaded = new boolean[3];
@@ -176,6 +211,7 @@ public class Battle extends JPanel{
             menuOptions[5]="";
             menuOptions[6]="";
             menuOptions[7]="";
+            maxMenuPosition = 3;
         }
         public void loadItemOptions(){
             for(int i=0;i<8;i++){
@@ -185,6 +221,7 @@ public class Battle extends JPanel{
                     menuOptions[i]="x-- ----";
                 }
             }
+            maxMenuPosition = 7;
         }
         public void loadSkillsOptions(){
             for(int i=0;i<8;i++){
@@ -194,9 +231,28 @@ public class Battle extends JPanel{
                     menuOptions[i] = "--mp -----";
                 }
             }
+            maxMenuPosition = 7;
         }
+        //menu navigating
+        public void updateMenuPosition(int newPos){selectorPosition = newPos;}
         //sets
         public void setCurrent(BattleEntity current){this.current=current;}
+        public void switchMenu(int currentMenu, int newMenu){
+            menuLoaded[currentMenu]=false;
+            menuLoaded[newMenu]=true;
+            loadMenus();
+        }
+        //gets
+        public int getMaxSelectorPosition(){return maxMenuPosition;}
+        public int getX(){return myX;}
+        public int getY(){return myY;}
+        public int getWidth(){return myWidth;}
+        public int getHeight(){return myHeight;}
+        public int getInvOffset(){return invOffset;}
+        public int getSkillsOffset(){return skillsOffset;}
+        public int getInvMaxOffset(){return invMaxOffset;}
+        public int getSkillsMaxOffset(){return skillsMaxOffset;}
+        public int getSelectorPosition(){return selectorPosition;}
         //offset handling
         public void setInvMaxOffset(){
         invMaxOffset=0;
@@ -232,8 +288,39 @@ public class Battle extends JPanel{
             for(int i=0;i<8;i++){
                 g.drawString(menuOptions[i], myX+20, myY+20+30*i);
             }
+            g.drawString(">", myX, myY+20+30*selectorPosition);
+        }
+        
+
+    }
+    //key event controlling
+    public class Joystick implements KeyListener{
+        @Override
+        public void keyTyped(KeyEvent ke) {
+        }
+        @Override
+        public void keyPressed(KeyEvent ke) {
+            switch(ke.getExtendedKeyCode()){
+                case KeyEvent.VK_O:confirmEvent();break;
+                case KeyEvent.VK_P:cancelEvent();break;
+                case KeyEvent.VK_W:upEvent();break;
+                case KeyEvent.VK_A:leftEvent();break;
+                case KeyEvent.VK_S:downEvent();break;
+                case KeyEvent.VK_D:rightEvent();break;
+                //case KeyEvent.VK_ENTER:menuEvent();break;
+            }
+        }
+        @Override
+        public void keyReleased(KeyEvent ke) {
         }
     }
+    public void confirmEvent(){confirmEvent=true;}
+    public void cancelEvent(){cancelEvent=true;}
+    public void upEvent(){menuPosition--;}
+    public void downEvent(){menuPosition++;}
+    public void leftEvent(){}
+    public void rightEvent(){}
+    //public void menuEvent(){System.exit(0);}
     public static void main(String[] args){
         BattleTester.main(args);
     }
