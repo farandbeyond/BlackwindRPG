@@ -19,7 +19,8 @@ public class BattleActionLoader {
             FIREBALL=0, ICEBLAST=1, QUAKE=2,GUST=3,
             CURE=100,RAISE=101,
             SLICE=200,
-            BRAVERY=300;
+            BRAVERY=300,
+            SHELTER=301;
     public static BattleAction loadAction(int actionID){
         switch(actionID){
             case FIREBALL   :return new DamageSpell("Fireball","deals 15-20 Fire damage",15,5,ElementHandler.FIRE,12);
@@ -31,6 +32,7 @@ public class BattleActionLoader {
                 
             case SLICE      :return new PhysicalAction("Slice","A quick slash dealing 10-15dmg",10,5,StatID.STR,StatID.VIT,ElementHandler.NEUTRAL);
             case BRAVERY    :return new EffectSpell("Bravery","25% Str buff",10,Effect.effectLoader(Effect.BUFF, StatID.STR, Buff.TWENTYFIVEP,"Bravery"));
+            case SHELTER    :return new EffectSpell("Shelter","25% Vit buff",10,Effect.effectLoader(Effect.BUFF, StatID.VIT, Buff.TWENTYFIVEP, "Shelter"));
         }
         return null;
     }

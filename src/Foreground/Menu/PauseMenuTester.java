@@ -40,16 +40,17 @@ public class PauseMenuTester {
 
         party.getMemberFromParty(1).checkForLevelUp();
         party.getMemberFromParty(0).equip((Equipment)ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1), 1);
-        inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1));
-        inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 2));
+        inv.add(ItemLoader.loadItem(ItemLoader.ELIXER, 10));
         inv.add(ItemLoader.loadItem(ItemLoader.FIREBOMB, 11));
         inv.add(ItemLoader.loadItem(ItemLoader.ICEBOMB, 99));
-        inv.add(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 99));
-        inv.add(ItemLoader.loadItem(ItemLoader.MUDBOMB, 1));
-        inv.add(ItemLoader.loadItem(ItemLoader.PHEONIXDOWN, 1));
-        inv.add(ItemLoader.loadItem(ItemLoader.POTION, 1));
-        inv.add(ItemLoader.loadItem(ItemLoader.REJUVI, 1));
-        inv.add(ItemLoader.loadItem(ItemLoader.WINDBOMB, 1));
+        inv.add(ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 3));
+        inv.add(ItemLoader.loadItem(ItemLoader.LEATHERGLOVES, 3));
+        inv.add(ItemLoader.loadItem(ItemLoader.MUDBOMB, 4));
+        inv.add(ItemLoader.loadItem(ItemLoader.PHEONIXDOWN, 5));
+        inv.add(ItemLoader.loadItem(ItemLoader.POTION, 10));
+        inv.add(ItemLoader.loadItem(ItemLoader.REJUVI, 10));
+        inv.add(ItemLoader.loadItem(ItemLoader.WINDBOMB, 12));
         inv.add(ItemLoader.loadItem(ItemLoader.IRONSWORD, 1));
         PauseMenu menu = new PauseMenu(frame,party,inv);
         menu.run(party, inv);

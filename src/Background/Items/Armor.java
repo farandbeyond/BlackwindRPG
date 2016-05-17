@@ -35,8 +35,8 @@ public class Armor extends Equipment{
         this.setEquipper(null);
     }
     @Override
-    public void use(BattleEntity target) {
-        System.out.println("No use");
+    public String use(BattleEntity target) {
+        return "No use";
     }
     //gets
     public int getPrimaryStat(){return primaryStat;}

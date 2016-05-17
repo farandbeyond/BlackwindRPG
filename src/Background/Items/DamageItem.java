@@ -22,12 +22,13 @@ public class DamageItem extends Item{
     }
     
     @Override
-    public void use(BattleEntity target) {
+    public String use(BattleEntity target) {
         int damage = 0;
         damage+=this.damage;
         damage*=ElementHandler.handler(target.getElement(), element);
         target.damage(damage);
         reduceQuantity();
+        return String.format("%s dealt %d damage to %s", getName(), damage,target.getName());
     }
     //gets
     public int getDamage(){return damage;}

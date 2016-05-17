@@ -24,7 +24,7 @@ public abstract class Item {
         this.shopValue=shopValue;
     }
     //abstracts
-    public abstract void use(BattleEntity target);
+    public abstract String use(BattleEntity target);
     //item handlers
     public void reduceQuantity(){
         quantity--;

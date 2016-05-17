@@ -37,8 +37,8 @@ public class Weapon extends Equipment{
         setEquipper(null);
     }
     @Override
-    public void use(BattleEntity target) {
-        System.out.println("No use");
+    public String use(BattleEntity target) {
+        return "No use";
     }
     //getsWeaponDamage
     public int attackDamage(){

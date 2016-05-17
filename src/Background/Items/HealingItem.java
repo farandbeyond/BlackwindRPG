@@ -26,18 +26,26 @@ public class HealingItem extends Item{
     }
     
     @Override
-    public void use(BattleEntity target) {
+    public String use(BattleEntity target) {
         reduceQuantity();
         if(revives){
             target.raise(healValue);
+            return String.format("%s raised %s for %d",getName(), target.getName(),healValue);
         }else{
             switch(type){
-                case HPMP:target.regainMp(healValue);
-                case HP:target.heal(healValue);break;
-                case MP:target.regainMp(healValue);break;
-                
+                case HPMP:
+                    target.regainMp(healValue);
+                    target.heal(healValue);
+                    return String.format("%s regained %d Hp and Mp from %s", target.getName(),healValue,getName());
+                case HP:
+                    target.heal(healValue);
+                    return String.format("%s regained %d Hp from %s", target.getName(),healValue,getName());
+                case MP:
+                    target.regainMp(healValue);
+                    return String.format("%s regained %d Mp from %s", target.getName(),healValue,getName());
             }
         }
+        return "Unknown error";
     }
     //gets
     public int getHealValue(){return healValue;}
