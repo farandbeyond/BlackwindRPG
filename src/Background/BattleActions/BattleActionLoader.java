@@ -9,6 +9,7 @@ import Background.BattleEntity;
 import Background.DeBuffs.Buff;
 import Background.DeBuffs.Effect;
 import Background.ElementHandler;
+import Background.Items.Item;
 import Background.StatID;
 
 /**
@@ -24,6 +25,9 @@ public class BattleActionLoader {
             SHELTER=301;
     public static BattleAction loadAttack(BattleEntity caster){
         return new PhysicalAction(caster,"Attack","The basic attack action everyone has",1,1,StatID.STR,StatID.VIT,ElementHandler.NEUTRAL);
+    }
+    public static BattleAction loadItemAction(BattleEntity caster, Item i){
+        return new UseItem(caster,i);
     }
     public static BattleAction loadAction(int actionID){
         switch(actionID){

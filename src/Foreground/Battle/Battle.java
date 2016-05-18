@@ -9,6 +9,7 @@ import Background.BattleActions.BattleAction;
 import Background.BattleActions.BattleActionLoader;
 import Background.BattleEntity;
 import Background.Items.Inventory;
+import Background.Items.Item;
 import Background.Party.Party;
 import Background.StatID;
 import java.awt.Color;
@@ -34,7 +35,7 @@ public class Battle extends JPanel{
     private Joystick kb;
     private ArrayList<BattleAction> actionsLoaded;
     private ArrayList<BattleEntity> targetsLoaded;
-    private boolean battleOver;
+    private boolean battleOver,turnOver;
     public Battle(Party party, Inventory inv, Party enemyParty,JFrame frame){
         //panel setup
         this.setLayout(null);
@@ -46,6 +47,7 @@ public class Battle extends JPanel{
         targetsLoaded = new ArrayList<>();
         confirmEvent = false;
         cancelEvent = false;
+        turnOver = false;
         menuPosition = 0;
         enemyTargeted = 0;
         enemiesDisplay = new displayBox[3];
@@ -69,6 +71,7 @@ public class Battle extends JPanel{
         frame.addKeyListener(kb);
         frame.add(this);
     }
+    //battle loop
     public void loop(){
         while(!battleOver){
             prepareActions();
@@ -79,11 +82,12 @@ public class Battle extends JPanel{
             System.out.println("Looped once");
         }
     }
-    //battle loop
+    
     //prepareActions
     public void prepareActions(){
         int actingMember = 0;
         while(actingMember<player.getCurrentPartySize()){
+            turnOver = false;
             if(!partyDisplay[actingMember].isActing())
                 partyDisplay[actingMember].toggleActing();
             partyDisplay[actingMember].updateColor();
@@ -97,8 +101,8 @@ public class Battle extends JPanel{
                 menuPosition = 0;
                 switch(save){
                     case 0:selectAttackTarget(actingMember);break;
-                    case 1:
-                    case 2:
+                    case 1:selectSkill(actingMember);menu.loadMainMenuOptions();break;
+                    case 2:selectItem(actingMember);menu.loadMainMenuOptions();break;
                     case 3:System.exit(0);
                 }
                 if(!cancelEvent)
@@ -117,7 +121,7 @@ public class Battle extends JPanel{
     }
     public void selectAttackTarget(int memberActing){
         resetEvents();
-        while(!cancelEvent){
+        while(!cancelEvent&&!turnOver){
             repaint();
             confirmEnemyTarget(enemies.getCurrentPartySize()-1);
             confirmTargetedEnemy();
@@ -125,7 +129,7 @@ public class Battle extends JPanel{
                 //System.out.println("Here");
                 actionsLoaded.add(BattleActionLoader.loadAttack(player.getMemberFromParty(memberActing)));
                 targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
-                System.out.println("targeted an enemy");
+                turnOver = true;
                 return;
             }
             if(cancelEvent){
@@ -147,6 +151,18 @@ public class Battle extends JPanel{
             }
         }
     }
+    public void confirmTargetedAlly(){
+        for(int i=0;i<player.getCurrentPartySize();i++){
+            if(partyDisplay[i].isTargeted()&&i!=enemyTargeted){
+                partyDisplay[i].toggleTargeted();
+                partyDisplay[i].updateColor();
+            }
+            if(!partyDisplay[i].isTargeted()&&i==enemyTargeted){
+                partyDisplay[i].toggleTargeted();
+                partyDisplay[i].updateColor();
+            }
+        }
+    }
     public void confirmActingMember(int acting){
         for(int i=0;i<player.getCurrentPartySize();i++){
             if(partyDisplay[i].isActing()&&i!=acting){
@@ -156,6 +172,124 @@ public class Battle extends JPanel{
             if(!partyDisplay[i].isActing()&&i==acting){
                 partyDisplay[i].toggleActing();
                 partyDisplay[i].updateColor();
+            }
+        }
+    }
+    public void selectSkill(int memberActing){
+        resetEvents();
+        menu.switchMenu(menuBox.MAIN, menuBox.SKILLS);
+        menu.loadSkills();
+        while(!cancelEvent&&!turnOver){
+            repaint();
+            confirmMenuPosition(menu.getMaxSelectorPosition());
+            menuPosition = menu.updateSkillsOffsetSelectorPosition(menuPosition);
+            if(confirmEvent){
+                BattleAction selectedAction = menu.getSkillAtPosition();
+                if(selectedAction.targetsAllies()){
+                    selectAllyTarget(selectedAction); 
+                }else{
+                    selectEnemyTarget(selectedAction);
+                }
+            }
+        }
+    }
+    public void selectItem(int memberActing){
+        resetEvents();
+        menu.switchMenu(menuBox.MAIN, menuBox.ITEMS);
+        while(!cancelEvent&&!turnOver){
+            menu.loadItems();
+            repaint();
+            confirmMenuPosition(menu.getMaxSelectorPosition());
+            menuPosition = menu.updateInvOffsetSelectorPosition(menuPosition);
+            if(confirmEvent){
+                Item selectedItem = menu.getItemAtPosition();
+                if(selectedItem.getId()>=0&&selectedItem.getId()<=99){
+                    selectAllyTarget(memberActing,selectedItem);
+                }else{
+                    selectEnemyTarget(memberActing,selectedItem);
+                }
+            }
+        }
+    }
+    public void selectAllyTarget(BattleAction selectedAction){
+        resetEvents();
+        while(!cancelEvent&&!turnOver){
+            repaint();
+            confirmEnemyTarget(player.getCurrentPartySize()-1);
+            confirmTargetedAlly();
+            if(confirmEvent){
+                //System.out.println("Here");
+                actionsLoaded.add(selectedAction);
+                targetsLoaded.add(player.getMemberFromParty(enemyTargeted));
+                turnOver = true;
+                partyDisplay[enemyTargeted].toggleTargeted();
+                return;
+            }
+            if(cancelEvent){
+                //resetEvents();
+                partyDisplay[enemyTargeted].toggleTargeted();
+                return;
+            }
+        }
+    }
+    public void selectAllyTarget(int memberActing, Item selectedItem){
+        resetEvents();
+        while(!cancelEvent&&!turnOver){
+            repaint();
+            confirmEnemyTarget(player.getCurrentPartySize()-1);
+            confirmTargetedAlly();
+            if(confirmEvent){
+                //System.out.println("Here");
+                actionsLoaded.add(BattleActionLoader.loadItemAction(player.getMemberFromParty(memberActing), selectedItem));
+                targetsLoaded.add(player.getMemberFromParty(enemyTargeted));
+                turnOver = true;
+                partyDisplay[enemyTargeted].toggleTargeted();
+                return;
+            }
+            if(cancelEvent){
+                //resetEvents();
+                partyDisplay[enemyTargeted].toggleTargeted();
+                return;
+            }
+        }
+    }
+    public void selectEnemyTarget(BattleAction selectedAction){
+        resetEvents();
+        while(!cancelEvent&&!turnOver){
+            repaint();
+            confirmEnemyTarget(enemies.getCurrentPartySize()-1);
+            confirmTargetedEnemy();
+            if(confirmEvent){
+                //System.out.println("Here");
+                actionsLoaded.add(selectedAction);
+                targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
+                turnOver = true;
+                return;
+            }
+            if(cancelEvent){
+                //resetEvents();
+                enemiesDisplay[enemyTargeted].toggleTargeted();
+                return;
+            }
+        }
+    }
+    public void selectEnemyTarget(int memberActing, Item selectedItem){
+        resetEvents();
+        while(!cancelEvent&&!turnOver){
+            repaint();
+            confirmEnemyTarget(enemies.getCurrentPartySize()-1);
+            confirmTargetedEnemy();
+            if(confirmEvent){
+                //System.out.println("Here");
+                actionsLoaded.add(BattleActionLoader.loadItemAction(player.getMemberFromParty(memberActing), selectedItem));
+                targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
+                turnOver = true;
+                return;
+            }
+            if(cancelEvent){
+                //resetEvents();
+                enemiesDisplay[enemyTargeted].toggleTargeted();
+                return;
             }
         }
     }
@@ -310,6 +444,8 @@ public class Battle extends JPanel{
             this.current = current;
             menuOptions = new String[8];
             loadMenus();
+            setSkillsMaxOffset();
+            setInvMaxOffset();
             this.setSize(myWidth,myHeight);
             this.setLocation(myX, myY);
             this.setVisible(true);
@@ -324,12 +460,12 @@ public class Battle extends JPanel{
             }else if(menuLoaded[SKILLS]){
                 myY = 180;
                 myHeight = 260;
-                loadSkillsOptions();
+                loadSkills();
             }
             else if(menuLoaded[ITEMS]){
                 myY = 180;
                 myHeight = 260;
-                loadItemOptions();
+                loadItems();
             }
         }
         //menu option sets
@@ -344,7 +480,7 @@ public class Battle extends JPanel{
             menuOptions[7]="";
             maxMenuPosition = 3;
         }
-        public void loadItemOptions(){
+        public void loadItems(){
             for(int i=0;i<8;i++){
                 try{
                     menuOptions[i] = "x"+inventory.getItem(i+invOffset).getQuantity()+" "+inventory.getItem(i+invOffset).getName();
@@ -354,7 +490,7 @@ public class Battle extends JPanel{
             }
             maxMenuPosition = 7;
         }
-        public void loadSkillsOptions(){
+        public void loadSkills(){
             for(int i=0;i<8;i++){
                 try{
                     menuOptions[i] = current.getSkill(i+skillsOffset).getCost()+"mp "+current.getSkill(i+skillsOffset).getName();
@@ -372,8 +508,103 @@ public class Battle extends JPanel{
         }
         //menu navigating
         public void updateSelectorPosition(int newPos){selectorPosition = newPos;}
+        //offsetNavigation
+        public void setInvMaxOffset(){
+            invMaxOffset=0;
+            while(true){
+                try{
+                    inventory.getItem(invMaxOffset+8).toString();
+                    invMaxOffset++;
+                }catch(IndexOutOfBoundsException e){
+                    System.out.println(String.format("max offset is %d, from an inventory size %d, containing %d items", invMaxOffset, inventory.getInvSize(), inventory.getNumberOfItemsInInventory()));
+                    return;
+                }
+            }
+        }    
+        public void setSkillsMaxOffset(){
+            skillsMaxOffset=0;
+            while(true){
+                try{
+                    current.getSkill(skillsMaxOffset+8).toString();
+                    skillsMaxOffset++;
+                }catch(IndexOutOfBoundsException e){
+                    System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",skillsMaxOffset,current.getName(),current.getNumberOfSkills()));
+                    return;
+                }
+            }
+        }
+        public int updateInvOffsetSelectorPosition(int newPos){
+        //if you scroll down far enough and there are more options to load, scroll the inventory and add to the offset
+        try{
+            if(newPos!=selectorPosition){
+                if(newPos==7){
+                    invOffset = invMaxOffset;
+                }
+                if(newPos==0){
+                    invOffset = 0;
+                }
+                //-1 is intened to throw null error if not exist
+                if(newPos>=5&&inventory.getItem(10+invOffset)!=null){
+                    invOffset++;
+                    //System.out.println(currOffset+"vv"+newPos);
+                    return newPos-1;
+                }
+                if(newPos<=2&&inventory.getItem(invOffset-1)!=null){
+                    invOffset--;
+                    //System.out.println(currOffset+"^^"+newPos);
+                    return newPos+1;
+                }
+
+                selectorPosition = newPos;
+            }
+            //System.out.println(currOffset+">>"+newPos);
+            return newPos;
+        }catch(IndexOutOfBoundsException e){
+            //System.out.println("Handling an error");
+
+            //System.out.println(currOffset+">>"+newPos);
+            selectorPosition = newPos;
+            return newPos;
+        }
+    }
+        public int updateSkillsOffsetSelectorPosition(int newPos){
+        //if you scroll down far enough and there are more options to load, scroll the inventory and add to the offset
+        try{
+            if(newPos!=selectorPosition){
+                if(newPos==7){
+                    skillsOffset = skillsMaxOffset;
+                }
+                if(newPos==0){
+                    skillsOffset = 0;
+                }
+                //-1 is intened to throw null error if not exist
+                if(newPos>=5&&current.getSkill(10+skillsOffset)!=null){
+                    skillsOffset++;
+                    //System.out.println(currOffset+"vv"+newPos);
+                    return newPos-1;
+                }
+                if(newPos<=2&&current.getSkill(skillsOffset-1)!=null){
+                    skillsOffset--;
+                    //System.out.println(currOffset+"^^"+newPos);
+                    return newPos+1;
+                }
+
+                selectorPosition = newPos;
+            }
+            //System.out.println(currOffset+">>"+newPos);
+            return newPos;
+        }catch(IndexOutOfBoundsException e){
+            //System.out.println("Handling an error");
+
+            //System.out.println(currOffset+">>"+newPos);
+            selectorPosition = newPos;
+            return newPos;
+        }
+    }
+        public Item getItemAtPosition(){return inventory.getItem(menuPosition+invOffset);}
+        public BattleAction getSkillAtPosition(){return current.getSkill(menuPosition+skillsOffset);}
         //sets
-        public void setCurrent(BattleEntity current){this.current=current;}
+        public void setCurrent(BattleEntity current){this.current=current;setSkillsMaxOffset();}
         public void switchMenu(int currentMenu, int newMenu){
             menuLoaded[currentMenu]=false;
             menuLoaded[newMenu]=true;
@@ -390,31 +621,6 @@ public class Battle extends JPanel{
         public int getInvMaxOffset(){return invMaxOffset;}
         public int getSkillsMaxOffset(){return skillsMaxOffset;}
         public int getSelectorPosition(){return selectorPosition;}
-        //offset handling
-        public void setInvMaxOffset(){
-        invMaxOffset=0;
-        while(true){
-            try{
-                inventory.getItem(invMaxOffset+10).toString();
-                invMaxOffset++;
-            }catch(IndexOutOfBoundsException e){
-                System.out.println(String.format("max offset is %d, from an inventory size %d, containing %d items", invMaxOffset, inventory.getInvSize(), inventory.getNumberOfItemsInInventory()));
-                return;
-            }
-        }
-    }
-        public void setSkillsMaxOffset(){
-            skillsMaxOffset=0;
-            while(true){
-                try{
-                    current.getSkill(skillsMaxOffset+10).toString();
-                    skillsMaxOffset++;
-                }catch(IndexOutOfBoundsException e){
-                    System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",skillsMaxOffset,current.getName(),current.getNumberOfSkills()));
-                    return;
-                }
-            }
-        }
         //paint
         public void paint(Graphics g){
             g.setColor(Color.GREEN);
