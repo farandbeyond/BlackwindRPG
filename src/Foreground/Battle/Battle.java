@@ -76,11 +76,12 @@ public class Battle extends JPanel{
         while(!battleOver){
             prepareActions();
             //getEnemyActions();
-            //sortByDex();
+            sortByDex();
             executeAllActions();
-            //checkForBattleOver();
-            System.out.println("Looped once");
+            checkForBattleOver();
+            //System.out.println("Looped once");
         }
+        System.out.println("Battle Over");
     }
     
     //prepareActions
@@ -130,6 +131,7 @@ public class Battle extends JPanel{
                 actionsLoaded.add(BattleActionLoader.loadAttack(player.getMemberFromParty(memberActing)));
                 targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
                 turnOver = true;
+                enemiesDisplay[enemyTargeted].toggleTargeted();
                 return;
             }
             if(cancelEvent){
@@ -264,6 +266,7 @@ public class Battle extends JPanel{
                 actionsLoaded.add(selectedAction);
                 targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
                 turnOver = true;
+                enemiesDisplay[enemyTargeted].toggleTargeted();
                 return;
             }
             if(cancelEvent){
@@ -284,6 +287,7 @@ public class Battle extends JPanel{
                 actionsLoaded.add(BattleActionLoader.loadItemAction(player.getMemberFromParty(memberActing), selectedItem));
                 targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
                 turnOver = true;
+                enemiesDisplay[enemyTargeted].toggleTargeted();
                 return;
             }
             if(cancelEvent){
@@ -291,6 +295,31 @@ public class Battle extends JPanel{
                 enemiesDisplay[enemyTargeted].toggleTargeted();
                 return;
             }
+        }
+    }
+    //sort by dexterity
+    public void sortByDex(){
+        for(int i=0;i<actionsLoaded.size();i++){
+            BattleAction fastest = null;
+            int position = 0;
+            for(int p=actionsLoaded.size()-1-i;p>=0;p--){
+                if(p==actionsLoaded.size()-1-i){
+                    fastest = actionsLoaded.get(p);
+                    position = p;
+                }
+                if(actionsLoaded.get(i).getCaster().getStat(StatID.DEX)>fastest.getCasterStat(StatID.DEX)){
+                    fastest = actionsLoaded.get(p);
+                    position =p;
+                }              
+            }
+            BattleEntity target = targetsLoaded.get(position);
+            actionsLoaded.remove(position);
+            targetsLoaded.remove(position);
+            actionsLoaded.add(fastest);
+            targetsLoaded.add(target);
+        }
+        for(BattleAction e:actionsLoaded){
+            System.out.println(e.getCaster().getName());
         }
     }
     //executeAllActions
@@ -305,6 +334,25 @@ public class Battle extends JPanel{
         }
         for(BattleAction b:actionsLoaded){
             System.out.println(b.toString());
+        }
+        repaint();
+    }
+    //check for battle over
+    public void checkForBattleOver(){
+        boolean enemiesDead = true;
+        boolean partyDead = true;
+        for(int i=0;i<enemies.getCurrentPartySize();i++){
+            if(!enemies.getMemberFromParty(i).getIsDead()){
+                enemiesDead = false;
+            }
+        }
+        for(int i=0;i<player.getCurrentPartySize();i++){
+            if(!player.getMemberFromParty(i).getIsDead()){
+                partyDead = false;
+            }
+        }
+        if(partyDead || enemiesDead){
+            battleOver = true;
         }
     }
     //menu controlling
