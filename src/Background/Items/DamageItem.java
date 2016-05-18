@@ -26,6 +26,8 @@ public class DamageItem extends Item{
         int damage = 0;
         damage+=this.damage;
         damage*=ElementHandler.handler(target.getElement(), element);
+        if(damage<1)
+            damage = 1;
         target.damage(damage);
         reduceQuantity();
         return String.format("%s dealt %d damage to %s", getName(), damage,target.getName());

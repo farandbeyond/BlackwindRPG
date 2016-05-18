@@ -46,6 +46,8 @@ public class PhysicalAction extends BattleAction{
         damage-=target.getStat(resistStat)/3;
         damage*=ElementHandler.handler(target.getElement(), element);
         //System.out.println(damage);
+        if(damage<1)
+            damage = 1;
         target.damage(damage);
         return String.format("%s dealt %d damage to %s with %s", getCaster().getName(),damage, target.getName(), getName());
     }

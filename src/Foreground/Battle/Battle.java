@@ -74,68 +74,103 @@ public class Battle extends JPanel{
             prepareActions();
             //getEnemyActions();
             //sortByDex();
-            //executeAllActions();
+            executeAllActions();
             //checkForBattleOver();
+            System.out.println("Looped once");
         }
     }
     //battle loop
+    //prepareActions
     public void prepareActions(){
-        //int selectingAction = 0;
-        for(int selectingAction=0;selectingAction<player.getCurrentPartySize();selectingAction++){
-            menu.loadMainMenu();
-            partyDisplay[selectingAction].toggleActing();
-            while(!cancelEvent){
+        int actingMember = 0;
+        while(actingMember<player.getCurrentPartySize()){
+            if(!partyDisplay[actingMember].isActing())
+                partyDisplay[actingMember].toggleActing();
+            partyDisplay[actingMember].updateColor();
+            repaint();
+            confirmActingMember(actingMember);
+            confirmMenuPosition(menu.getMaxSelectorPosition());
+            menu.updateSelectorPosition(menuPosition);
+            if(confirmEvent){
                 resetEvents();
-                repaint();
-                confirmMenuPosition(menu.getMaxSelectorPosition());
-                menu.updateSelectorPosition(menuPosition);
-                if(confirmEvent){
-                    int save = menuPosition;
-                    menuPosition = 0;
-                    switch(save){
-                        case 0:attackEnemy(selectingAction);break;
-                        case 1:
-                        case 2:
-                        case 3:System.exit(0);break;
-                    }
-                    resetEvents();
-                    menuPosition = save;
-                    break;
+                int save = menuPosition;
+                menuPosition = 0;
+                switch(save){
+                    case 0:selectAttackTarget(actingMember);break;
+                    case 1:
+                    case 2:
+                    case 3:System.exit(0);
                 }
+                if(!cancelEvent)
+                    actingMember++;
+                menuPosition = save;
+                resetEvents();
             }
             if(cancelEvent){
-                if(selectingAction!=0){
-                    selectingAction--;
+                partyDisplay[actingMember].toggleActing();
+                if(actingMember!=0){
+                    actingMember--;
                 }
-                selectingAction--;
-                
+                partyDisplay[actingMember].toggleActing();
             }
         }
     }
-    public void attackEnemy(int memberActing){
+    public void selectAttackTarget(int memberActing){
         resetEvents();
-        enemiesDisplay[enemyTargeted].toggleTargeted();
         while(!cancelEvent){
             repaint();
             confirmEnemyTarget(enemies.getCurrentPartySize()-1);
-            showTargetedEnemy();
+            confirmTargetedEnemy();
             if(confirmEvent){
+                //System.out.println("Here");
                 actionsLoaded.add(BattleActionLoader.loadAttack(player.getMemberFromParty(memberActing)));
                 targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
-                System.out.println("Got here");
+                System.out.println("targeted an enemy");
+                return;
+            }
+            if(cancelEvent){
+                //resetEvents();
+                enemiesDisplay[enemyTargeted].toggleTargeted();
                 return;
             }
         }
     }
-    public void showTargetedEnemy(){
+    public void confirmTargetedEnemy(){
         for(int i=0;i<enemies.getCurrentPartySize();i++){
-            if(i!=enemyTargeted&&enemiesDisplay[i].isTargeted()){
+            if(enemiesDisplay[i].isTargeted()&&i!=enemyTargeted){
                 enemiesDisplay[i].toggleTargeted();
+                enemiesDisplay[i].updateColor();
             }
-            enemiesDisplay[i].updateColor();
+            if(!enemiesDisplay[i].isTargeted()&&i==enemyTargeted){
+                enemiesDisplay[i].toggleTargeted();
+                enemiesDisplay[i].updateColor();
+            }
         }
-        if(!enemiesDisplay[enemyTargeted].isTargeted()){
-            enemiesDisplay[enemyTargeted].toggleTargeted();
+    }
+    public void confirmActingMember(int acting){
+        for(int i=0;i<player.getCurrentPartySize();i++){
+            if(partyDisplay[i].isActing()&&i!=acting){
+                partyDisplay[i].toggleActing();
+                partyDisplay[i].updateColor();
+            }
+            if(!partyDisplay[i].isActing()&&i==acting){
+                partyDisplay[i].toggleActing();
+                partyDisplay[i].updateColor();
+            }
+        }
+    }
+    //executeAllActions
+    public void executeAllActions(){
+        for(int i=0;i<actionsLoaded.size();i++){
+            System.out.println(actionsLoaded.get(i).execute(targetsLoaded.get(i)));
+            
+        }
+        for(int i=actionsLoaded.size()-1;i>=0;i--){
+            actionsLoaded.remove(i);
+            targetsLoaded.remove(i);
+        }
+        for(BattleAction b:actionsLoaded){
+            System.out.println(b.toString());
         }
     }
     //menu controlling
@@ -183,12 +218,13 @@ public class Battle extends JPanel{
             myWidth = width;
             myHeight = height;
             acting = false;
+            targeted = false;
             this.setSize(x,y);
             this.setLocation(width, height);
             this.setVisible(true);
             displayed = displayTarget;
             updateColor();
-            targeted = false;
+            
         }
         public void updateColor(){
             try{
@@ -223,6 +259,7 @@ public class Battle extends JPanel{
             acting = true;
         }
         public boolean isTargeted(){return targeted;}
+        public boolean isActing(){return acting;}
         @Override
         public int getX(){return myX;}
         @Override
@@ -247,7 +284,7 @@ public class Battle extends JPanel{
             try{
                g.drawString(displayed.getName(),myX+10 ,myY+40);
                g.drawString(String.format("%d/%d hp", displayed.getStat(StatID.HP),displayed.getStat(StatID.MAXHP)),myX+10 ,myY+70);
-               g.drawString(String.format("%d/%d hp", displayed.getStat(StatID.MP),displayed.getStat(StatID.MAXMP)),myX+10 ,myY+100);
+               g.drawString(String.format("%d/%d mp", displayed.getStat(StatID.MP),displayed.getStat(StatID.MAXMP)),myX+10 ,myY+100);
             }catch(NullPointerException e){
                g.drawString("----",myX+10 ,myY+40);
                g.drawString("--/-- hp",myX+10 ,myY+70);

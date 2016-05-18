@@ -33,7 +33,7 @@ public class BattleTester {
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
         
         party2.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.ENEMYONE));
-        party.damagePartyMember(0, 25);
+        //party.damagePartyMember(0, 25);
         party.getMemberFromParty(0).checkForLevelUp();
 
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));

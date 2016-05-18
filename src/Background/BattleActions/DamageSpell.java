@@ -39,6 +39,8 @@ public class DamageSpell extends Spell{
         damage+=baseDamage+rand.nextInt(rollDamage);
         damage-=target.getStat(StatID.RES);
         damage*=ElementHandler.handler(element, target.getElement());
+        if(damage<1)
+            damage = 1;
         target.damage(damage);
         return String.format("%s dealt %d damage to %s with %s", getCaster().getName(),damage, target.getName(), getName());
     }

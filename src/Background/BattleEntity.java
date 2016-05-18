@@ -237,6 +237,8 @@ public class BattleEntity {
         setStat(StatID.MP,getStat(StatID.MAXMP));
     }
     public void damage(int damage){
+        if(damage<1)
+            damage = 1;
         reduceStat(StatID.HP,damage);
         if(getStat(StatID.HP)<=0){
             isDead=true;
