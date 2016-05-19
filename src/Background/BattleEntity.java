@@ -201,15 +201,22 @@ public class BattleEntity {
         exp+=expGained;
         checkForLevelUp();
     }
-    public void checkForLevelUp(){
+    public String checkForLevelUp(){
+        int oldLevel = level;
         while(exp>=expRequiredToLevel){
             level++;
-            System.out.println("Level Up");
+            //System.out.println("Level Up");
             for(Stat stat:stats){
                 stat.levelUp();
             }
             xpToLevel();
         }
+        if(oldLevel!=level){
+            return "Level up! "+name+" Reached level "+level;
+        }else{
+            return "";
+        }
+        
     }
     //equipment controlling
     public void equip(Equipment e, int equipSlot){

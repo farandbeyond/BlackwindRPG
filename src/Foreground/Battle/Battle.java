@@ -78,20 +78,24 @@ public class Battle extends JPanel{
     }
     //battle loop
     public void loop(){
-        while(!battleOver){
-            prepareActions();
-            getEnemyActions();
-            sortByDex();
-            try{
-                executeAllActions();
-            }catch(InterruptedException e){
-                System.out.println("Error Occured");
+        try{
+            while(!battleOver){
+                prepareActions();
+                getEnemyActions();
+                sortByDex();
+
+                    executeAllActions();
+
+
+                checkForBattleOver();
+                tickBuffs();
+                //System.out.println("Looped once");
             }
-            checkForBattleOver();
-            tickBuffs();
-            //System.out.println("Looped once");
+            endBattle();
+        }catch(InterruptedException e){
+            System.out.println("Error Occured");
         }
-        System.out.println("Battle Over");
+        
     }
     
     //prepareActions
@@ -464,6 +468,28 @@ public class Battle extends JPanel{
     //assisttext ajusting
     public void setAssistText(String text){
         assistText = text;
+    }
+    //end battle
+    public void endBattle() throws InterruptedException{
+        int xpGained = 0;
+        for(int i=0;i<enemies.getCurrentPartySize();i++){
+            xpGained+=enemies.getMemberFromParty(i).getExp();
+        }
+        for(int i=0;i<player.getCurrentPartySize();i++){
+            if(!player.getMemberFromParty(i).getIsDead()){
+                player.getMemberFromParty(i).giveExp(xpGained);
+                setAssistText(String.format("%s gained %d experience", player.getMemberFromParty(i).getName(),xpGained));
+                repaint();
+                Thread.sleep(500);
+                String levelUp = player.getMemberFromParty(i).checkForLevelUp();
+                if(!levelUp.equals("")){
+                    setAssistText(levelUp);
+                    repaint();
+                    Thread.sleep(1500);
+                }
+            }
+        }
+        
     }
     //paint
     public void paint(Graphics g){
