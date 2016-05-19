@@ -42,4 +42,11 @@ public class EffectSpell extends Spell{
     //gets
     public Effect getEffect(){return effect;}
     public int getElement(){return ElementHandler.NEUTRAL;}
+    public boolean targetsAllies(){
+        if(effect.getType()==Effect.BUFF){
+            return true;
+        }else{
+            return false;        
+        }
+    }
 }

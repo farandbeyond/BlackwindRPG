@@ -53,4 +53,5 @@ public class HealingSpell extends Spell{
     public int getRollHeal(){return rollHeal;}
     public int getMaxHeal(){return baseHeal+rollHeal;}
     public int getElement(){return ElementHandler.NEUTRAL;}
+    public boolean targetsAllies(){return true;}
 }

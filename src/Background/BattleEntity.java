@@ -167,6 +167,12 @@ public class BattleEntity {
         effects.get(i-1).remove(this);
         effects.remove(i-1);
     }
+    public void removeAllEffects(){
+        for(Effect e:effects){
+            e.setDuration(0);
+        }
+        updateEffectsList();
+    }
     public void tickAllEffects(){
         for(Effect effect:effects){
             effect.onTick(this);
@@ -195,15 +201,22 @@ public class BattleEntity {
         exp+=expGained;
         checkForLevelUp();
     }
-    public void checkForLevelUp(){
+    public String checkForLevelUp(){
+        int oldLevel = level;
         while(exp>=expRequiredToLevel){
             level++;
-            System.out.println("Level Up");
+            //System.out.println("Level Up");
             for(Stat stat:stats){
                 stat.levelUp();
             }
             xpToLevel();
         }
+        if(oldLevel!=level){
+            return "Level up! "+name+" Reached level "+level;
+        }else{
+            return "";
+        }
+        
     }
     //equipment controlling
     public void equip(Equipment e, int equipSlot){
@@ -241,6 +254,9 @@ public class BattleEntity {
         if(getStat(StatID.HP)<=0){
             isDead=true;
             setStat(StatID.HP,0);
+        }
+        if(getStat(StatID.HP)>getStat(StatID.MAXHP)){
+            setStat(StatID.HP,getStat(StatID.MAXHP));
         }
     }
     public void heal(int heal){
@@ -337,7 +353,7 @@ public class BattleEntity {
         }
     public void printAllEffects(){
         for(Effect effect:effects){
-            System.out.println("-"+effect.toString());
+            System.out.print("--"+effect.toString());
         }
     }
     //gets from effects list
@@ -362,6 +378,9 @@ public class BattleEntity {
     //gets from entity
     public boolean canCast(Spell s){
         return s.getCost()<=getStat(StatID.MP);
+    }
+    public boolean canCast(int i){
+        return i<=getStat(StatID.MP);
     }
     public Weapon getWeapon(){
         return (Weapon)equipment[0];

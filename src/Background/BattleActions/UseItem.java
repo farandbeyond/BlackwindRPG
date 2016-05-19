@@ -25,5 +25,11 @@ public class UseItem extends BattleAction{
     public int getCost() {return 0;}
     @Override
     public int getElement() {return 0;}
-    
+    public boolean targetsAllies(){
+        if(item.getId()>=0&&item.getId()<=99){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

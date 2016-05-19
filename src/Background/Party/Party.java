@@ -93,7 +93,7 @@ public class Party {
         }
     }
     public void printAllMembersStats(){
-        for(int i=0;i<maxPartySize;i++){
+        for(int i=0;i<getCurrentPartySize();i++){
             party[i].printAllStats();
         }
     }
