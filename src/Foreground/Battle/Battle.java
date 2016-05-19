@@ -33,6 +33,7 @@ public class Battle extends JPanel{
     private menuBox menu;
     private int menuPosition, enemyTargeted;
     private boolean confirmEvent, cancelEvent;
+    private String assistText;
     private Joystick kb;
     private ArrayList<BattleAction> actionsLoaded;
     private ArrayList<BattleEntity> targetsLoaded;
@@ -48,6 +49,7 @@ public class Battle extends JPanel{
         rand = new Random();
         actionsLoaded = new ArrayList<>();
         targetsLoaded = new ArrayList<>();
+        assistText = "";
         confirmEvent = false;
         cancelEvent = false;
         turnOver = false;
@@ -80,7 +82,11 @@ public class Battle extends JPanel{
             prepareActions();
             getEnemyActions();
             sortByDex();
-            executeAllActions();
+            try{
+                executeAllActions();
+            }catch(InterruptedException e){
+                System.out.println("Error Occured");
+            }
             checkForBattleOver();
             tickBuffs();
             //System.out.println("Looped once");
@@ -92,45 +98,50 @@ public class Battle extends JPanel{
     public void prepareActions(){
         int actingMember = 0;
         while(actingMember<player.getCurrentPartySize()){
-            
-            turnOver = false;
-            if(!partyDisplay[actingMember].isActing())
-                partyDisplay[actingMember].toggleActing();
-            partyDisplay[actingMember].updateColor();
-            repaint();
-            confirmActingMember(actingMember);
-            confirmMenuPosition(menu.getMaxSelectorPosition());
-            menu.updateSelectorPosition(menuPosition);
-            if(confirmEvent){
-                menu.setCurrent(player.getMemberFromParty(actingMember));
-                resetEvents();
-                int save = menuPosition;
-                menuPosition = 0;
-                switch(save){
-                    case 0:selectAttackTarget(actingMember);break;
-                    case 1:selectSkill(actingMember);menu.loadMainMenuOptions();break;
-                    case 2:selectItem(actingMember);menu.loadMainMenuOptions();break;
-                    case 3:System.exit(0);
+            if(player.getMemberFromParty(actingMember).getIsDead()){
+                actingMember++;
+            }else{
+                setAssistText(String.format("What will %s do?",player.getMemberFromParty(actingMember).getName()));
+                turnOver = false;
+                if(!partyDisplay[actingMember].isActing())
+                    partyDisplay[actingMember].toggleActing();
+                partyDisplay[actingMember].updateColor();
+                repaint();
+                confirmActingMember(actingMember);
+                confirmMenuPosition(menu.getMaxSelectorPosition());
+                menu.updateSelectorPosition(menuPosition);
+                if(confirmEvent){
+                    menu.setCurrent(player.getMemberFromParty(actingMember));
+                    resetEvents();
+                    int save = menuPosition;
+                    menuPosition = 0;
+                    switch(save){
+                        case 0:selectAttackTarget(actingMember);break;
+                        case 1:selectSkill(actingMember);menu.loadMainMenuOptions();break;
+                        case 2:selectItem(actingMember);menu.loadMainMenuOptions();break;
+                        case 3:System.exit(0);
+                    }
+                    if(!cancelEvent)
+                        actingMember++;
+                    menuPosition = save;
+                    resetEvents();
                 }
-                if(!cancelEvent)
-                    actingMember++;
-                menuPosition = save;
-                resetEvents();
-            }
-            if(cancelEvent){
-                partyDisplay[actingMember].toggleActing();
-                if(actingMember!=0){
-                    actingMember--;
-                    actionsLoaded.remove(actingMember);
-                    targetsLoaded.remove(actingMember);
+                if(cancelEvent){
+                    partyDisplay[actingMember].toggleActing();
+                    if(actingMember!=0){
+                        actingMember--;
+                        actionsLoaded.remove(actingMember);
+                        targetsLoaded.remove(actingMember);
+                    }
+                    partyDisplay[actingMember].toggleActing();
                 }
-                partyDisplay[actingMember].toggleActing();
             }
         }
     }
     public void selectAttackTarget(int memberActing){
         resetEvents();
         while(!cancelEvent&&!turnOver){
+            setAssistText(String.format("Who will %s attack?",player.getMemberFromParty(memberActing).getName()));
             repaint();
             confirmEnemyTarget(enemies.getCurrentPartySize()-1);
             confirmTargetedEnemy();
@@ -190,6 +201,7 @@ public class Battle extends JPanel{
         menu.switchMenu(menuBox.MAIN, menuBox.SKILLS);
         menu.loadSkills();
         while(!cancelEvent&&!turnOver){
+            setAssistText(String.format("What will %s do?",player.getMemberFromParty(memberActing).getName()));
             repaint();
             confirmMenuPosition(menu.getMaxSelectorPosition());
             menuPosition = menu.updateSkillsOffsetSelectorPosition(menuPosition);
@@ -207,6 +219,7 @@ public class Battle extends JPanel{
         resetEvents();
         menu.switchMenu(menuBox.MAIN, menuBox.ITEMS);
         while(!cancelEvent&&!turnOver){
+            setAssistText(String.format("What will %s use?",player.getMemberFromParty(memberActing).getName()));
             menu.loadItems();
             repaint();
             confirmMenuPosition(menu.getMaxSelectorPosition());
@@ -224,6 +237,7 @@ public class Battle extends JPanel{
     public void selectAllyTarget(BattleAction selectedAction){
         resetEvents();
         while(!cancelEvent&&!turnOver){
+            setAssistText(String.format("Who will be targeted by %s's %s",selectedAction.getCaster().getName(),selectedAction.getName()));
             repaint();
             confirmEnemyTarget(player.getCurrentPartySize()-1);
             confirmTargetedAlly();
@@ -245,6 +259,7 @@ public class Battle extends JPanel{
     public void selectAllyTarget(int memberActing, Item selectedItem){
         resetEvents();
         while(!cancelEvent&&!turnOver){
+            setAssistText(String.format("Who will be targeted by %s's %s",player.getMemberFromParty(memberActing).getName(),selectedItem.getName()));
             repaint();
             confirmEnemyTarget(player.getCurrentPartySize()-1);
             confirmTargetedAlly();
@@ -266,6 +281,7 @@ public class Battle extends JPanel{
     public void selectEnemyTarget(BattleAction selectedAction){
         resetEvents();
         while(!cancelEvent&&!turnOver){
+            setAssistText(String.format("Who will be targeted by %s's %s",selectedAction.getCaster().getName(),selectedAction.getName()));
             repaint();
             confirmEnemyTarget(enemies.getCurrentPartySize()-1);
             confirmTargetedEnemy();
@@ -287,6 +303,7 @@ public class Battle extends JPanel{
     public void selectEnemyTarget(int memberActing, Item selectedItem){
         resetEvents();
         while(!cancelEvent&&!turnOver){
+            setAssistText(String.format("Who will be targeted by %s's %s",player.getMemberFromParty(memberActing).getName(),selectedItem.getName()));
             repaint();
             confirmEnemyTarget(enemies.getCurrentPartySize()-1);
             confirmTargetedEnemy();
@@ -308,10 +325,31 @@ public class Battle extends JPanel{
     //getEnemyAcions
     public void getEnemyActions(){
         for(int i=0;i<enemies.getCurrentPartySize();i++){
-            if(enemies.getMemberFromParty(i).getIsDead())
-                return;
-            actionsLoaded.add(enemies.getMemberFromParty(i).getSkill(rand.nextInt(enemies.getMemberFromParty(i).getNumberOfSkills())));
-            targetsLoaded.add(player.getMemberFromParty(rand.nextInt(player.getCurrentPartySize())));
+            if(enemies.getMemberFromParty(i).getIsDead()){
+                
+            }else{
+                boolean actionLoaded;
+                do{
+                    actionLoaded = false;
+                    BattleAction aTL =  enemies.getMemberFromParty(i).getSkill(rand.nextInt(enemies.getMemberFromParty(i).getNumberOfSkills()));
+                    if(aTL.targetsAllies()){
+                        BattleEntity target = enemies.getMemberFromParty(rand.nextInt(enemies.getCurrentPartySize()));
+                        if(!target.getIsDead()){
+                            targetsLoaded.add(target);
+                            actionsLoaded.add(aTL);
+                            actionLoaded = true;
+
+                        }
+                    }else{
+                        BattleEntity target = player.getMemberFromParty(rand.nextInt(player.getCurrentPartySize()));
+                        if(!target.getIsDead()){
+                            targetsLoaded.add(player.getMemberFromParty(rand.nextInt(player.getCurrentPartySize())));
+                            actionsLoaded.add(aTL);
+                            actionLoaded = true;
+                        }
+                    }
+                }while(!actionLoaded);
+            }
         }
     }
     //sort by dexterity
@@ -337,21 +375,22 @@ public class Battle extends JPanel{
             actionsLoaded.add(fastest);
             targetsLoaded.add(target);
         }
-        for(BattleAction e:actionsLoaded){
-            System.out.printf("%s has the %s action prepared\n", e.getCaster(),e.getName());
-        }
-        System.out.println("");
+        //for(BattleAction e:actionsLoaded){
+        //    System.out.printf("%s has the %s action prepared\n", e.getCaster(),e.getName());
+        //}
+        //System.out.println("");
     }
     //executeAllActions
-    public void executeAllActions(){
+    public void executeAllActions() throws InterruptedException{
         for(int i=0;i<actionsLoaded.size();i++){
             if(actionsLoaded.get(i).getCaster().getIsDead())
-                System.out.printf("%s is dead and cannot act\n",actionsLoaded.get(i).getCaster().getName());
+                setAssistText(String.format("%s is dead and cannot act\n",actionsLoaded.get(i).getCaster().getName()));
             else if(actionsLoaded.get(i).getCaster().canCast(actionsLoaded.get(i).getCost()))
-                System.out.println(actionsLoaded.get(i).execute(targetsLoaded.get(i)));
+                setAssistText(actionsLoaded.get(i).execute(targetsLoaded.get(i)));
             else
-                System.out.printf("%s tried to act, but couldnt cast %s\n",actionsLoaded.get(i).getCaster().getName(),actionsLoaded.get(i).getName());
-            
+                setAssistText(String.format("%s tried to act, but couldnt cast %s\n",actionsLoaded.get(i).getCaster().getName(),actionsLoaded.get(i).getName()));
+            repaint();
+            Thread.sleep(1000);
         }
         for(int i=actionsLoaded.size()-1;i>=0;i--){
             actionsLoaded.remove(i);
@@ -422,10 +461,15 @@ public class Battle extends JPanel{
         confirmEvent = false;
         cancelEvent = false;
     }
+    //assisttext ajusting
+    public void setAssistText(String text){
+        assistText = text;
+    }
     //paint
     public void paint(Graphics g){
         g.setColor(Color.yellow);
         g.fillRect(0, 0, 612, 480);
+        g.setFont(new Font("Courier New", Font.BOLD, 15));
         for(int i=0;i<3;i++){
             enemiesDisplay[i].paint(g);
         }
@@ -433,6 +477,21 @@ public class Battle extends JPanel{
             partyDisplay[i].paint(g);
         }
         menu.paint(g);
+        g.setFont(new Font("Courier New", Font.BOLD, 15));
+        if(assistText.length()<40){
+            g.drawString(assistText, 10, 190);
+        }else{
+            int split = 0;
+            for(int i=19;i<41;i++){
+                if(assistText.charAt(i)==' '){
+                    split = i;
+                    break;
+                }
+                    
+            }
+            g.drawString(assistText.substring(0, split), 10, 190);
+            g.drawString(assistText.substring(split+1), 10, 220);
+        }
     }
     //subclass jpanels
     private class displayBox extends JPanel{

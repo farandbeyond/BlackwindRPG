@@ -243,12 +243,13 @@ public class BattleEntity {
         setStat(StatID.MP,getStat(StatID.MAXMP));
     }
     public void damage(int damage){
-        if(damage<1)
-            damage = 1;
         reduceStat(StatID.HP,damage);
         if(getStat(StatID.HP)<=0){
             isDead=true;
             setStat(StatID.HP,0);
+        }
+        if(getStat(StatID.HP)>getStat(StatID.MAXHP)){
+            setStat(StatID.HP,getStat(StatID.MAXHP));
         }
     }
     public void heal(int heal){

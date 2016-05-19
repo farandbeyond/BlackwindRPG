@@ -17,7 +17,8 @@ public class BattleEntityLoader {
     public static final int
             TESTENTITY=0,
             WILSON=1,
-            ENEMYONE=100;
+            ENEMYONE=100,
+            HEALBOT=101;
             
     public static BattleEntity loadEntity(int entityID){
         switch(entityID){                          //hp,    mp,   str,   dex,   vit,   int,   res,     name,    element            level/xp
@@ -25,6 +26,7 @@ public class BattleEntityLoader {
             case WILSON:     return new BattleEntity(15,2.3,16,5.3,5 ,0.3,8 ,1.1,5 ,0.9,14,1.5,10,1.4,"Wilson",ElementHandler.NEUTRAL,1,0);
                                                    //hp,mp,str,dex,vit,int,res   name             element          intendedLevel, expDropped
             case ENEMYONE:   return new BattleEntity(20,10,10, 10, 10, 10, 10,"Training Dummy",ElementHandler.EARTH,1,10);
+            case HEALBOT:    return new BattleEntity(10,50, 5,  5,  3, 15, 10,"Soraka",        ElementHandler.LIGHT,1,20);
         }
         return null;
     }
@@ -36,7 +38,15 @@ public class BattleEntityLoader {
                     enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.RAISEGUARD));
                 for(int i=0;i<2;i++)
                     enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),enemyToLoad.getStat(StatID.DEX)));
-                
+                break;
+            case HEALBOT:
+                for(int i=0;i<7;i++){
+                    enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.CURE));
+                }
+                for(int i=0;i<3;i++){
+                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad, enemyToLoad.getStat(StatID.STR), 4));
+                }
+            break;
         }
         return enemyToLoad;
     }

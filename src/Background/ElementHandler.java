@@ -41,7 +41,7 @@ public class ElementHandler{
             return 0.75; 
 //case 4: if element is opposed.
         }else{
-            if((spellElement-targetElement)*(spellElement-targetElement)==1){
+            if((spellElement-targetElement)*(spellElement-targetElement)==1&&spellElement!=FIRE&&targetElement!=FIRE){
 //case 5: if the elements are light and dark
                 return 2.0;
             }else if(spellElement-targetElement==2 || spellElement+targetElement==7&&spellElement>4){

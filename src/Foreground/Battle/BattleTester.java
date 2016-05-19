@@ -31,9 +31,11 @@ public class BattleTester {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.WILSON));
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
+        party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
+        party.damagePartyMember(1, 100);
         
         party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.ENEMYONE));
-        party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.ENEMYONE));
+        party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.HEALBOT));
         //party.damagePartyMember(0, 25);
         
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
