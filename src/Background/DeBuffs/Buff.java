@@ -29,8 +29,8 @@ public class Buff extends Effect{
     }
     @Override
     public void assign(BattleEntity e) {
-        savedIncrease = (int)(e.getStat(stat)*increase);
-        System.out.println(savedIncrease);
+        savedIncrease = (int)(e.getBaseStat(stat)*increase);
+        //System.out.println(savedIncrease);
         e.increaseStat(stat,savedIncrease);
     }
     @Override

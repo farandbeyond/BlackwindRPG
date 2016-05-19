@@ -5,6 +5,8 @@
  */
 package Background;
 
+import Background.BattleActions.BattleActionLoader;
+
 
 
 /**
@@ -25,5 +27,17 @@ public class BattleEntityLoader {
             case ENEMYONE:   return new BattleEntity(20,10,10, 10, 10, 10, 10,"Training Dummy",ElementHandler.EARTH,1,10);
         }
         return null;
+    }
+    public static BattleEntity loadEntityWithSkills(int entityID){
+        BattleEntity enemyToLoad = loadEntity(entityID);
+        switch(entityID){
+            case ENEMYONE:
+                for(int i=0;i<8;i++)
+                    enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.RAISEGUARD));
+                for(int i=0;i<2;i++)
+                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),enemyToLoad.getStat(StatID.DEX)));
+                
+        }
+        return enemyToLoad;
     }
 }

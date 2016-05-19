@@ -167,6 +167,12 @@ public class BattleEntity {
         effects.get(i-1).remove(this);
         effects.remove(i-1);
     }
+    public void removeAllEffects(){
+        for(Effect e:effects){
+            e.setDuration(0);
+        }
+        updateEffectsList();
+    }
     public void tickAllEffects(){
         for(Effect effect:effects){
             effect.onTick(this);
@@ -339,7 +345,7 @@ public class BattleEntity {
         }
     public void printAllEffects(){
         for(Effect effect:effects){
-            System.out.println("-"+effect.toString());
+            System.out.print("--"+effect.toString());
         }
     }
     //gets from effects list
@@ -364,6 +370,9 @@ public class BattleEntity {
     //gets from entity
     public boolean canCast(Spell s){
         return s.getCost()<=getStat(StatID.MP);
+    }
+    public boolean canCast(int i){
+        return i<=getStat(StatID.MP);
     }
     public Weapon getWeapon(){
         return (Weapon)equipment[0];

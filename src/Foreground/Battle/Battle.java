@@ -18,6 +18,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -36,6 +37,7 @@ public class Battle extends JPanel{
     private ArrayList<BattleAction> actionsLoaded;
     private ArrayList<BattleEntity> targetsLoaded;
     private boolean battleOver,turnOver;
+    private Random rand;
     public Battle(Party party, Inventory inv, Party enemyParty,JFrame frame){
         //panel setup
         this.setLayout(null);
@@ -43,6 +45,7 @@ public class Battle extends JPanel{
         this.setLocation(0, 0);
         this.setVisible(true);
         //instance variable setup
+        rand = new Random();
         actionsLoaded = new ArrayList<>();
         targetsLoaded = new ArrayList<>();
         confirmEvent = false;
@@ -75,10 +78,11 @@ public class Battle extends JPanel{
     public void loop(){
         while(!battleOver){
             prepareActions();
-            //getEnemyActions();
+            getEnemyActions();
             sortByDex();
             executeAllActions();
             checkForBattleOver();
+            tickBuffs();
             //System.out.println("Looped once");
         }
         System.out.println("Battle Over");
@@ -88,6 +92,7 @@ public class Battle extends JPanel{
     public void prepareActions(){
         int actingMember = 0;
         while(actingMember<player.getCurrentPartySize()){
+            
             turnOver = false;
             if(!partyDisplay[actingMember].isActing())
                 partyDisplay[actingMember].toggleActing();
@@ -97,6 +102,7 @@ public class Battle extends JPanel{
             confirmMenuPosition(menu.getMaxSelectorPosition());
             menu.updateSelectorPosition(menuPosition);
             if(confirmEvent){
+                menu.setCurrent(player.getMemberFromParty(actingMember));
                 resetEvents();
                 int save = menuPosition;
                 menuPosition = 0;
@@ -115,6 +121,8 @@ public class Battle extends JPanel{
                 partyDisplay[actingMember].toggleActing();
                 if(actingMember!=0){
                     actingMember--;
+                    actionsLoaded.remove(actingMember);
+                    targetsLoaded.remove(actingMember);
                 }
                 partyDisplay[actingMember].toggleActing();
             }
@@ -297,6 +305,15 @@ public class Battle extends JPanel{
             }
         }
     }
+    //getEnemyAcions
+    public void getEnemyActions(){
+        for(int i=0;i<enemies.getCurrentPartySize();i++){
+            if(enemies.getMemberFromParty(i).getIsDead())
+                return;
+            actionsLoaded.add(enemies.getMemberFromParty(i).getSkill(rand.nextInt(enemies.getMemberFromParty(i).getNumberOfSkills())));
+            targetsLoaded.add(player.getMemberFromParty(rand.nextInt(player.getCurrentPartySize())));
+        }
+    }
     //sort by dexterity
     public void sortByDex(){
         for(int i=0;i<actionsLoaded.size();i++){
@@ -304,12 +321,14 @@ public class Battle extends JPanel{
             int position = 0;
             for(int p=actionsLoaded.size()-1-i;p>=0;p--){
                 if(p==actionsLoaded.size()-1-i){
-                    fastest = actionsLoaded.get(p);
                     position = p;
+                    fastest = actionsLoaded.get(position);
+                    
                 }
                 if(actionsLoaded.get(i).getCaster().getStat(StatID.DEX)>fastest.getCasterStat(StatID.DEX)){
-                    fastest = actionsLoaded.get(p);
                     position =p;
+                    fastest = actionsLoaded.get(position);
+                    
                 }              
             }
             BattleEntity target = targetsLoaded.get(position);
@@ -319,13 +338,19 @@ public class Battle extends JPanel{
             targetsLoaded.add(target);
         }
         for(BattleAction e:actionsLoaded){
-            System.out.println(e.getCaster().getName());
+            System.out.printf("%s has the %s action prepared\n", e.getCaster(),e.getName());
         }
+        System.out.println("");
     }
     //executeAllActions
     public void executeAllActions(){
         for(int i=0;i<actionsLoaded.size();i++){
-            System.out.println(actionsLoaded.get(i).execute(targetsLoaded.get(i)));
+            if(actionsLoaded.get(i).getCaster().getIsDead())
+                System.out.printf("%s is dead and cannot act\n",actionsLoaded.get(i).getCaster().getName());
+            else if(actionsLoaded.get(i).getCaster().canCast(actionsLoaded.get(i).getCost()))
+                System.out.println(actionsLoaded.get(i).execute(targetsLoaded.get(i)));
+            else
+                System.out.printf("%s tried to act, but couldnt cast %s\n",actionsLoaded.get(i).getCaster().getName(),actionsLoaded.get(i).getName());
             
         }
         for(int i=actionsLoaded.size()-1;i>=0;i--){
@@ -353,6 +378,27 @@ public class Battle extends JPanel{
         }
         if(partyDead || enemiesDead){
             battleOver = true;
+        }
+    }
+    //buffs
+    public void tickBuffs(){
+        if(battleOver){
+            for(int i=0;i<player.getCurrentPartySize();i++){
+                player.getMemberFromParty(i).removeAllEffects();
+            }
+            for(int i=0;i<enemies.getCurrentPartySize();i++){
+                enemies.getMemberFromParty(i).removeAllEffects();
+            }
+        }else{
+            for(int i=0;i<player.getCurrentPartySize();i++){
+                player.getMemberFromParty(i).tickAllEffects();
+                //player.getMemberFromParty(i).printAllEffects();
+                //player.printMembersStats(i);
+            }
+            for(int i=0;i<enemies.getCurrentPartySize();i++){
+                enemies.getMemberFromParty(i).tickAllEffects();
+                //enemies.getMemberFromParty(i).printAllEffects();
+            }
         }
     }
     //menu controlling
@@ -453,6 +499,7 @@ public class Battle extends JPanel{
         public BattleEntity getDisplayed(){return displayed;}
         @Override
         public void paint(Graphics g){
+            updateColor();
             try{
                 g.setColor(currentColor);
                 g.fillRect(myX, myY, myWidth, myHeight);
@@ -502,8 +549,8 @@ public class Battle extends JPanel{
             myX = 400;
             myWidth = 201;
             if(menuLoaded[MAIN]){
-                myY = 300;
-                myHeight = 140;
+                myY = 180;
+                myHeight = 260;
                 loadMainMenuOptions();
             }else if(menuLoaded[SKILLS]){
                 myY = 180;
@@ -564,7 +611,7 @@ public class Battle extends JPanel{
                     inventory.getItem(invMaxOffset+8).toString();
                     invMaxOffset++;
                 }catch(IndexOutOfBoundsException e){
-                    System.out.println(String.format("max offset is %d, from an inventory size %d, containing %d items", invMaxOffset, inventory.getInvSize(), inventory.getNumberOfItemsInInventory()));
+                    //System.out.println(String.format("max offset is %d, from an inventory size %d, containing %d items", invMaxOffset, inventory.getInvSize(), inventory.getNumberOfItemsInInventory()));
                     return;
                 }
             }
@@ -576,7 +623,7 @@ public class Battle extends JPanel{
                     current.getSkill(skillsMaxOffset+8).toString();
                     skillsMaxOffset++;
                 }catch(IndexOutOfBoundsException e){
-                    System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",skillsMaxOffset,current.getName(),current.getNumberOfSkills()));
+                    //System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",skillsMaxOffset,current.getName(),current.getNumberOfSkills()));
                     return;
                 }
             }

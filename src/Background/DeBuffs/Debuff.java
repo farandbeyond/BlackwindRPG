@@ -27,8 +27,8 @@ public class Debuff extends Effect{
     }
     @Override
     public void assign(BattleEntity e) {
-        savedDecrease = (int)(e.getStat(stat)*decrease);
-        System.out.println(savedDecrease);
+        savedDecrease = (int)(e.getBaseStat(stat)*decrease);
+        //System.out.println(savedDecrease);
         e.reduceStat(stat,savedDecrease);
     }
     @Override

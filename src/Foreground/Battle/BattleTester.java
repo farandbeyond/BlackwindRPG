@@ -32,16 +32,17 @@ public class BattleTester {
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.WILSON));
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
         
-        party2.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.ENEMYONE));
+        party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.ENEMYONE));
+        party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.ENEMYONE));
         //party.damagePartyMember(0, 25);
-        party.getMemberFromParty(0).checkForLevelUp();
-
+        
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.CURE));
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.SLICE));
         party.getMemberFromParty(1).addSkill(BattleActionLoader.loadAction(BattleActionLoader.GUST));
-
+        party.getMemberFromParty(0).giveExp(1200);
+        party.getMemberFromParty(0).checkForLevelUp();
         party.getMemberFromParty(1).checkForLevelUp();
         party.getMemberFromParty(0).equip((Equipment)ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1), 1);
         inv.add(ItemLoader.loadItem(ItemLoader.BRONZESWORD, 2));
