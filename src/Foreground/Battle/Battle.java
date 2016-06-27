@@ -27,7 +27,7 @@ import javax.swing.JPanel;
  * @author Connor
  */
 public class Battle extends JPanel{
-    private Party enemies, player;
+    private Party enemies, playerParty;
     private Inventory inventory;
     private displayBox[] enemiesDisplay, partyDisplay;
     private menuBox menu;
@@ -57,7 +57,7 @@ public class Battle extends JPanel{
         enemyTargeted = 0;
         enemiesDisplay = new displayBox[3];
         partyDisplay = new displayBox[4];
-        player = party;
+        playerParty = party;
         enemies = enemyParty;
         inventory = inv;
         //panel setup
@@ -80,6 +80,7 @@ public class Battle extends JPanel{
     public void loop(){
         try{
             while(!battleOver){
+                resetEvents();
                 prepareActions();
                 getEnemyActions();
                 sortByDex();
@@ -99,13 +100,31 @@ public class Battle extends JPanel{
     }
     
     //prepareActions
-    public void prepareActions(){
+    public void prepareActions() throws InterruptedException{
         int actingMember = 0;
-        while(actingMember<player.getCurrentPartySize()){
-            if(player.getMemberFromParty(actingMember).getIsDead()){
-                actingMember++;
+        while(actingMember<playerParty.getCurrentPartySize()){
+            //System.out.println("--");
+            //System.out.println(actingMember);
+            //for(BattleAction action:actionsLoaded){
+            //    System.out.print(action.toString());
+            //    System.out.println(actionsLoaded.indexOf(action));
+            //}
+            //System.out.println("--");
+            if(playerParty.getMemberFromParty(actingMember).getIsDead()){
+                if(cancelEvent){
+                    actingMember--;
+                    actionsLoaded.remove(actingMember);
+                    targetsLoaded.remove(actingMember);
+                }else{
+                    actionsLoaded.add(BattleActionLoader.noAction(playerParty.getMemberFromParty(actingMember)));
+                    targetsLoaded.add(playerParty.getMemberFromParty(actingMember));
+                    actingMember++;
+                }
+                System.out.println(actingMember);
             }else{
-                setAssistText(String.format("What will %s do?",player.getMemberFromParty(actingMember).getName()));
+                resetEvents();
+                Thread.sleep(10);
+                setAssistText(String.format("What will %s do?",playerParty.getMemberFromParty(actingMember).getName()));
                 turnOver = false;
                 if(!partyDisplay[actingMember].isActing())
                     partyDisplay[actingMember].toggleActing();
@@ -115,7 +134,7 @@ public class Battle extends JPanel{
                 confirmMenuPosition(menu.getMaxSelectorPosition());
                 menu.updateSelectorPosition(menuPosition);
                 if(confirmEvent){
-                    menu.setCurrent(player.getMemberFromParty(actingMember));
+                    menu.setCurrent(playerParty.getMemberFromParty(actingMember));
                     resetEvents();
                     int save = menuPosition;
                     menuPosition = 0;
@@ -123,19 +142,22 @@ public class Battle extends JPanel{
                         case 0:selectAttackTarget(actingMember);break;
                         case 1:selectSkill(actingMember);menu.loadMainMenuOptions();break;
                         case 2:selectItem(actingMember);menu.loadMainMenuOptions();break;
-                        case 3:System.exit(0);
+                        case 3:flee();break;
                     }
                     if(!cancelEvent)
                         actingMember++;
                     menuPosition = save;
                     resetEvents();
                 }
+                
                 if(cancelEvent){
                     partyDisplay[actingMember].toggleActing();
                     if(actingMember!=0){
                         actingMember--;
-                        actionsLoaded.remove(actingMember);
-                        targetsLoaded.remove(actingMember);
+                        //if(!playerParty.getMemberFromParty(actingMember).getIsDead()){
+                            actionsLoaded.remove(actingMember);
+                            targetsLoaded.remove(actingMember);
+                        //}
                     }
                     partyDisplay[actingMember].toggleActing();
                 }
@@ -145,13 +167,13 @@ public class Battle extends JPanel{
     public void selectAttackTarget(int memberActing){
         resetEvents();
         while(!cancelEvent&&!turnOver){
-            setAssistText(String.format("Who will %s attack?",player.getMemberFromParty(memberActing).getName()));
+            setAssistText(String.format("Who will %s attack?",playerParty.getMemberFromParty(memberActing).getName()));
             repaint();
             confirmEnemyTarget(enemies.getCurrentPartySize()-1);
             confirmTargetedEnemy();
             if(confirmEvent){
                 //System.out.println("Here");
-                actionsLoaded.add(BattleActionLoader.loadAttack(player.getMemberFromParty(memberActing)));
+                actionsLoaded.add(BattleActionLoader.loadAttack(playerParty.getMemberFromParty(memberActing)));
                 targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
                 turnOver = true;
                 enemiesDisplay[enemyTargeted].toggleTargeted();
@@ -177,7 +199,7 @@ public class Battle extends JPanel{
         }
     }
     public void confirmTargetedAlly(){
-        for(int i=0;i<player.getCurrentPartySize();i++){
+        for(int i=0;i<playerParty.getCurrentPartySize();i++){
             if(partyDisplay[i].isTargeted()&&i!=enemyTargeted){
                 partyDisplay[i].toggleTargeted();
                 partyDisplay[i].updateColor();
@@ -189,7 +211,7 @@ public class Battle extends JPanel{
         }
     }
     public void confirmActingMember(int acting){
-        for(int i=0;i<player.getCurrentPartySize();i++){
+        for(int i=0;i<playerParty.getCurrentPartySize();i++){
             if(partyDisplay[i].isActing()&&i!=acting){
                 partyDisplay[i].toggleActing();
                 partyDisplay[i].updateColor();
@@ -205,7 +227,7 @@ public class Battle extends JPanel{
         menu.switchMenu(menuBox.MAIN, menuBox.SKILLS);
         menu.loadSkills();
         while(!cancelEvent&&!turnOver){
-            setAssistText(String.format("What will %s do?",player.getMemberFromParty(memberActing).getName()));
+            setAssistText(String.format("What will %s do?",playerParty.getMemberFromParty(memberActing).getName()));
             repaint();
             confirmMenuPosition(menu.getMaxSelectorPosition());
             menuPosition = menu.updateSkillsOffsetSelectorPosition(menuPosition);
@@ -223,7 +245,7 @@ public class Battle extends JPanel{
         resetEvents();
         menu.switchMenu(menuBox.MAIN, menuBox.ITEMS);
         while(!cancelEvent&&!turnOver){
-            setAssistText(String.format("What will %s use?",player.getMemberFromParty(memberActing).getName()));
+            setAssistText(String.format("What will %s use?",playerParty.getMemberFromParty(memberActing).getName()));
             menu.loadItems();
             repaint();
             confirmMenuPosition(menu.getMaxSelectorPosition());
@@ -243,12 +265,12 @@ public class Battle extends JPanel{
         while(!cancelEvent&&!turnOver){
             setAssistText(String.format("Who will be targeted by %s's %s",selectedAction.getCaster().getName(),selectedAction.getName()));
             repaint();
-            confirmEnemyTarget(player.getCurrentPartySize()-1);
+            confirmEnemyTarget(playerParty.getCurrentPartySize()-1);
             confirmTargetedAlly();
             if(confirmEvent){
                 //System.out.println("Here");
                 actionsLoaded.add(selectedAction);
-                targetsLoaded.add(player.getMemberFromParty(enemyTargeted));
+                targetsLoaded.add(playerParty.getMemberFromParty(enemyTargeted));
                 turnOver = true;
                 partyDisplay[enemyTargeted].toggleTargeted();
                 return;
@@ -263,14 +285,14 @@ public class Battle extends JPanel{
     public void selectAllyTarget(int memberActing, Item selectedItem){
         resetEvents();
         while(!cancelEvent&&!turnOver){
-            setAssistText(String.format("Who will be targeted by %s's %s",player.getMemberFromParty(memberActing).getName(),selectedItem.getName()));
+            setAssistText(String.format("Who will be targeted by %s's %s",playerParty.getMemberFromParty(memberActing).getName(),selectedItem.getName()));
             repaint();
-            confirmEnemyTarget(player.getCurrentPartySize()-1);
+            confirmEnemyTarget(playerParty.getCurrentPartySize()-1);
             confirmTargetedAlly();
             if(confirmEvent){
                 //System.out.println("Here");
-                actionsLoaded.add(BattleActionLoader.loadItemAction(player.getMemberFromParty(memberActing), selectedItem));
-                targetsLoaded.add(player.getMemberFromParty(enemyTargeted));
+                actionsLoaded.add(BattleActionLoader.loadItemAction(playerParty.getMemberFromParty(memberActing), selectedItem));
+                targetsLoaded.add(playerParty.getMemberFromParty(enemyTargeted));
                 turnOver = true;
                 partyDisplay[enemyTargeted].toggleTargeted();
                 return;
@@ -307,13 +329,13 @@ public class Battle extends JPanel{
     public void selectEnemyTarget(int memberActing, Item selectedItem){
         resetEvents();
         while(!cancelEvent&&!turnOver){
-            setAssistText(String.format("Who will be targeted by %s's %s",player.getMemberFromParty(memberActing).getName(),selectedItem.getName()));
+            setAssistText(String.format("Who will be targeted by %s's %s",playerParty.getMemberFromParty(memberActing).getName(),selectedItem.getName()));
             repaint();
             confirmEnemyTarget(enemies.getCurrentPartySize()-1);
             confirmTargetedEnemy();
             if(confirmEvent){
                 //System.out.println("Here");
-                actionsLoaded.add(BattleActionLoader.loadItemAction(player.getMemberFromParty(memberActing), selectedItem));
+                actionsLoaded.add(BattleActionLoader.loadItemAction(playerParty.getMemberFromParty(memberActing), selectedItem));
                 targetsLoaded.add(enemies.getMemberFromParty(enemyTargeted));
                 turnOver = true;
                 enemiesDisplay[enemyTargeted].toggleTargeted();
@@ -330,7 +352,7 @@ public class Battle extends JPanel{
     public void getEnemyActions(){
         for(int i=0;i<enemies.getCurrentPartySize();i++){
             if(enemies.getMemberFromParty(i).getIsDead()){
-                
+                //do nothing: Dead enemies do not act
             }else{
                 boolean actionLoaded;
                 do{
@@ -345,9 +367,9 @@ public class Battle extends JPanel{
 
                         }
                     }else{
-                        BattleEntity target = player.getMemberFromParty(rand.nextInt(player.getCurrentPartySize()));
+                        BattleEntity target = playerParty.getMemberFromParty(rand.nextInt(playerParty.getCurrentPartySize()));
                         if(!target.getIsDead()){
-                            targetsLoaded.add(player.getMemberFromParty(rand.nextInt(player.getCurrentPartySize())));
+                            targetsLoaded.add(playerParty.getMemberFromParty(rand.nextInt(playerParty.getCurrentPartySize())));
                             actionsLoaded.add(aTL);
                             actionLoaded = true;
                         }
@@ -414,8 +436,8 @@ public class Battle extends JPanel{
                 enemiesDead = false;
             }
         }
-        for(int i=0;i<player.getCurrentPartySize();i++){
-            if(!player.getMemberFromParty(i).getIsDead()){
+        for(int i=0;i<playerParty.getCurrentPartySize();i++){
+            if(!playerParty.getMemberFromParty(i).getIsDead()){
                 partyDead = false;
             }
         }
@@ -426,15 +448,15 @@ public class Battle extends JPanel{
     //buffs
     public void tickBuffs(){
         if(battleOver){
-            for(int i=0;i<player.getCurrentPartySize();i++){
-                player.getMemberFromParty(i).removeAllEffects();
+            for(int i=0;i<playerParty.getCurrentPartySize();i++){
+                playerParty.getMemberFromParty(i).removeAllEffects();
             }
             for(int i=0;i<enemies.getCurrentPartySize();i++){
                 enemies.getMemberFromParty(i).removeAllEffects();
             }
         }else{
-            for(int i=0;i<player.getCurrentPartySize();i++){
-                player.getMemberFromParty(i).tickAllEffects();
+            for(int i=0;i<playerParty.getCurrentPartySize();i++){
+                playerParty.getMemberFromParty(i).tickAllEffects();
                 //player.getMemberFromParty(i).printAllEffects();
                 //player.printMembersStats(i);
             }
@@ -470,18 +492,21 @@ public class Battle extends JPanel{
         assistText = text;
     }
     //end battle
+    public void flee(){
+        System.exit(0);
+    }
     public void endBattle() throws InterruptedException{
         int xpGained = 0;
         for(int i=0;i<enemies.getCurrentPartySize();i++){
             xpGained+=enemies.getMemberFromParty(i).getExp();
         }
-        for(int i=0;i<player.getCurrentPartySize();i++){
-            if(!player.getMemberFromParty(i).getIsDead()){
-                player.getMemberFromParty(i).giveExp(xpGained);
-                setAssistText(String.format("%s gained %d experience", player.getMemberFromParty(i).getName(),xpGained));
+        for(int i=0;i<playerParty.getCurrentPartySize();i++){
+            if(!playerParty.getMemberFromParty(i).getIsDead()){
+                playerParty.getMemberFromParty(i).giveExp(xpGained);
+                setAssistText(String.format("%s gained %d experience", playerParty.getMemberFromParty(i).getName(),xpGained));
                 repaint();
                 Thread.sleep(500);
-                String levelUp = player.getMemberFromParty(i).checkForLevelUp();
+                String levelUp = playerParty.getMemberFromParty(i).checkForLevelUp();
                 if(!levelUp.equals("")){
                     setAssistText(levelUp);
                     repaint();

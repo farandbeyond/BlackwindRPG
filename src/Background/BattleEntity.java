@@ -15,6 +15,7 @@ import Background.BattleActions.Spell;
 import Background.DeBuffs.*;
 import Background.Items.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class BattleEntity {
@@ -206,8 +207,13 @@ public class BattleEntity {
         while(exp>=expRequiredToLevel){
             level++;
             //System.out.println("Level Up");
-            for(Stat stat:stats){
-                stat.levelUp();
+            //for(Stat stat:stats){
+            //    stat.levelUp();
+            //}
+            for(int i=0;i<stats.length;i++){
+                if(i!=StatID.HP&&i!=StatID.MP){
+                    stats[i].levelUp();
+                }
             }
             xpToLevel();
         }
@@ -339,8 +345,7 @@ public class BattleEntity {
     }
     public void printAllStats(){
         for(int i=0;i<stats.length;i++){
-            System.out.printf("%s: %d", StatID.getStatName(i),getStat(i));
-            
+            System.out.printf("-%s: %d-", StatID.getStatName(i),getStat(i));
         }
         System.out.println();
     }
@@ -412,9 +417,8 @@ public class BattleEntity {
     public String toString(){
         return name;
     }
-    
-    
     private class Stat{
+        private Random rand = new Random();
         int baseStat;
         int modifiedStat;
         double statGrowth;
@@ -449,6 +453,7 @@ public class BattleEntity {
         }
         //ajustments
         public void levelUp(){
+            growthOverflow+=rand.nextInt(2);
             growthOverflow+=statGrowth;
             while(growthOverflow>1){
                 baseStat++;
@@ -474,5 +479,9 @@ public class BattleEntity {
         public int getModifiedStat(){return modifiedStat;}
         public double getStatGrowth(){return statGrowth;}
         public double getGrowthOverflow(){return growthOverflow;}
+    }
+    
+    public static void main(String[] args){
+        EntityTester.main(args);
     }
 }

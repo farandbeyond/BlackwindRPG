@@ -5,15 +5,9 @@
         <group>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Battle/Battle.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleEntityLoader.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/DeBuffs/Effect.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/DeBuffs/Debuff.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleEntity.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleActions/BattleActionLoader.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleActions/EffectSpell.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/StatID.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Battle/BattleTester.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/DeBuffs/Buff.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/Party/Party.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleActions/SelfBuff.java</file>
         </group>
     </open-files>
 </project-private>
