@@ -26,6 +26,9 @@ public class BattleActionLoader {
     public static BattleAction loadAttack(BattleEntity caster){
         return new PhysicalAction(caster,"Attack","The basic attack action everyone has",1,1,StatID.STR,StatID.VIT,ElementHandler.NEUTRAL);
     }
+    public static BattleAction noAction(BattleEntity caster){
+        return new DeathAction(caster,"Dead","Caster was dead at round start");
+    }
     public static BattleAction loadAttack(BattleEntity caster, int newBase, int newRoll){
         return new PhysicalAction(caster,"Attack","The basic attack action everyone has",newBase,newRoll,StatID.STR,StatID.VIT,ElementHandler.NEUTRAL);
     }

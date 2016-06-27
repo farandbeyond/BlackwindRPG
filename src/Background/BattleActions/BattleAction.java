@@ -33,4 +33,7 @@ public abstract class BattleAction {
     public BattleAction(BattleEntity caster){
         this.caster = caster;
     }
+    public String toString(){
+        return String.format("%s, cast by %s", name,caster.getName());
+    }
 }

@@ -31,8 +31,7 @@ public class BattleTester {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.WILSON));
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
-        party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
-        party.damagePartyMember(1, 100);
+        //party.damagePartyMember(1, 100);
         
         party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.ENEMYONE));
         party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.HEALBOT));
@@ -43,6 +42,7 @@ public class BattleTester {
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.SLICE));
         party.getMemberFromParty(1).addSkill(BattleActionLoader.loadAction(BattleActionLoader.GUST));
+        party.getMemberFromParty(0).equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
         party.getMemberFromParty(0).giveExp(1200);
         party.getMemberFromParty(0).checkForLevelUp();
         party.getMemberFromParty(1).checkForLevelUp();
