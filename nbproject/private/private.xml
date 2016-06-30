@@ -3,11 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Battle/Battle.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleEntityLoader.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleEntity.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/StatID.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Battle/BattleTester.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/TempTextBox.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/Event.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/ItemSegment.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/TextSegment.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/EventSegment.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/EventReader.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/Items/Inventory.java</file>
         </group>
     </open-files>
 </project-private>
