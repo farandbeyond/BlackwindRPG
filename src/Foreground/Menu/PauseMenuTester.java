@@ -11,6 +11,8 @@ import Background.Items.Equipment;
 import Background.Items.Inventory;
 import Background.Items.ItemLoader;
 import Background.Party.Party;
+import Foreground.Battle.Battle;
+import Foreground.Battle.BattleTester;
 import javax.swing.*;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
@@ -24,6 +26,9 @@ public class PauseMenuTester {
         JFrame frame = new JFrame();
         Party party = new Party(4);
         Inventory inv = new Inventory(15);
+
+        
+        
         frame.setLayout(null);
         frame.setSize(618, 480);
         frame.setVisible(true);
@@ -52,7 +57,13 @@ public class PauseMenuTester {
         inv.add(ItemLoader.loadItem(ItemLoader.REJUVI, 10));
         inv.add(ItemLoader.loadItem(ItemLoader.WINDBOMB, 12));
         inv.add(ItemLoader.loadItem(ItemLoader.IRONSWORD, 1));
-        PauseMenu menu = new PauseMenu(frame,party,inv);
+        PauseMenu menu = new PauseMenu(party,inv);
+        
+        //Battle b = new Battle(party,inv,party);
+        
+        frame.addKeyListener(menu.getKL());
+        frame.add(menu);
         menu.run(party, inv);
+        BattleTester.fromInv(args, inv, party,frame);
     }
 }

@@ -59,7 +59,18 @@ public class BattleTester {
         inv.add(ItemLoader.loadItem(ItemLoader.REJUVI, 10));
         inv.add(ItemLoader.loadItem(ItemLoader.WINDBOMB, 12));
         inv.add(ItemLoader.loadItem(ItemLoader.IRONSWORD, 1));
-        Battle battle = new Battle(party,inv,party2,frame);
+        Battle battle = new Battle(party,inv,party2);
+        frame.add(battle);
+        frame.addKeyListener(battle.getKL());
+        battle.loop();
+    }
+    public static void fromInv(String[] args, Inventory inv, Party p, JFrame frame){
+        Party party2 = new Party(3);
+        party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.ENEMYONE));
+        party2.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.HEALBOT));
+        Battle battle = new Battle(p,inv,party2);
+        frame.add(battle);
+        frame.addKeyListener(battle.getKL());
         battle.loop();
     }
 }

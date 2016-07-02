@@ -39,7 +39,7 @@ public class Battle extends JPanel{
     private ArrayList<BattleEntity> targetsLoaded;
     private boolean battleOver,turnOver;
     private Random rand;
-    public Battle(Party party, Inventory inv, Party enemyParty,JFrame frame){
+    public Battle(Party party, Inventory inv, Party enemyParty){
         //panel setup
         this.setLayout(null);
         this.setSize(612,480);
@@ -73,8 +73,7 @@ public class Battle extends JPanel{
         }
         kb = new Joystick();
         battleOver = false;
-        frame.addKeyListener(kb);
-        frame.add(this);
+        //frame.add(this);
     }
     //battle loop
     public void loop(){
@@ -855,7 +854,7 @@ public class Battle extends JPanel{
                 case KeyEvent.VK_A:leftEvent();break;
                 case KeyEvent.VK_S:downEvent();break;
                 case KeyEvent.VK_D:rightEvent();break;
-                //case KeyEvent.VK_ENTER:menuEvent();break;
+                case KeyEvent.VK_ENTER:menuEvent();break;
             }
         }
         @Override
@@ -868,6 +867,8 @@ public class Battle extends JPanel{
     public void downEvent(){menuPosition++;}
     public void leftEvent(){enemyTargeted--;}
     public void rightEvent(){enemyTargeted++;}
+    public void menuEvent(){}
+    public Joystick getKL(){return kb;}
     //public void menuEvent(){System.exit(0);}
     public static void main(String[] args){
         BattleTester.main(args);

@@ -21,7 +21,7 @@ import javax.swing.*;
  *
  * @author Connor
  */
-public class PauseMenu extends JPanel{
+public class PauseMenu extends JPanel {
     private final int menus = 5;
     private final int 
             OPTIONS=0,
@@ -39,7 +39,7 @@ public class PauseMenu extends JPanel{
     SpellsMenu spellsView;
     boolean[] visible;
     Joystick joystick;
-    PauseMenu(JFrame frame,Party p, Inventory inv){
+    PauseMenu(Party p, Inventory inv){
         //local variables
         menuPosition=0;
         confirmEvent=false;
@@ -67,8 +67,6 @@ public class PauseMenu extends JPanel{
         this.add(statusView);
         this.add(spellsView);
         joystick = new Joystick();
-        frame.addKeyListener(joystick);
-        frame.add(this);
     }
     
     public void run(Party p, Inventory inv){
@@ -79,7 +77,7 @@ public class PauseMenu extends JPanel{
             resetEvents();
             menuLoop();
         }
-        System.exit(0);
+        //System.exit(0);
     }
     //main menu loop
     public void menuLoop(){
@@ -612,6 +610,7 @@ public class PauseMenu extends JPanel{
     public void leftEvent(){}
     public void rightEvent(){}
     public void menuEvent(){System.exit(0);}
+    public Joystick getKL(){return joystick;}
     public static void main(String[] args){
         PauseMenuTester.main(args);
     }
