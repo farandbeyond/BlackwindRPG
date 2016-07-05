@@ -50,6 +50,7 @@ public class Inventory {
         }
         if(inventory.size()<invSize){
               inventory.add(i);
+              updateInventory();
               return;
         }
         throw new Error("Couldnt add item");

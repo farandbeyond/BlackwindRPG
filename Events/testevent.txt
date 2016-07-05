@@ -1,0 +1,30 @@
+!repeatable
+;this is a comment
+;a '-' is needed after any text event less than 4 lines long.
+-text
+this is an event meant to test the EventReader Class
+you will be receiving an item directly after this
+-endText
+-item
+0x6
+;6x potion
+-item
+400x2
+;2x cure scroll
+-text
+i hope you enjoy the item!
+-endText
+-text
+actually, do you have room for one more?
+i've been searching for some action,
+and it seems like you could use the help.
+im pretty handy in combat you know!
+-pmem
+2
+-pmem
+1
+-pmem
+3
+-text
+you won't regret this!
+-endText

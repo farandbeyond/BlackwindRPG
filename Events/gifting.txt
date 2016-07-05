@@ -1,0 +1,33 @@
+repeatable
+-text
+Hey buddy. want some items?
+100% free, only for my best friends
+-end
+-text
+Here ya go buddy. enjoy
+-end
+-item
+0x5
+-item
+1x5
+-item
+3x1
+-item
+100x5
+-item
+101x5
+-item
+102x5
+-item
+103x5
+-item
+300x4
+-item
+301x4
+-item
+403x4
+-item
+401x1
+-text
+hehe. Ive got plenty more if you need another batch
+-end

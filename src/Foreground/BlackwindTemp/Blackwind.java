@@ -5,6 +5,7 @@
  */
 package Foreground.BlackwindTemp;
 
+import Background.BattleActions.BattleActionLoader;
 import Background.BattleEntity;
 import Background.BattleEntityLoader;
 import Background.Items.*;
@@ -19,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -124,6 +126,7 @@ public class Blackwind extends JPanel{
                     textBox.loadEvent(s.getEvent());
                     gameState = EVENT;
                     System.out.println("Event in trigger");
+                    s.faceAway(mc.getDirection());
                     return;
                 }
             }catch(NullPointerException e){
@@ -272,7 +275,8 @@ public class Blackwind extends JPanel{
     }
     public void loadBattle(){
         //System.out.println("Opening menu");
-        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(0),this);
+        Random rand = new Random();
+        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(rand.nextInt(5)),this);
         battle.loop();
         //System.out.println("Closing menu");
     }
@@ -347,14 +351,16 @@ public class Blackwind extends JPanel{
         Map m = Map.loadMap("maxSize2.txt");
         m.addSprite(new Sprite(0,"Wall Man",10,10,0));
         m.addSprite(new Sprite(0,"Corner Man",3,19,0));
+        m.addSprite(new Sprite(0,"Shady Salesman",6,6,0));
         
         Event e = new Event(false);
         e.addSegment(new TextSegment("My name is wilson rose","","",""));
         e.addSegment(new ItemSegment(ItemLoader.POTION,5));
         e.addSegment(new ItemSegment(ItemLoader.BRONZESWORD,1));
         e.addSegment(new TextSegment("this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times"));
-        m.getSpriteList().get(0).setEvent(e);
-        
+        m.getSpriteList().get(1).setEvent(e);
+        m.getSpriteList().get(0).setEvent(EventReader.loadEvent("testevent"));
+        m.getSpriteList().get(2).setEvent(EventReader.loadEvent("gifting"));
         
         Blackwind g = new Blackwind(m,0,0);
         
@@ -362,6 +368,8 @@ public class Blackwind extends JPanel{
         g.inv.add(ItemLoader.loadItem(0, 10));
         BattleEntity b = BattleEntityLoader.loadEntity(0);
         b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
         g.party.addPartyMember(b);
         
         //g.getMenu().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));

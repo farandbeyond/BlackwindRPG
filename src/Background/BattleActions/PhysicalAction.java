@@ -42,7 +42,7 @@ public class PhysicalAction extends BattleAction{
         if(getCaster().getWeapon()!=null){
             damage+=getCaster().getWeapon().attackDamage();
         }
-        damage+=baseDamage+rand.nextInt(rollDamage)+getCaster().getStat(damageStat)/6;
+        damage+=baseDamage+rand.nextInt(rollDamage)+getCaster().getStat(damageStat)/2;
         damage-=target.getStat(resistStat)/3;
         if(ElementHandler.handler(element, target.getElement())<0)
             damage*=ElementHandler.handler(element, target.getElement());

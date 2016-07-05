@@ -106,7 +106,7 @@ public class InventoryMenu extends JPanel{
         selectorVisible=true;
     }
     
-    public void updateInventory(Inventory i){inv=i;}
+    public void updateInventory(Inventory i){inv=i;refreshInventory();}
     
     public void paint(Graphics g){
         g.setColor(Color.cyan);

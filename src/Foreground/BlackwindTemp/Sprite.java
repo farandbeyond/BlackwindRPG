@@ -140,6 +140,13 @@ public class Sprite {
     public void setFacingDirection(int direction){
         facingDirection = direction;
     }
+    public void faceAway(int direction){
+        if(direction%2==0)
+            direction--;
+        else
+            direction++;
+        facingDirection = direction;
+    }
     
     public BufferedImage animate(int sheetRow){
         //this is a temp thing. it will be updated soon

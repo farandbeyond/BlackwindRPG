@@ -42,7 +42,7 @@ public class Weapon extends Equipment{
     }
     //getsWeaponDamage
     public int attackDamage(){
-        return baseDamage+rand.nextInt(rollDamage)+getEquipper().getStat(StatID.STR)/6;
+        return baseDamage+rand.nextInt(rollDamage);
     }
     //gets
     public int getBaseDamage(){return baseDamage;}
