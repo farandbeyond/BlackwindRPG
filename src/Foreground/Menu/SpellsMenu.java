@@ -7,6 +7,7 @@ package Foreground.Menu;
 
 import Background.BattleActions.BattleAction;
 import Background.BattleEntity;
+import Foreground.BlackwindTemp.Tile;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -40,8 +41,8 @@ public class SpellsMenu extends JPanel{
             try{
                 viewed.getSkill(maxOffset+10).toString();
                 maxOffset++;
-            }catch(IndexOutOfBoundsException e){
-                System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",maxOffset,viewed.getName(),viewed.getNumberOfSkills()));
+            }catch(IndexOutOfBoundsException|NullPointerException e){
+                //System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",maxOffset,viewed.getName(),viewed.getNumberOfSkills()));
                 return;
             }
         }
@@ -99,9 +100,9 @@ public class SpellsMenu extends JPanel{
     //paint
     public void paint(Graphics g){
         g.setColor(Color.green);
-        g.fillRect(0, 0, 400, 480);
+        g.fillRect(0, 0, 400, 480+Tile.tileSize);
         g.setColor(Color.black);
-        g.drawRect(0, 0, 400, 480);
+        g.drawRect(0, 0+Tile.tileSize, 400, 480+Tile.tileSize);
         g.setFont(new Font("Courier New", Font.BOLD, 20));
         for(int i=0;i<10;i++){
             try{

@@ -6,6 +6,7 @@
 package Foreground.Menu;
 
 import Background.Items.*;
+import Foreground.BlackwindTemp.Tile;
 import java.awt.*;
 import javax.swing.*;
 
@@ -109,9 +110,9 @@ public class InventoryMenu extends JPanel{
     
     public void paint(Graphics g){
         g.setColor(Color.cyan);
-        g.fillRect(0, 0, 400, 480);
+        g.fillRect(0, 0, 400, 480+Tile.tileSize);
         g.setColor(Color.black);
-        g.drawRect(0, 0, 400, 480);
+        g.drawRect(0, 0+Tile.tileSize, 400, 480+Tile.tileSize);
         g.setFont(new Font("Courier New", Font.BOLD, 20));
         for(int i=0;i<10;i++){
             try{

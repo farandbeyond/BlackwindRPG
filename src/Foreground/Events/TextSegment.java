@@ -22,6 +22,6 @@ public class TextSegment extends EventSegment{
         text[3]=line4;
     }
     public String activate(Inventory i, Party p) {
-        return String.format("%s$n%s$n%s$n%s", text[0],text[1],text[2],text[3]);
+        return String.format("%s\n%s\n%s\n%s", text[0],text[1],text[2],text[3]);
     }
 }

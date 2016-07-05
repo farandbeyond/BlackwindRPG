@@ -5,6 +5,7 @@
  */
 package Foreground.Menu;
 
+import Foreground.BlackwindTemp.Tile;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -105,9 +106,9 @@ public class OptionsMenu extends JPanel{
     }
     public void paint(Graphics g){
         g.setColor(Color.red);
-        g.fillRect(400, 0, 618, 480);
+        g.fillRect(400, 0, 618, 480+Tile.tileSize);
         g.setColor(Color.black);
-        g.drawRect(400, 0, 618, 410);
+        g.drawRect(400, 0, 618, 410+Tile.tileSize);
         g.setFont(new Font("Monospaced", Font.BOLD, 20));
         for(int i=0;i<maxOptions;i++){
             g.drawString(optionsDisplayed[i], distFromLeft+390, distFromTop+40*i);

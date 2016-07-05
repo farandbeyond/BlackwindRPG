@@ -29,7 +29,7 @@ public class Tile{
     public static void startUp(){
         System.out.println("Tile Startup Commenced");
         try{
-            loadTile(0,"Void",true,"void");
+            loadTile(0,"Void",false,"void");
             loadTile(1,"Floor",true,"floor2");
             loadTile(2,"Wall",false,"wall2");
             

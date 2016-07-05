@@ -7,6 +7,7 @@ package Foreground.Menu;
 
 import Background.BattleEntity;
 import Background.StatID;
+import Foreground.BlackwindTemp.Tile;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -51,9 +52,9 @@ public class StatusMenu extends JPanel{
     
     public void paint(Graphics g){
         g.setColor(Color.magenta);
-        g.fillRect(0, 0, 400, 480);
+        g.fillRect(0, 0, 400, 480+Tile.tileSize);
         g.setColor(Color.black);
-        g.drawRect(0, 0, 400, 480);
+        g.drawRect(0, 0+Tile.tileSize, 400, 480+Tile.tileSize);
         g.setFont(new Font("Courier New", Font.BOLD, 20));
         g.drawString(displayed.getName(),30,75);
         g.drawString(String.format("Level %d", displayed.getLevel()), 230, 75);

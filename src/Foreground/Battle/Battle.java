@@ -12,6 +12,8 @@ import Background.Items.Inventory;
 import Background.Items.Item;
 import Background.Party.Party;
 import Background.StatID;
+import Foreground.BlackwindTemp.Blackwind;
+import Foreground.BlackwindTemp.Tile;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -37,13 +39,15 @@ public class Battle extends JPanel{
     private Joystick kb;
     private ArrayList<BattleAction> actionsLoaded;
     private ArrayList<BattleEntity> targetsLoaded;
-    private boolean battleOver,turnOver;
+    private boolean battleOver,turnOver,flee;
     private Random rand;
+    
+    Blackwind engine;
     public Battle(Party party, Inventory inv, Party enemyParty){
         //panel setup
         this.setLayout(null);
-        this.setSize(612,480);
-        this.setLocation(0, 0);
+        this.setSize(640,480);
+        this.setLocation(32, 32);
         this.setVisible(true);
         //instance variable setup
         rand = new Random();
@@ -53,6 +57,7 @@ public class Battle extends JPanel{
         confirmEvent = false;
         cancelEvent = false;
         turnOver = false;
+        flee = false;
         menuPosition = 0;
         enemyTargeted = 0;
         enemiesDisplay = new displayBox[3];
@@ -75,6 +80,55 @@ public class Battle extends JPanel{
         battleOver = false;
         //frame.add(this);
     }
+    
+    public Battle(Party party, Inventory inv, Party enemyParty, Blackwind b){
+        sendEngine(b);
+        //panel setup
+        this.setLayout(null);
+        this.setSize(612,480);
+        this.setLocation(0, 0);
+        this.setVisible(true);
+        //instance variable setup
+        rand = new Random();
+        actionsLoaded = new ArrayList<>();
+        targetsLoaded = new ArrayList<>();
+        assistText = "";
+        confirmEvent = false;
+        cancelEvent = false;
+        turnOver = false;
+        flee = false;
+        menuPosition = 0;
+        enemyTargeted = 0;
+        enemiesDisplay = new displayBox[3];
+        partyDisplay = new displayBox[4];
+        playerParty = party;
+        enemies = enemyParty;
+        inventory = inv;
+        //panel setup
+        menu = new menuBox(party.getMemberFromParty(0));
+        this.add(menu);
+        for(int i=0;i<3;i++){
+            enemiesDisplay[i]=new displayBox(i*150+30,20,150,150,enemies.getMemberFromParty(i));
+            this.add(enemiesDisplay[i]);
+        }
+        for(int i=0;i<4;i++){
+            partyDisplay[i]=new displayBox(i*100,270,100,150,party.getMemberFromParty(i));
+            this.add(partyDisplay[i]);
+        }
+        kb = new Joystick();
+        battleOver = false;
+        //frame.add(this);
+    }
+    public void sendEngine(Blackwind b){
+        engine = b;
+    }
+    public void repaint(){
+        try{
+            engine.repaint();
+        }catch(NullPointerException e){
+            System.out.println("engine currently null");
+        }
+    }
     //battle loop
     public void loop(){
         try{
@@ -83,13 +137,9 @@ public class Battle extends JPanel{
                 prepareActions();
                 getEnemyActions();
                 sortByDex();
-
-                    executeAllActions();
-
-
+                executeAllActions();
                 checkForBattleOver();
                 tickBuffs();
-                //System.out.println("Looped once");
             }
             endBattle();
         }catch(InterruptedException e){
@@ -492,33 +542,40 @@ public class Battle extends JPanel{
     }
     //end battle
     public void flee(){
-        System.exit(0);
+        flee = true;
+        battleOver = true;
     }
     public void endBattle() throws InterruptedException{
-        int xpGained = 0;
-        for(int i=0;i<enemies.getCurrentPartySize();i++){
-            xpGained+=enemies.getMemberFromParty(i).getExp();
-        }
-        for(int i=0;i<playerParty.getCurrentPartySize();i++){
-            if(!playerParty.getMemberFromParty(i).getIsDead()){
-                playerParty.getMemberFromParty(i).giveExp(xpGained);
-                setAssistText(String.format("%s gained %d experience", playerParty.getMemberFromParty(i).getName(),xpGained));
-                repaint();
-                Thread.sleep(500);
-                String levelUp = playerParty.getMemberFromParty(i).checkForLevelUp();
-                if(!levelUp.equals("")){
-                    setAssistText(levelUp);
+        if(!flee){
+            int xpGained = 0;
+            for(int i=0;i<enemies.getCurrentPartySize();i++){
+                xpGained+=enemies.getMemberFromParty(i).getExp();
+            }
+            for(int i=0;i<playerParty.getCurrentPartySize();i++){
+                if(!playerParty.getMemberFromParty(i).getIsDead()){
+                    playerParty.getMemberFromParty(i).giveExp(xpGained);
+                    setAssistText(String.format("%s gained %d experience", playerParty.getMemberFromParty(i).getName(),xpGained));
                     repaint();
-                    Thread.sleep(1500);
+                    Thread.sleep(500);
+                    String levelUp = playerParty.getMemberFromParty(i).checkForLevelUp();
+                    if(!levelUp.equals("")){
+                        setAssistText(levelUp);
+                        repaint();
+                        Thread.sleep(1500);
+                    }
                 }
             }
+        }else{
+            setAssistText("Fled battle");
+            Thread.sleep(1500);
         }
+        Blackwind.gameState = Blackwind.MAP;
         
     }
     //paint
     public void paint(Graphics g){
         g.setColor(Color.yellow);
-        g.fillRect(0, 0, 612, 480);
+        g.fillRect(0+Tile.tileSize, 0+Tile.tileSize, 612, 480);
         g.setFont(new Font("Courier New", Font.BOLD, 15));
         for(int i=0;i<3;i++){
             enemiesDisplay[i].paint(g);
@@ -529,7 +586,7 @@ public class Battle extends JPanel{
         menu.paint(g);
         g.setFont(new Font("Courier New", Font.BOLD, 15));
         if(assistText.length()<40){
-            g.drawString(assistText, 10, 190);
+            g.drawString(assistText, 10+Tile.tileSize, 190+Tile.tileSize);
         }else{
             int split = 0;
             for(int i=19;i<41;i++){
@@ -539,8 +596,8 @@ public class Battle extends JPanel{
                 }
                     
             }
-            g.drawString(assistText.substring(0, split), 10, 190);
-            g.drawString(assistText.substring(split+1), 10, 220);
+            g.drawString(assistText.substring(0, split), 10+Tile.tileSize, 190+Tile.tileSize);
+            g.drawString(assistText.substring(split+1), 10+Tile.tileSize, 220+Tile.tileSize);
         }
     }
     //subclass jpanels
@@ -611,22 +668,22 @@ public class Battle extends JPanel{
             updateColor();
             try{
                 g.setColor(currentColor);
-                g.fillRect(myX, myY, myWidth, myHeight);
+                g.fillRect(myX+Tile.tileSize, myY+Tile.tileSize, myWidth, myHeight);
             }catch(NullPointerException e){
                 g.setColor(Color.gray);
-                g.fillRect(myX, myY, myWidth, myHeight);
+                g.fillRect(myX+Tile.tileSize, myY+Tile.tileSize, myWidth, myHeight);
             }
             g.setColor(Color.black);
-            g.drawRect(myX, myY, myWidth, myHeight);
+            g.drawRect(myX+Tile.tileSize, myY+Tile.tileSize, myWidth, myHeight);
             g.setFont(new Font("Courier New", Font.BOLD, 15));
             try{
-               g.drawString(displayed.getName(),myX+10 ,myY+40);
-               g.drawString(String.format("%d/%d hp", displayed.getStat(StatID.HP),displayed.getStat(StatID.MAXHP)),myX+10 ,myY+70);
-               g.drawString(String.format("%d/%d mp", displayed.getStat(StatID.MP),displayed.getStat(StatID.MAXMP)),myX+10 ,myY+100);
+               g.drawString(displayed.getName(),myX+10+Tile.tileSize ,myY+40+Tile.tileSize);
+               g.drawString(String.format("%d/%d hp", displayed.getStat(StatID.HP),displayed.getStat(StatID.MAXHP)),myX+10+Tile.tileSize ,myY+70+Tile.tileSize);
+               g.drawString(String.format("%d/%d mp", displayed.getStat(StatID.MP),displayed.getStat(StatID.MAXMP)),myX+10+Tile.tileSize ,myY+100+Tile.tileSize);
             }catch(NullPointerException e){
-               g.drawString("----",myX+10 ,myY+40);
-               g.drawString("--/-- hp",myX+10 ,myY+70);
-               g.drawString("--/-- hp",myX+10 ,myY+100);
+               g.drawString("----",     myX+10+Tile.tileSize ,myY+40+Tile.tileSize);
+               g.drawString("--/-- hp", myX+10+Tile.tileSize ,myY+70+Tile.tileSize);
+               g.drawString("--/-- hp", myX+10+Tile.tileSize ,myY+100+Tile.tileSize);
             }
         }
     }
@@ -731,7 +788,7 @@ public class Battle extends JPanel{
                 try{
                     current.getSkill(skillsMaxOffset+8).toString();
                     skillsMaxOffset++;
-                }catch(IndexOutOfBoundsException e){
+                }catch(IndexOutOfBoundsException|NullPointerException e){
                     //System.out.println(String.format("Max offset is %d, looking at the entity %s with %d skills",skillsMaxOffset,current.getName(),current.getNumberOfSkills()));
                     return;
                 }
@@ -828,14 +885,14 @@ public class Battle extends JPanel{
         //paint
         public void paint(Graphics g){
             g.setColor(Color.GREEN);
-            g.fillRect(myX, myY, myWidth, myHeight);
+            g.fillRect(myX+Tile.tileSize, myY+Tile.tileSize, myWidth, myHeight);
             g.setColor(Color.black);
-            g.drawRect(myX, myY, myWidth, myHeight);
+            g.drawRect(myX+Tile.tileSize, myY+Tile.tileSize, myWidth, myHeight);
             g.setFont(new Font("Courier New", Font.BOLD, 16));
             for(int i=0;i<8;i++){
-                g.drawString(menuOptions[i], myX+20, myY+20+30*i);
+                g.drawString(menuOptions[i], myX+20+Tile.tileSize, myY+Tile.tileSize+20+30*i);
             }
-            g.drawString(">", myX, myY+20+30*selectorPosition);
+            g.drawString(">", myX+Tile.tileSize, myY+Tile.tileSize+20+30*selectorPosition);
         }
         
 
@@ -871,6 +928,6 @@ public class Battle extends JPanel{
     public Joystick getKL(){return kb;}
     //public void menuEvent(){System.exit(0);}
     public static void main(String[] args){
-        BattleTester.main(args);
+        Blackwind.main(args);
     }
 }

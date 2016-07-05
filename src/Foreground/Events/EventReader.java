@@ -22,7 +22,7 @@ public class EventReader {
     
     public static Event loadEvent(String fileName){
         try {
-            Event e = new Event();
+            //Event e = new Event();
             String filePath = String.format("Events/testevent.txt");
             InputStream input;
 
@@ -33,7 +33,7 @@ public class EventReader {
             String line;
 
 
-            return e;
+            return null;
         }catch (FileNotFoundException ex) {
             System.out.printf("File %s not found\n",fileName);
             return null;

@@ -10,6 +10,8 @@ import Background.Party.*;
 import Background.*;
 import Background.BattleActions.HealingSpell;
 import Background.BattleActions.Spell;
+import Foreground.BlackwindTemp.Blackwind;
+import Foreground.BlackwindTemp.Tile;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -38,8 +40,41 @@ public class PauseMenu extends JPanel {
     StatusMenu statusView;
     SpellsMenu spellsView;
     boolean[] visible;
-    Joystick joystick;
-    PauseMenu(Party p, Inventory inv){
+    
+    Blackwind engine;
+    //Joystick joystick;
+    public PauseMenu(Party p, Inventory inv){
+        //local variables
+        menuPosition=0;
+        confirmEvent=false;
+        cancelEvent=false;
+        //menu visibility
+        visible = new boolean[menus];
+        for(int i=0;i<menus;i++){
+            visible[i]=false;
+        }
+        //menu panels
+        partyView = new PartyMenu(p);
+        inventoryView = new InventoryMenu(inv);
+        statusView = new StatusMenu(p.getMemberFromParty(0));
+        spellsView = new SpellsMenu(p.getMemberFromParty(0));
+        options = new OptionsMenu();
+        //set up this panel
+        this.setLayout(null);
+        this.setSize(640,480);
+        this.setLocation(Tile.tileSize, Tile.tileSize);
+        this.setVisible(true);
+        //add panels to frame
+        this.add(partyView);
+        this.add(options);
+        this.add(inventoryView);
+        this.add(statusView);
+        this.add(spellsView);
+        //joystick = new Joystick();
+    }
+    
+    public PauseMenu(Party p, Inventory inv, Blackwind b){
+        sendEngine(b);
         //local variables
         menuPosition=0;
         confirmEvent=false;
@@ -66,28 +101,45 @@ public class PauseMenu extends JPanel {
         this.add(inventoryView);
         this.add(statusView);
         this.add(spellsView);
-        joystick = new Joystick();
+        //joystick = new Joystick();
+    }
+    public void sendEngine(Blackwind b){
+        engine = b;
+    }
+    public void repaint(){
+        //System.out.println("Painting");
+        try{
+            engine.repaint();
+        }catch(NullPointerException e){
+            System.out.println("engine currently null");
+        }
     }
     
     public void run(Party p, Inventory inv){
+        partyView.updateParty(p);
+        inventoryView.updateInventory(inv);
         visible[OPTIONS]=true;
         visible[PARTYMENU]=true;
-        //System.out.println("Got here");
+        System.out.println("Got here");
+        resetEvents();
         while(!cancelEvent){
             resetEvents();
             menuLoop();
         }
         //System.exit(0);
+        //Blackwind.gameState = Blackwind.MAP;
+        exitMenu();
     }
     //main menu loop
     public void menuLoop(){
-        repaint();
         confirmMenuPosition(options.getSelectorMaxPosition());
         options.updateSelectorPosition(menuPosition);
         options.setSelectorVisible();
         setAssistText("");
+        repaint();
         //System.out.println("Looping");
         if(confirmEvent){
+            System.out.println("Confirmed");
             switch(menuPosition){
                 case OptionsMenu.INVENTORY:loadInvFromMainMenu();break;
                 case OptionsMenu.STATUS:loadStatusFromMainMenu();break;
@@ -105,6 +157,7 @@ public class PauseMenu extends JPanel {
         options.loadInventoryMenuOptions();
         options.toggleSelectorVisible();
         inventoryView.toggleSelectorVisible();
+        setAssistText("Select an item");
         while(!cancelEvent){
             inventoryLoop();
         }
@@ -203,6 +256,7 @@ public class PauseMenu extends JPanel {
                     options.toggleSelectorVisible();
                     options.loadMainMenuOptions();
                 }catch(NullPointerException e){
+                    System.out.println(e);
                     setAssistText("Invalid Party Member");
                     resetEvents();
                 }
@@ -228,7 +282,7 @@ public class PauseMenu extends JPanel {
         //System.out.println(menuPosition);
         confirmMenuPosition(inventoryView.getSelectorMaxPosition());
         menuPosition = inventoryView.updateOffsetSelectorPosition(menuPosition);
-        setAssistText("Select an item");
+        
         if(confirmEvent){
             try{
                 inventoryView.getItemAtPosition();
@@ -237,7 +291,7 @@ public class PauseMenu extends JPanel {
                 openItemOptions();
                 menuPosition=save;
             }catch(IndexOutOfBoundsException e){
-                System.out.println("Invalid Item");
+                setAssistText("Invalid Item");
                 resetEvents();
             }
         }
@@ -307,6 +361,7 @@ public class PauseMenu extends JPanel {
                 break;
             }
         }
+        partyView.toggleSelectorVisible();
         toggleViews(INVENTORYMENU,PARTYMENU);
         
     }
@@ -483,7 +538,11 @@ public class PauseMenu extends JPanel {
                 resetEvents();
                 try{
                     switch(slot){
-                        case 0: target.equip((Weapon)inventoryView.getItemAtPosition(), slot);break;
+                        case 0:
+                            if(target.getEquipment(0)!=null)
+                                inventoryView.AddToInventory(target.unEquip(slot));
+                            target.equip((Weapon)inventoryView.getItemAtPosition(), slot);
+                            break;
                         case 1:
                         case 2:
                         case 3: target.equip((Armor)inventoryView.getItemAtPosition(), slot);break;
@@ -577,7 +636,7 @@ public class PauseMenu extends JPanel {
         }
     }
     //key events
-    public class Joystick implements KeyListener{
+    /*public class Joystick implements KeyListener{
 
         @Override
         public void keyTyped(KeyEvent ke) {
@@ -602,16 +661,24 @@ public class PauseMenu extends JPanel {
             
         }
         
-    }
+    }*/
     public void confirmEvent(){confirmEvent=true;}
     public void cancelEvent(){cancelEvent=true;}
     public void upEvent(){menuPosition--;}
     public void downEvent(){menuPosition++;}
     public void leftEvent(){}
     public void rightEvent(){}
-    public void menuEvent(){System.exit(0);}
-    public Joystick getKL(){return joystick;}
+    public void menuEvent(){exitMenu();}
+    public void exitMenu(){
+        for(boolean b:visible){
+            b=false;
+        }
+        Blackwind.gameState = Blackwind.MAP;
+        resetEvents();
+    }
+    //public Joystick getKL(){return joystick;}
     public static void main(String[] args){
-        PauseMenuTester.main(args);
+        //PauseMenuTester.main(args);
+        Blackwind.main(args);
     }
 }

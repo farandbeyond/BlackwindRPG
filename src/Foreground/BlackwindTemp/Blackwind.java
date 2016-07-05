@@ -5,11 +5,16 @@
  */
 package Foreground.BlackwindTemp;
 
+import Background.BattleEntity;
+import Background.BattleEntityLoader;
 import Background.Items.*;
 import Background.Party.*;
 import Foreground.Battle.*;
+import Foreground.Events.*;
 import Foreground.Menu.*;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -23,10 +28,13 @@ import javax.swing.JPanel;
  */
 public class Blackwind extends JPanel{
     public static final int STILL=0,DOWN=1, UP=2, RIGHT=3, LEFT=4;
-    public static int pixelsMoved = 4;
+    public static int pixelsMoved = 1;
     public static final int displayWidth=19, displayHeight=15;
     public static final int maxDisplayWidth=20, maxDisplayHeight=15;
-    public static final int fps = 1000/60; //approx 30 updates per second
+    public static final int fps = 1000/100; //approx 30 updates per second
+    
+    public static int gameState;
+    public static final int MAP=0,INVENTORY=1, BATTLE=2,EVENT=3;
     //Joystick kb;
     //Sprite player;
     int mapOffsetX, mapOffsetY, scrollX, scrollY;
@@ -35,24 +43,41 @@ public class Blackwind extends JPanel{
     BufferedImage shownMap;
     Sprite mc;
     Joystick kb;
-    Blackwind(Map m){
-        this.setSize(640, 480);
+    TextBox textBox;
+    
+    PauseMenu menu;
+    Battle battle;
+    
+    Party party;
+    Inventory inv;
+    Blackwind(Map m, int mapOffsetX, int mapOffsetY){
+        this.setSize(640,480);
         this.setLayout(null);
         this.setLocation(0, 0);
         this.setVisible(true);
         this.repaint();
-        this.setPreferredSize(new Dimension(640,480));
-        kb = new Joystick();
+        this.setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
+        kb = new Joystick(this);
+        textBox = new TextBox(0,364,640+16,180);
         //player = mc;
-        mapOffsetX=0;
-        mapOffsetY=0;
+        gameState = MAP;
+        this.mapOffsetX=mapOffsetX;
+        this.mapOffsetY=mapOffsetY;
         scrollX=0;
         scrollY=0;
         shownMap = new BufferedImage((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize,BufferedImage.TYPE_INT_RGB);
         loadedMap = m;
-        mc = new Sprite(0,"Wilson",3,3,STILL);
+        mc = new Sprite(0,"Wilson",10+mapOffsetX,8+mapOffsetY,STILL);
         loadDisplayArea(0,0);
         loadMapImage();
+        
+        party = new Party(4);
+        inv = new Inventory(15);
+        menu = new PauseMenu(party, inv,this);
+        battle = new Battle(party, inv, party,this);
+        
+        this.add(menu);
+        this.add(battle);
     }
     
     public void loadDisplayArea(int offX, int offY){
@@ -66,79 +91,246 @@ public class Blackwind extends JPanel{
             }
         }
     }
-    
     public void loop(){
         try{
             while(true){
-                updateSprites();
-                repaint();
-                Thread.sleep(fps);
+                if(gameState==MAP){
+                    if(mc.isWalking()){
+                        mc.animate(mc.getDirection());
+                        shiftMap(mc.getDirection());
+                    }else{
+                        mc.animate(0);
+                    }
+                    repaint();
+                    Thread.sleep(fps);
+                }else if(gameState==INVENTORY){
+                    loadMenu();
+                }else if(gameState==BATTLE){
+                    loadBattle();
+                }else if(gameState==EVENT){
+                    repaint();
+                }
             }
         }catch(InterruptedException e){
             System.out.println("Error Occurred During loop: "+e);
         }
     }
-    public void updateSprites(){
-        mc.move(mc.movingDirection);
+    
+    public void triggerEvent(){
+        for(Sprite s:loadedMap.getSpriteList()){
+            try{
+                if(s.isAt(mc.getMapX(), mc.getMapY(), mc.getDirection())){
+                    System.out.printf("Trying to trigger %s's Event\n",s.getName());
+                    textBox.loadEvent(s.getEvent());
+                    gameState = EVENT;
+                    System.out.println("Event in trigger");
+                    return;
+                }
+            }catch(NullPointerException e){
+                break;
+            }
+        }
+        System.out.println("Couldnt find an event to trigger");
     }
     
-    
+    public void shiftMap(int direction){
+        switch(direction){
+            case UP:scrollY-=pixelsMoved;break;
+            case DOWN:scrollY+=pixelsMoved;break;
+            case LEFT:scrollX-=pixelsMoved;break;
+            case RIGHT:scrollX+=pixelsMoved;break;
+        }
+        switch(direction){
+            case UP:
+                if(scrollY<=-32){
+                    scrollY=0;
+                    mapOffsetY--;
+                    //mc.setNewMapLocation(mc.getMapX(), mc.getMapY()+1);
+                }
+            case DOWN:
+                if(scrollY>=32){
+                    scrollY=0;
+                    mapOffsetY++;
+                    //mc.setNewMapLocation(mc.getMapX(), mc.getMapY()-1);
+                }
+            case LEFT: 
+                if(scrollX<=-32){
+                    scrollX=0;
+                    mapOffsetX--;
+                    //mc.setNewMapLocation(mc.getMapX()+1, mc.getMapY());
+                }
+            case RIGHT:
+                if(scrollX>=32){
+                    scrollX=0;
+                    mapOffsetX++;
+                    //mc.setNewMapLocation(mc.getMapX()-1, mc.getMapY());
+                }
+        }
+        if(scrollY==0&&scrollX==0){
+            loadDisplayArea(mapOffsetX,mapOffsetY);
+            loadMapImage();
+            mc.toggleIsWalking();
+        }
+    }
     public void paintComponents(Graphics g){
         this.paint(g);
     }
     public void paint(Graphics g){
-        //g.setColor(Color.red);
-        //g.fillRect(0, 0, 1000, 1000);
-        //g.drawImage(shownMap, 32+scrollX, 32+scrollY, this);'
-        //System.out.printf("%d/%d\n",scrollX,scrollY);
-        g.drawImage(shownMap.getSubimage(32+scrollX,32+scrollY,(Tile.tileSize*displayWidth),(Tile.tileSize*displayHeight)), 32*((maxDisplayWidth-displayWidth)/2), 32*((maxDisplayHeight-displayHeight)/2), this);
-        g.drawImage(mc.getImage(), mc.getGlobalX(), mc.getGlobalY(), this);
-    }
-    
-    public void move(int direction){
+        //System.out.println("Blackwind Paint Function");
+        switch(gameState){
+            case EVENT:
+            case MAP:paintMap(g);break;
+            case INVENTORY:menu.paint(g);break;
+            case BATTLE:battle.paint(g);break;
+        }
+        if(gameState==EVENT)
+            textBox.paint(g);
         
     }
-    
-    public class Joystick implements KeyListener{
-        @Override
-        public void keyTyped(KeyEvent ke) {
+    public void paintMap(Graphics g){
+        g.setColor(Color.MAGENTA);
+        g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        g.drawImage(shownMap.getSubimage(32+scrollX,32+scrollY,(32*displayWidth),(32*displayHeight)), 32, 32, this);
+        g.drawImage(mc.getSprite(), mc.getGlobalX(), mc.getGlobalY(), this);
+        for(Sprite s:loadedMap.getSpriteList()){
+            if(s.isDisplayed(mapOffsetX, mapOffsetY, displayWidth+1, displayHeight+1)){
+                g.drawImage(s.getSprite(), (s.getScreenX()-mapOffsetX)*Tile.tileSize-scrollX, (s.getScreenY()-mapOffsetY)*Tile.tileSize-scrollY, this);
+                //System.out.printf("Sprite %s is displayed at %dx and %dy\nthis is with a map offset of %dx and %dy\n\n",s.getName(),s.getMapX(),s.getMapY(),mapOffsetX,mapOffsetY);
             }
-        @Override
-        public void keyPressed(KeyEvent ke) {
-            switch(ke.getExtendedKeyCode()){
-                case KeyEvent.VK_O:
-                case KeyEvent.VK_P:break;
-                case KeyEvent.VK_W:upEvent();break;
-                case KeyEvent.VK_A:leftEvent();break;
-                case KeyEvent.VK_S:downEvent();break;
-                case KeyEvent.VK_D:rightEvent();break;
-                case KeyEvent.VK_ENTER:     break;               
-            }
-        }
-        @Override
-        public void keyReleased(KeyEvent ke) {
         }
     }
+    
+    public boolean nearBorder(int direction){
+        switch(direction){
+            case UP:    if(mc.getScreenY()<=3)return true;else break;
+            case DOWN:  if(mc.getScreenY()>=6)return true;else break;
+            case LEFT: if(mc.getScreenX()<=3)return true;else break;
+            case RIGHT:  if(mc.getScreenX()>=6)return true;else break;
+        }
+        return false;
+    }
+    public boolean mapContinues(int direction){
+        switch(direction){
+            case UP:
+            case DOWN:
+                for(int i=0;i<displayWidth;i++){
+                    if(displayArea[i][direction==UP?0:displayHeight+1].getID()!=0)
+                        return true;
+                }
+            return false;
+            case RIGHT:
+            case LEFT:
+                for(int i=0;i<displayHeight;i++){
+                    if(displayArea[direction==LEFT?0:displayWidth+1][i].getID()!=0)
+                        return true;
+                }
+        }
+        return false;
+    }
+    public void move(int direction){
+        if(mc.isWalking()){
+            //System.out.println("Return");
+            return;
+        }
+        boolean tileIsWalkable = false;
+        mc.setFacingDirection(direction);
+        switch(direction){
+            case UP:
+                tileIsWalkable = displayArea[mc.getScreenX()][mc.getScreenY()-1].getWalkable();
+                break;
+            case DOWN:
+                tileIsWalkable = displayArea[mc.getScreenX()][mc.getScreenY()+1].getWalkable();
+                break;
+            case RIGHT:
+                tileIsWalkable = displayArea[mc.getScreenX()+1][mc.getScreenY()].getWalkable();
+                break;
+            case LEFT:
+                tileIsWalkable = displayArea[mc.getScreenX()-1][mc.getScreenY()].getWalkable();
+                break;
+        }
+        for(Sprite s:loadedMap.getSpriteList()){
+            //System.out.println(mc.getMapX()+"/"+mc.getMapY());
+            if(s.isAt(mc.getMapX(), mc.getMapY(), direction))
+                tileIsWalkable = false;
+        }
+        if(!tileIsWalkable)
+            return;
+        mc.move(direction);
+    }
+    public Joystick getKL(){return kb;}
+
+    public Battle getBattle(){return battle;}
+    public PauseMenu getMenu(){return menu;}
+    public TextBox getTextBox(){return textBox;}
+    
     public void confirmEvent(){}
     public void cancelEvent(){}
-    public void upEvent(){
-        if(loadedMap.tileWalkable(mc.getMapX(), mc.getMapY(), UP))
-            mc.move(UP);
+    public void loadMenu(){
+        //System.out.println("Opening menu");
+        menu.run(party, inv);
+        //System.out.println("Closing menu");
     }
-    public void downEvent(){
-        if(loadedMap.tileWalkable(mc.getMapX(), mc.getMapY(), DOWN))
-            mc.move(DOWN);
+    public void loadBattle(){
+        //System.out.println("Opening menu");
+        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(0),this);
+        battle.loop();
+        //System.out.println("Closing menu");
     }
-    public void leftEvent(){
-        if(loadedMap.tileWalkable(mc.getMapX(), mc.getMapY(), LEFT))
-            mc.move(LEFT);
+    //public void menuEvent(){System.exit(0);}
+    public class TextBox{
+        int x,y,width,height;
+        Event currentEvent;
+        String eventLine;
+        String[] display;
+        int increment;
+        TextBox(int x, int y, int width, int height){
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            increment = 0;
+            display = new String[4];
+        }
+        public void loadEvent(Event e){
+            if(!e.triggered()||e.reTriggerable()){
+                currentEvent = e;
+                eventLine = currentEvent.nextSegment(inv, party);
+                display = eventLine.split("\n");
+            }else{
+                eventLine = "cant be triggered again";
+                display = eventLine.split("\n");
+                currentEvent = new Event(false);
+            }
+        }
+        public void advanceText(){
+            try{
+                eventLine = currentEvent.nextSegment(inv, party);
+                display = eventLine.split("\n");
+            }catch(IndexOutOfBoundsException e){
+                //System.out.println("out of bounds");
+                display = null;
+                currentEvent.reset();
+            }
+        }
+        public void paint(Graphics g){
+            g.setColor(Color.cyan);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.black);
+            g.setFont(new Font("Courier New", Font.BOLD, 17));
+            g.drawRect(x, y, width, height);
+            try{
+                for(int i=0;i<display.length;i++){
+                    g.drawString(display[i], x+30, y+30+30*i);
+                    //System.out.println(i);
+                }
+            }catch(NullPointerException e){
+                //System.out.println("Null");
+                g.drawString("", x+30, y+30);
+                gameState = MAP;
+            }
+        }
     }
-    public void rightEvent(){
-        if(loadedMap.tileWalkable(mc.getMapX(), mc.getMapY(), RIGHT))
-            mc.move(RIGHT);
-    }
-    public void menuEvent(){System.exit(0);}
-    public Joystick getKL(){return kb;}
+    
     
     public static void main(String[] args){
         JFrame frame = new JFrame("Blackwind Dev",null);
@@ -148,13 +340,42 @@ public class Blackwind extends JPanel{
         frame.setSize(640, 480);
         // ^^ using this size means the display area can be as large as 20*15
         Tile.startUp();
+        Sprite.startUp();
         //Sprite.initialize();
         //Sprite wilson = new Sprite(0,5,5);
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
-        Blackwind g = new Blackwind(Map.loadMap("maxSize2.txt"));
+        Map m = Map.loadMap("maxSize2.txt");
+        m.addSprite(new Sprite(0,"Wall Man",10,10,0));
+        m.addSprite(new Sprite(0,"Corner Man",3,19,0));
+        
+        Event e = new Event(false);
+        e.addSegment(new TextSegment("My name is wilson rose","","",""));
+        e.addSegment(new ItemSegment(ItemLoader.POTION,5));
+        e.addSegment(new ItemSegment(ItemLoader.BRONZESWORD,1));
+        e.addSegment(new TextSegment("this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times"));
+        m.getSpriteList().get(0).setEvent(e);
+        
+        
+        Blackwind g = new Blackwind(m,0,0);
+        
         frame.add(g);
+        g.inv.add(ItemLoader.loadItem(0, 10));
+        BattleEntity b = BattleEntityLoader.loadEntity(0);
+        b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
+        g.party.addPartyMember(b);
+        
+        //g.getMenu().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
+        //g.getBattle().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
+        //g.getBattle().sendEngine(g);
+        //g.getMenu().sendEngine(g);
+        
+        //frame.add(g.getBattle());
+        //frame.add(g.getMenu());
+        
         frame.pack();
         frame.addKeyListener(g.getKL());
         g.loop();
+        //Blackwind.gameState = INVENTORY;
+        //g.getMenu().run(g.party, g.inv);
     }
 }

@@ -36,7 +36,7 @@ public class TempTextBox {
     }
     public static void main(String[] args){
         TempTextBox t = new TempTextBox();
-        Event e = new Event();
+        Event e = new Event(true);
         e.addSegment(new TextSegment("My name is wilson rose","","",""));
         e.addSegment(new ItemSegment(ItemLoader.POTION,5));
         e.addSegment(new ItemSegment(ItemLoader.BRONZESWORD,1));

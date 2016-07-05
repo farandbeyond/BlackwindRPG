@@ -61,7 +61,7 @@ public class PauseMenuTester {
         
         //Battle b = new Battle(party,inv,party);
         
-        frame.addKeyListener(menu.getKL());
+        //frame.addKeyListener(menu.getKL());
         frame.add(menu);
         menu.run(party, inv);
         BattleTester.fromInv(args, inv, party,frame);

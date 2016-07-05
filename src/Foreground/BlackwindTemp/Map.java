@@ -92,7 +92,10 @@ public class Map {
     }
     //int mapID;
     int mapWidth, mapHeight;
+    //int totalSprites;
     Tile[][] mapTiles;
+    ArrayList<Sprite> sprites;
+    
     
     //tiles will be saved by map [ x ] [ y ]. meaning, tile [1][0] would be at 32,0; etc.
     public Map(int[][] mapTiles){
@@ -105,6 +108,7 @@ public class Map {
                 this.mapTiles[x][y] =  new Tile(mapTiles[x][y]);
             }
         }
+        sprites = new ArrayList<>();
     }
     public Map(){
         mapWidth = 11;
@@ -115,6 +119,7 @@ public class Map {
                 mapTiles[x][y] =  new Tile(0);
             }
         }
+        sprites = new ArrayList<>();
     }
     
     public Tile[][] getMapSegment(int sx, int sy, int width, int height){
@@ -149,6 +154,11 @@ public class Map {
     }
     public int getWidth(){return mapWidth;}
     public int getHeight(){return mapHeight;}
+    
+    public void addSprite(Sprite s){
+        sprites.add(s);
+        
+    }
     
     public void changeTile(int x, int y, int tileID){
         mapTiles[x][y]=new Tile(tileID);
@@ -189,6 +199,7 @@ public class Map {
     }
     public int getX(){return getWidth();}
     public int getY(){return getHeight();}
+    public ArrayList<Sprite> getSpriteList(){return sprites;}
     
     public static void main(String[] args){
         Tile.startUp();
