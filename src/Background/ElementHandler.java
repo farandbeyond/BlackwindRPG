@@ -71,10 +71,10 @@ public class ElementHandler{
     }
     public static void main(String[] args){
         String[] elements = {"Neutral","Air","Water","Earth","Fire","Light","Dark"};
-        for(int i=0;i<7;i++){
-            for(int w=0;w<7;w++){
-                System.out.println(elements[i]+" Is attacking "+elements[w]);
-                System.out.println(handler(w,i)+" Is the damage multiplier \n");
+        for(int spellElement=0;spellElement<7;spellElement++){
+            for(int targetElement=0;targetElement<7;targetElement++){
+                System.out.println(elements[spellElement]+" Is attacking "+elements[targetElement]);
+                System.out.println(handler(targetElement,spellElement)+" Is the damage multiplier \n");
                 
             }
         }

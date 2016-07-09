@@ -7,13 +7,14 @@ package Foreground.Events;
 
 import Background.Items.Inventory;
 import Background.Party.Party;
+import Foreground.BlackwindTemp.Blackwind;
 import java.util.ArrayList;
 
 /**
  *
  * @author Connor
  */
-public class Event {
+public class Event implements Runnable{
     ArrayList<EventSegment> segments;
     int currentSegment;
     boolean reTrigger, triggered;
@@ -26,11 +27,11 @@ public class Event {
     public void addSegment(EventSegment e){
         segments.add(e);
     }
-    public String nextSegment(Inventory i, Party p){
+    public String nextSegment(Blackwind b,Inventory i, Party p){
         
         currentSegment++;
         //System.out.println(currentSegment);
-        return segments.get(currentSegment).activate(i,p);
+        return segments.get(currentSegment).activate(b,i,p);
         
     }
     
@@ -40,4 +41,9 @@ public class Event {
     }
     public boolean reTriggerable(){return reTrigger;}
     public boolean triggered(){return triggered;}
+
+    @Override
+    public void run() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

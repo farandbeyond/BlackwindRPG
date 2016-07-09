@@ -46,7 +46,7 @@ public class Joystick implements KeyListener{
             }break;
             case Blackwind.EVENT:
                 switch(ke.getExtendedKeyCode()){
-                    case KeyEvent.VK_O:game.getTextBox().advanceText();break;
+                    case KeyEvent.VK_O:game.getTextBox().advanceText(game);break;
                 }break;
             case Blackwind.INVENTORY:
                 //System.out.println("Menu Command");

@@ -6,6 +6,7 @@
 package Foreground.BlackwindTemp;
 
 import Foreground.Events.Event;
+import Foreground.Events.EventReader;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class Sprite {
     //these are usable during events, and for our own clarity
     int id;
     String name;
+    String eventFileName;
     
     
     Sprite(int id, String name, int mapX, int mapY, int facingDirection){
@@ -64,6 +66,24 @@ public class Sprite {
         aniCycle = 0;
         moving = false;
         movingDirection = Blackwind.DOWN;
+        
+        setGlobalX();
+        setGlobalY();
+    }
+    Sprite(int id, String name, int mapX, int mapY, int facingDirection,String eventName){
+        screenX = mapX;
+        screenY = mapY;
+        this.mapX = mapX;
+        this.mapY = mapY;
+        this.id = id;
+        this.name = name;
+        this.facingDirection = facingDirection;
+        
+        aniCycle = 0;
+        moving = false;
+        movingDirection = Blackwind.DOWN;
+        eventFileName = eventName;
+        setEvent(EventReader.loadEvent(eventName));
         
         setGlobalX();
         setGlobalY();
@@ -128,6 +148,10 @@ public class Sprite {
         moving = true;
     }
     public void setNewMapLocation(int newX, int newY){
+        mapX = newX;
+        mapY = newY;
+    }
+    public void setNewScreenLocation(int newX, int newY){
         screenX = newX;
         screenY = newY;
         setGlobalX();
@@ -153,6 +177,8 @@ public class Sprite {
         return getSprite();
     }
     
+    public int getID(){return id;}
+    
     public int getMapX(){return mapX;}
     public int getMapY(){return mapY;}
     public int getScreenX(){return screenX;}
@@ -166,11 +192,16 @@ public class Sprite {
         return facingDirection;
     }
     public String getName(){return name;}
+    
     public Event getEvent(){return e;}
+    public String getEventFileName(){return eventFileName;}
     
     public void setEvent(Event e){
         this.e = e;
     }
+    public void setEventFileName(String e){eventFileName = e;}
+    public void setName(String n){name = n;}
+    public void setID(int id){this.id = id;}
     
     public boolean isDisplayed(int offX, int offY, int disW, int disH){
         if(mapX>offX&&mapX<disW+offX){
@@ -197,5 +228,6 @@ public class Sprite {
         //for testing, you are represented by a void tile
         //return Tile.getImagesList()[0];
     }
+    public static BufferedImage[] getSpritesheetList(){return spriteSheets;}
     
 }

@@ -33,7 +33,7 @@ public class Blackwind extends JPanel{
     public static int pixelsMoved = 1;
     public static final int displayWidth=19, displayHeight=15;
     public static final int maxDisplayWidth=20, maxDisplayHeight=15;
-    public static final int fps = 1000/100; //approx 30 updates per second
+    public static final int fps = 1000/100; //approx 100 updates per second
     
     public static int gameState;
     public static final int MAP=0,INVENTORY=1, BATTLE=2,EVENT=3;
@@ -60,7 +60,7 @@ public class Blackwind extends JPanel{
         this.repaint();
         this.setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
         kb = new Joystick(this);
-        textBox = new TextBox(0,364,640+16,180);
+        textBox = new TextBox(0,364,640+16,180,this);
         //player = mc;
         gameState = MAP;
         this.mapOffsetX=mapOffsetX;
@@ -123,7 +123,7 @@ public class Blackwind extends JPanel{
             try{
                 if(s.isAt(mc.getMapX(), mc.getMapY(), mc.getDirection())){
                     System.out.printf("Trying to trigger %s's Event\n",s.getName());
-                    textBox.loadEvent(s.getEvent());
+                    textBox.loadEvent(s.getEvent(),this);
                     gameState = EVENT;
                     System.out.println("Event in trigger");
                     s.faceAway(mc.getDirection());
@@ -175,11 +175,14 @@ public class Blackwind extends JPanel{
             mc.toggleIsWalking();
         }
     }
+    public void repaint(){
+        super.repaint();
+    }
     public void paintComponents(Graphics g){
         this.paint(g);
     }
     public void paint(Graphics g){
-        //System.out.println("Blackwind Paint Function");
+        System.out.println("Blackwind Paint Function");
         switch(gameState){
             case EVENT:
             case MAP:paintMap(g);break;
@@ -231,10 +234,13 @@ public class Blackwind extends JPanel{
         return false;
     }
     public void move(int direction){
+        repaint();
         if(mc.isWalking()){
-            //System.out.println("Return");
+            //System.out.println("MC is walking");
             return;
         }
+        
+        //System.out.println("Moving");
         boolean tileIsWalkable = false;
         mc.setFacingDirection(direction);
         switch(direction){
@@ -265,6 +271,7 @@ public class Blackwind extends JPanel{
     public Battle getBattle(){return battle;}
     public PauseMenu getMenu(){return menu;}
     public TextBox getTextBox(){return textBox;}
+    public Sprite getMC(){return mc;}
     
     public void confirmEvent(){}
     public void cancelEvent(){}
@@ -281,13 +288,13 @@ public class Blackwind extends JPanel{
         //System.out.println("Closing menu");
     }
     //public void menuEvent(){System.exit(0);}
-    public class TextBox{
+    public class TextBox extends JPanel{
         int x,y,width,height;
         Event currentEvent;
         String eventLine;
         String[] display;
         int increment;
-        TextBox(int x, int y, int width, int height){
+        TextBox(int x, int y, int width, int height,Blackwind b){
             this.x = x;
             this.y = y;
             this.width = width;
@@ -295,10 +302,10 @@ public class Blackwind extends JPanel{
             increment = 0;
             display = new String[4];
         }
-        public void loadEvent(Event e){
+        public void loadEvent(Event e,Blackwind b){
             if(!e.triggered()||e.reTriggerable()){
                 currentEvent = e;
-                eventLine = currentEvent.nextSegment(inv, party);
+                eventLine = currentEvent.nextSegment(b,inv, party);
                 display = eventLine.split("\n");
             }else{
                 eventLine = "cant be triggered again";
@@ -306,10 +313,13 @@ public class Blackwind extends JPanel{
                 currentEvent = new Event(false);
             }
         }
-        public void advanceText(){
+        public void advanceText(Blackwind b){
             try{
-                eventLine = currentEvent.nextSegment(inv, party);
-                display = eventLine.split("\n");
+                eventLine = currentEvent.nextSegment(b,inv, party);
+                if(eventLine.equals("adv!!"))
+                    advanceText(b);
+                else
+                    display = eventLine.split("\n");
             }catch(IndexOutOfBoundsException e){
                 //System.out.println("out of bounds");
                 display = null;
@@ -349,19 +359,6 @@ public class Blackwind extends JPanel{
         //Sprite wilson = new Sprite(0,5,5);
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
         Map m = Map.loadMap("maxSize2.txt");
-        m.addSprite(new Sprite(0,"Wall Man",10,10,0));
-        m.addSprite(new Sprite(0,"Corner Man",3,19,0));
-        m.addSprite(new Sprite(0,"Shady Salesman",6,6,0));
-        
-        Event e = new Event(false);
-        e.addSegment(new TextSegment("My name is wilson rose","","",""));
-        e.addSegment(new ItemSegment(ItemLoader.POTION,5));
-        e.addSegment(new ItemSegment(ItemLoader.BRONZESWORD,1));
-        e.addSegment(new TextSegment("this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times"));
-        m.getSpriteList().get(1).setEvent(e);
-        m.getSpriteList().get(0).setEvent(EventReader.loadEvent("testevent"));
-        m.getSpriteList().get(2).setEvent(EventReader.loadEvent("gifting"));
-        
         Blackwind g = new Blackwind(m,0,0);
         
         frame.add(g);

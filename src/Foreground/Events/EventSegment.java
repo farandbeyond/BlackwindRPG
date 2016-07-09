@@ -7,11 +7,13 @@ package Foreground.Events;
 
 import Background.Items.Inventory;
 import Background.Party.Party;
+import Foreground.BlackwindTemp.Blackwind;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Connor
  */
-public abstract class EventSegment {
-    public abstract String activate(Inventory i, Party p);
+public abstract class EventSegment{
+    public abstract String activate(Blackwind b,Inventory i, Party p);
 }

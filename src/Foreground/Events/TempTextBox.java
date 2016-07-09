@@ -42,7 +42,7 @@ public class TempTextBox {
         e.addSegment(new ItemSegment(ItemLoader.BRONZESWORD,1));
         e.addSegment(new TextSegment("this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times","this is going to be a very long statment repeated four times"));
         while(true){
-            String text = e.nextSegment(t.getInv(),null);
+            String text = e.nextSegment(null,t.getInv(),null);
             text = checkSpecialCharacters(text);
             if(text.equals("break"))
                 break;

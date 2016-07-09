@@ -68,6 +68,9 @@ public class EventReader {
                         else if(line.equals("-pmem")){
                             eve.addSegment(loadPartyMemberSegment(fileReader.readLine()));
                         }
+                        else if(line.equals("-movemc")){
+                            eve.addSegment(loadMCMovementSegment(fileReader.readLine()));
+                        }
                         //if the file is not labelled properly
                         else{
                             eve.addSegment(new TextSegment("Error Loading","","",""));
@@ -91,5 +94,9 @@ public class EventReader {
     }
     public static PartyMemberSegment loadPartyMemberSegment(String memberID){
         return new PartyMemberSegment(Integer.parseInt(memberID));
+    }
+    public static PlayerMovingSegment loadMCMovementSegment(String movementVector){
+        String[] xy = movementVector.split("/");
+        return new PlayerMovingSegment(Integer.parseInt(xy[0]),Integer.parseInt(xy[1]));
     }
 }

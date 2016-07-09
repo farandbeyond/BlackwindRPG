@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -28,6 +29,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -51,13 +53,26 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 	private static boolean mapChanged = false;
 	private static Map loadedMap;
 	private static JComboBox<String> editType;
+        //Sprite editor
+        private static boolean spriteSelected = false;
+        private static boolean spriteAltered = false;
+        private static Sprite selectedSprite;
+        //sprite editor buttons/text areas
+        private static JButton newSprite;
+        private static JComboBox<ImageIcon> spriteID;
+        private static JTextArea spriteName;
+        private static JComboBox<Integer> spriteMapX;
+        private static JComboBox<Integer> spriteMapY;
+        private static JTextArea eventFileName;
+        
+        
 	//Edit types for the Editor type drop down menu
 	public static final int EDIT_TILE = 0;
-	public static final int EDIT_ENTITIES = 1;
+	public static final int EDIT_SPRITES = 1;
 	//Edit Selectors
 	private static JComboBox<ImageIcon> tileSelecterLeft;
 	private static JComboBox<ImageIcon> tileSelecterRight;
-        
+        //map Size Altering
         private static JComboBox<Integer> mapWidth;
         private static JComboBox<Integer> mapHeight;
         
@@ -69,9 +84,10 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 		//Setup the MapEditor Combo Box's
 		editType = new JComboBox<String>();
 		editType.addItem("Tile Edit Mode");
-		editType.setBounds(620,10,160,30);
+                editType.addItem("Sprite Edit Mode");
+		editType.setBounds(menuItemLeft,10,160,30);
 		add(editType);
-		
+		//map eiditing details
 		tileSelecterLeft = new JComboBox<ImageIcon>();
 		tileSelecterRight = new JComboBox<ImageIcon>();
                 mapWidth = new JComboBox<Integer>();
@@ -88,13 +104,47 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                     mapWidth.addItem(i);
                 for(int i=3;i<26;i++)
                     mapHeight.addItem(i);
+                //sprite editing details
+                spriteID = new JComboBox<ImageIcon>();
+                spriteName = new JTextArea();
+                eventFileName = new JTextArea();
+                spriteMapX = new JComboBox<Integer>();
+                spriteMapY = new JComboBox<Integer>();
+                newSprite = new JButton();
                 
+                spriteID.setBounds(menuItemLeft, 350, 60, 45);
+                newSprite.setBounds(menuItemLeft, 300, 140, 45);
+                spriteName.setBounds(menuItemLeft, 400, 140, 30);
+                eventFileName.setBounds(menuItemLeft, 440, 140, 30);
+                spriteMapX.setBounds(menuItemLeft,480,60,30);
+                spriteMapY.setBounds(menuItemRight,480,60,30);
+                
+                newSprite.setText("New Sprite");
+                
+                
+                for(BufferedImage b:Sprite.getSpritesheetList()){
+                    spriteID.addItem(new ImageIcon(b.getSubimage(1, 1, 32, 32)));
+                }
+                for(int i=0;i<=40;i++){
+                    if(i<=25)
+                        spriteMapY.addItem(i);
+                    spriteMapX.addItem(i);
+                }
+                //all the add's
 		add(tileSelecterLeft);
 		add(tileSelecterRight);
                 add(mapWidth);
                 add(mapHeight);
+                
+                add(spriteID);
+                add(spriteName);
+                add(eventFileName);
+                add(spriteMapX);
+                add(spriteMapY);
+                add(newSprite);
 	}
         public void paintComponent(Graphics g){
+            //System.out.println("painting");
 		super.paintComponent(g);
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, 19*32, 19*32);
@@ -119,6 +169,11 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 			g.drawLine(0, row*32, loadedMap.getX()*32, row*32);
 		for(int col = 0; col < loadedMap.getX()+1; col++)
 			g.drawLine(col*32, 0, col*32, loadedMap.getY()*32);
+                
+                if(editType.getSelectedIndex()==EDIT_SPRITES){
+                    for(Sprite s:loadedMap.getSpriteList())
+                        g.drawImage(s.getSprite(), (s.getMapX()-1)*32, (s.getMapY()-1)*32, 32, 32, null);
+                }                
 	}
         
         public static void setupMenu(){
@@ -177,8 +232,17 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 		mapLoaded = false;
 		loadedMap = null;
 	}
+        public static void loadSpriteData(){
+            spriteMapX.setSelectedIndex(selectedSprite.getMapX()+1);
+            spriteMapY.setSelectedIndex(selectedSprite.getMapY()+1);
+            spriteName.setText(selectedSprite.getName());
+            eventFileName.setText(selectedSprite.getEventFileName());
+            spriteID.setSelectedIndex(selectedSprite.getID());
+            System.out.printf("Sprite %s loaded\n",selectedSprite.getName());
+        }
         
         public void actionPerformed(ActionEvent ae){
+            //System.out.println("Action");
 		if(ae.getSource() == file_loadmap){
 			JFileChooser fc = new JFileChooser();
 			fc.setCurrentDirectory(new File(System.getProperty("user.dir")+"/maps/"));
@@ -210,9 +274,16 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 			if(mapLoaded){
 				closeMap();
 			}
-		}
+		}else if(ae.getSource() == newSprite){
+                    System.out.println("new sprite");
+                    Sprite s = new Sprite(0,"name",1,1,0,"eventName");
+                    loadedMap.addSprite(s);
+                    selectedSprite = s;
+                    loadSpriteData();
+                }
 		repaint();
 	}
+        
 	//MouseListener
 	public void mouseClicked(MouseEvent me) {mousePressed(me);}
 	public void mouseEntered(MouseEvent me) {}
@@ -223,16 +294,14 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 		int squareX = me.getX()/32;
 		int squareY = me.getY()/32;
 		//Only do this if we are inside our map
+                repaint();
 		if(squareX >= mapWidth.getSelectedIndex()+3 || squareY >= mapHeight.getSelectedIndex()+3 || !mapLoaded)
 			return;
-                //System.out.println("Test1");
                 if(loadedMap.getX()!=mapWidth.getSelectedIndex()+3){
-                    //System.out.println("Test2");
                     loadedMap.setWidth(mapWidth.getSelectedIndex()+3);
                     System.out.println(loadedMap.mapWidth);
                 }
                 if(loadedMap.getY()!=mapHeight.getSelectedIndex()+3){
-                    //System.out.println("Test3");
                     loadedMap.setHeight(mapHeight.getSelectedIndex()+3);
                     System.out.println(loadedMap.mapHeight);
                 }
@@ -246,9 +315,39 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 					loadedMap.changeTile(squareX, squareY, tileSelecterRight.getSelectedIndex());
 				mapChanged = true;
 			}break;
+                        case EDIT_SPRITES:{
+                            if(me.getButton() == MouseEvent.BUTTON1){
+                                if(spriteSelected){
+                                    loadedMap.getSpriteList().remove(selectedSprite);
+                                    if(selectedSprite.getMapX()!=spriteMapX.getSelectedIndex()-1||selectedSprite.getMapY()!=spriteMapY.getSelectedIndex()-1){
+                                        selectedSprite.setNewMapLocation(spriteMapX.getSelectedIndex()-1, spriteMapY.getSelectedIndex()-1);
+                                    }
+                                    if(!selectedSprite.getName().equals(spriteName.getText())){
+                                        selectedSprite.setName(spriteName.getText());
+                                    }
+                                    if(!selectedSprite.getEventFileName().equals(eventFileName.getText())){
+                                        selectedSprite.setEventFileName(eventFileName.getText());
+                                    }
+                                    if(selectedSprite.getID()!=spriteID.getSelectedIndex()){
+                                        selectedSprite.setID(spriteID.getSelectedIndex());
+                                    }
+                                    loadedMap.getSpriteList().add(selectedSprite);
+                                    loadSpriteData();
+                                    mapChanged = true;
+                                }
+                                for(Sprite s:loadedMap.getSpriteList()){
+                                    if(s.getMapX()-1==squareX&&s.getMapY()-1==squareY){
+                                        selectedSprite = s;
+                                        spriteSelected= true;
+                                        loadSpriteData();
+                                    }
+                                }
+                            }
+                            
+                        }
 		}
 		//Repaint every click
-		repaint();
+		
 	}
 	public void mouseReleased(MouseEvent me) {}
         
@@ -257,9 +356,12 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 		System.out.println("======================");
 		System.out.println("Loading Tiles...");
 		Tile.startUp();
+                System.out.println("Loading Sprites...");
+                Sprite.startUp();
 		System.out.println("Starting Editor...");
 		editor = new MapEditor();
 		setupMenu();
+                newSprite.addActionListener(editor);
 		window = new JFrame("Editor");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);

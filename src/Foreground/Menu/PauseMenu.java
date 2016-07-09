@@ -500,7 +500,12 @@ public class PauseMenu extends JPanel {
                 resetEvents();
                 int save = menuPosition;
                 switch(menuPosition){
-                    case StatusMenu.DESCRIPTION :setAssistText(target.getEquipment(save).getDescription());break;
+                    case StatusMenu.DESCRIPTION :
+                        if(target.getEquipment(save)!=null)
+                            setAssistText(target.getEquipment(save).getDescription());
+                        else
+                            setAssistText("Nothing Equipped");
+                        break;
                     case StatusMenu.UNEQUIP     :
                         try{
                             if(inventoryView.canAdd(target.getEquipment(slot))){

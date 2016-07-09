@@ -1,0 +1,12 @@
+repeatable
+-text
+im going to move you down a bit
+careful not to run into the wall
+-end
+-movemc
+-5/0
+-movemc
+0/-1
+-text
+theres the movement for ya
+-end

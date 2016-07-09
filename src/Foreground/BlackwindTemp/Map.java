@@ -30,20 +30,22 @@ public class Map {
         loadedMapName= mapname;
         //try{
             try{
+                //setup
                 String line = "";
                 ArrayList<String> contents = new ArrayList<>();
                 String filePath = String.format("maps/%s",mapname);
                 InputStream input = new FileInputStream(filePath);
                 InputStreamReader inputReader = new InputStreamReader(input);
                 BufferedReader fileReader = new BufferedReader(inputReader);
-                while((line=fileReader.readLine())!=null){
+                //tile loading
+                while((line=fileReader.readLine()).charAt(0)!='-'){
                         //System.out.println(line);
                         contents.add(line);
                 }
                 //for(String mapRow:contents)
                     //System.out.println(mapRow);
                 String[] testLen = contents.get(0).split(" ");
-
+                //tile writing
                 int[][] tileIDs = new int[contents.size()][testLen.length];
                 for(int x=0;x<tileIDs.length;x++){
                     for(int y=0;y<testLen.length-1;y++){
@@ -51,7 +53,22 @@ public class Map {
                         tileIDs[x][y] = Integer.parseInt(contents.get(x).split(" ")[y]);
                     }
                 }
-                return new Map(tileIDs);
+                Map m = new Map(tileIDs);
+                //sprite loading
+                while((line=fileReader.readLine())!=null){
+                    String spriteID = line;
+                    String spriteName = fileReader.readLine();
+                    
+                    System.out.println(spriteName.split("=")[0]);
+                    String spriteXY = fileReader.readLine();
+                    int id = Integer.parseInt(spriteID.split(" ")[0]);
+                    String[] xy = spriteXY.split("/");
+                    int x = Integer.parseInt(xy[0]);
+                    int y = Integer.parseInt(xy[1]);
+                    m.addSprite(new Sprite(id,spriteName.split("=")[0],x,y,0,fileReader.readLine().split(" ")[0]));
+                }
+                
+                return m;
             }catch(IOException e){
                 System.out.printf("Error Loading map %s\n",mapname);
                 System.out.println(e);
@@ -73,13 +90,17 @@ public class Map {
                 for(int x=0;x<m.getX();x++){
                     String line = "";
                     for(int y=0;y<m.getY();y++){
-                        System.out.println(x+"/"+y);
-                        line+=
-                                m.
-                                        getTile(x, y)
-                                        .getID()+" ";
+                        //System.out.println(x+"/"+y);
+                        line+=m.getTile(x, y).getID()+" ";
                     }
                     writeline.printf("%s%n",line);
+                }
+                writeline.printf("-%n");
+                for(Sprite s:m.getSpriteList()){
+                    writeline.printf("%d --SpriteID%n",s.getID());
+                    writeline.printf("%s=--Sprite Name%n", s.getName());
+                    writeline.printf("%d/%d/--spriteXY%n", s.getMapX(),s.getMapY());
+                    writeline.printf("%s --eventName%n",s.getEventFileName());
                 }
                 writeline.close();
             }catch(IOException e){

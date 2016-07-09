@@ -9,6 +9,7 @@ import Background.BattleEntity;
 import Background.BattleEntityLoader;
 import Background.Items.Inventory;
 import Background.Party.Party;
+import Foreground.BlackwindTemp.Blackwind;
 
 /**
  *
@@ -20,7 +21,7 @@ public class PartyMemberSegment extends EventSegment{
         e = BattleEntityLoader.loadEntity(entityID);
     }
     @Override
-    public String activate(Inventory i, Party p) {
+    public String activate(Blackwind b,Inventory i, Party p) {
         if(p.getMaxPartySize()!=p.getCurrentPartySize()){
             p.addPartyMember(e);
             return String.format("%s has joined the party!", e.getName());

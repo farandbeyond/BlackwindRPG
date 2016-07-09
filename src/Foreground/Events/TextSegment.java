@@ -7,6 +7,7 @@ package Foreground.Events;
 
 import Background.Items.Inventory;
 import Background.Party.Party;
+import Foreground.BlackwindTemp.Blackwind;
 
 /**
  *
@@ -21,7 +22,7 @@ public class TextSegment extends EventSegment{
         text[2]=line3;
         text[3]=line4;
     }
-    public String activate(Inventory i, Party p) {
+    public String activate(Blackwind b,Inventory i, Party p) {
         return String.format("%s\n%s\n%s\n%s", text[0],text[1],text[2],text[3]);
     }
 }

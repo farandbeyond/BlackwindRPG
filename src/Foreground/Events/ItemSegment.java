@@ -9,6 +9,7 @@ import Background.Items.Inventory;
 import Background.Items.Item;
 import Background.Items.ItemLoader;
 import Background.Party.Party;
+import Foreground.BlackwindTemp.Blackwind;
 
 /**
  *
@@ -22,7 +23,7 @@ public class ItemSegment extends EventSegment{
         this.quantity = quantity;
     }
 
-    public String activate(Inventory i, Party p) {
+    public String activate(Blackwind b, Inventory i, Party p) {
         Item it = ItemLoader.loadItem(itemID, quantity);
         if(i.canAdd(it)){
             i.add(it);
