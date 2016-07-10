@@ -46,7 +46,7 @@ public class Joystick implements KeyListener{
             }break;
             case Blackwind.EVENT:
                 switch(ke.getExtendedKeyCode()){
-                    case KeyEvent.VK_O:game.getTextBox().advanceText(game);break;
+                    case KeyEvent.VK_O:if(!game.getMC().isWalking())game.getTextBox().advanceText(game);break;
                 }break;
             case Blackwind.INVENTORY:
                 //System.out.println("Menu Command");
@@ -64,7 +64,6 @@ public class Joystick implements KeyListener{
     @Override
     public void keyReleased(KeyEvent ke) {
     }
-    
     public static void main(String[] args){
         Blackwind.main(args);
     }

@@ -36,7 +36,8 @@ public class PlayerMovingSegment extends EventSegment{
         }else{
             direction = Blackwind.STILL;
         }
-        for(int i=0;i<Integer.signum(moveX+moveY)*(moveX+moveY);i++){
+        b.queueMovement(direction, Integer.signum(moveX+moveY)*(moveX+moveY));
+        /*for(int i=0;i<Integer.signum(moveX+moveY)*(moveX+moveY);i++){
             try{
                 System.out.printf("Moving player %d",direction);
                 b.move(direction);
@@ -49,7 +50,7 @@ public class PlayerMovingSegment extends EventSegment{
             }catch(InterruptedException e){
                 System.out.println("Thread Error Occurred");
             }
-        }
+        }*/
         return "adv!!";
     }
     

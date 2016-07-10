@@ -40,6 +40,8 @@ public class Blackwind extends JPanel{
     //Joystick kb;
     //Sprite player;
     int mapOffsetX, mapOffsetY, scrollX, scrollY;
+    int qedMoves, qedMoveDirection;
+    boolean qedMovement;
     Map loadedMap;
     Tile[][] displayArea;
     BufferedImage shownMap;
@@ -61,10 +63,14 @@ public class Blackwind extends JPanel{
         this.setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
         kb = new Joystick(this);
         textBox = new TextBox(0,364,640+16,180,this);
+        //textBox.start();
         //player = mc;
         gameState = MAP;
         this.mapOffsetX=mapOffsetX;
         this.mapOffsetY=mapOffsetY;
+        qedMoves = 0;
+        qedMoveDirection = 0;
+        qedMovement = false;
         scrollX=0;
         scrollY=0;
         shownMap = new BufferedImage((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize,BufferedImage.TYPE_INT_RGB);
@@ -96,7 +102,15 @@ public class Blackwind extends JPanel{
     public void loop(){
         try{
             while(true){
-                if(gameState==MAP){
+                if(gameState==MAP||gameState==EVENT){
+                    if(movementQueued()){
+                        move(qedMoveDirection);
+                        qedMoves--;
+                    }
+                    if(qedMovement&&!movementQueued()&&!mc.isWalking()){
+                        qedMovement = false;
+                        textBox.advanceText(this);
+                    }
                     if(mc.isWalking()){
                         mc.animate(mc.getDirection());
                         shiftMap(mc.getDirection());
@@ -104,14 +118,13 @@ public class Blackwind extends JPanel{
                         mc.animate(0);
                     }
                     repaint();
-                    Thread.sleep(fps);
+                    //Thread.sleep(fps);
                 }else if(gameState==INVENTORY){
                     loadMenu();
                 }else if(gameState==BATTLE){
                     loadBattle();
-                }else if(gameState==EVENT){
-                    repaint();
                 }
+                Thread.sleep(fps);
             }
         }catch(InterruptedException e){
             System.out.println("Error Occurred During loop: "+e);
@@ -122,11 +135,16 @@ public class Blackwind extends JPanel{
         for(Sprite s:loadedMap.getSpriteList()){
             try{
                 if(s.isAt(mc.getMapX(), mc.getMapY(), mc.getDirection())){
-                    System.out.printf("Trying to trigger %s's Event\n",s.getName());
+                    //System.out.printf("Trying to trigger %s's Event\n",s.getName());
                     textBox.loadEvent(s.getEvent(),this);
                     gameState = EVENT;
-                    System.out.println("Event in trigger");
+                    //System.out.println("Event in trigger");
                     s.faceAway(mc.getDirection());
+                    //try{
+                    //    textBox.join();
+                    //}catch(InterruptedException e){
+                    //    System.out.println("Error Occurred in Thread");
+                    //}
                     return;
                 }
             }catch(NullPointerException e){
@@ -134,6 +152,17 @@ public class Blackwind extends JPanel{
             }
         }
         System.out.println("Couldnt find an event to trigger");
+    }
+    public void queueMovement(int direction, int distance){
+        qedMoves = distance;
+        qedMoveDirection = direction;
+        qedMovement = true;
+    }
+    public boolean movementQueued(){
+        if(!mc.isWalking()&&qedMoves!=0){
+            return true;
+        }
+        return false;
     }
     
     public void shiftMap(int direction){
@@ -182,15 +211,16 @@ public class Blackwind extends JPanel{
         this.paint(g);
     }
     public void paint(Graphics g){
-        System.out.println("Blackwind Paint Function");
+        //System.out.println("Blackwind Paint Function");
         switch(gameState){
             case EVENT:
             case MAP:paintMap(g);break;
             case INVENTORY:menu.paint(g);break;
             case BATTLE:battle.paint(g);break;
         }
-        if(gameState==EVENT)
+        if(gameState==EVENT){
             textBox.paint(g);
+        }
         
     }
     public void paintMap(Graphics g){
@@ -234,7 +264,8 @@ public class Blackwind extends JPanel{
         return false;
     }
     public void move(int direction){
-        repaint();
+        //repaint();
+        //System.out.println(mc.isWalking()?"Walking":"Not Walking" + mc.isWalking());
         if(mc.isWalking()){
             //System.out.println("MC is walking");
             return;
@@ -288,7 +319,7 @@ public class Blackwind extends JPanel{
         //System.out.println("Closing menu");
     }
     //public void menuEvent(){System.exit(0);}
-    public class TextBox extends JPanel{
+    public class TextBox{
         int x,y,width,height;
         Event currentEvent;
         String eventLine;
@@ -316,10 +347,13 @@ public class Blackwind extends JPanel{
         public void advanceText(Blackwind b){
             try{
                 eventLine = currentEvent.nextSegment(b,inv, party);
-                if(eventLine.equals("adv!!"))
+                if(eventLine.equals("adv!!")&&!mc.isWalking()&&qedMoves==0)
                     advanceText(b);
                 else
-                    display = eventLine.split("\n");
+                    if(eventLine.equals("adv!!"))
+                        display = "\n\n\n".split("\n");
+                    else
+                        display = eventLine.split("\n");
             }catch(IndexOutOfBoundsException e){
                 //System.out.println("out of bounds");
                 display = null;
@@ -379,6 +413,7 @@ public class Blackwind extends JPanel{
         
         frame.pack();
         frame.addKeyListener(g.getKL());
+        //g.getKL().start();
         g.loop();
         //Blackwind.gameState = INVENTORY;
         //g.getMenu().run(g.party, g.inv);
