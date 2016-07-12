@@ -4,9 +4,20 @@ im going to move you down a bit
 careful not to run into the wall
 -end
 -movemc
--5/0
+-1/0
 -movemc
 0/-1
 -text
 theres the movement for ya
 -end
+-text
+i'm going to walk over to you now
+-end
+-movenpc
+Skinny Man
+-2/0
+-text
+okay that's good
+-end
+-post
+test1

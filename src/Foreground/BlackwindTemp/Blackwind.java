@@ -42,6 +42,10 @@ public class Blackwind extends JPanel{
     int mapOffsetX, mapOffsetY, scrollX, scrollY;
     int qedMoves, qedMoveDirection;
     boolean qedMovement;
+    int npcMoves, npcMoveDirection;
+    boolean npcMovement;
+    String npcName;
+    String lastEventTriggered;
     Map loadedMap;
     Tile[][] displayArea;
     BufferedImage shownMap;
@@ -71,6 +75,11 @@ public class Blackwind extends JPanel{
         qedMoves = 0;
         qedMoveDirection = 0;
         qedMovement = false;
+        npcMoves = 0;
+        npcMoveDirection = 0;
+        npcMovement = false;
+        npcName = "";
+        lastEventTriggered = "";
         scrollX=0;
         scrollY=0;
         shownMap = new BufferedImage((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize,BufferedImage.TYPE_INT_RGB);
@@ -99,18 +108,13 @@ public class Blackwind extends JPanel{
             }
         }
     }
+    
     public void loop(){
         try{
             while(true){
                 if(gameState==MAP||gameState==EVENT){
-                    if(movementQueued()){
-                        move(qedMoveDirection);
-                        qedMoves--;
-                    }
-                    if(qedMovement&&!movementQueued()&&!mc.isWalking()){
-                        qedMovement = false;
-                        textBox.advanceText(this);
-                    }
+                    checkPlayerForcedMovement();
+                    checkNpcForcedMovement();
                     if(mc.isWalking()){
                         mc.animate(mc.getDirection());
                         shiftMap(mc.getDirection());
@@ -130,6 +134,52 @@ public class Blackwind extends JPanel{
             System.out.println("Error Occurred During loop: "+e);
         }
     }
+    public void checkPlayerForcedMovement(){
+        if(movementQueued()){
+            move(qedMoveDirection);
+            qedMoves--;
+        }
+        if(qedMovement&&!movementQueued()&&!mc.isWalking()){
+            qedMovement = false;
+            textBox.advanceText(this);
+        }
+    }
+    public void checkNpcForcedMovement(){
+        //if(npcMovementQueued()){
+        //    loadedMap.getSprite(npcName).move(npcMoveDirection);
+        //    if(!loadedMap.getSprite(npcName).isWalking()){
+        //        System.out.println("One less movement");
+        //        npcMoves--;
+        //    }
+        //}
+        //if(npcMovement&&!npcMovementQueued()&&!npcMoving()){
+        //    npcMovement = false;
+        //    textBox.advanceText(this);
+        //}
+        
+        if(npcMoves==0){
+            if(npcMovement){
+                npcMovement=false;
+                textBox.advanceText(this);
+            }
+            return;
+        }
+        if(!loadedMap.getSprite(npcName).isWalking()){
+            //System.out.println("Total moves decreasing");
+            npcMoves--;
+        }
+        if(npcMoves!=0){
+            System.out.printf("%d/%d\n",mc.getMapX(),mc.getMapY());
+            if((loadedMap.getSprite(npcName).isWalking()
+                ||loadedMap.tileWalkable(loadedMap.getSprite(npcName).getMapX()-1, loadedMap.getSprite(npcName).getMapY()-1, loadedMap.getSprite(npcName).getDirection())
+               )&&!mc.isAt(loadedMap.getSprite(npcName).getMapX(), loadedMap.getSprite(npcName).getMapY(), loadedMap.getSprite(npcName).getDirection()))
+                
+                loadedMap.getSprite(npcName).move(npcMoveDirection);
+            else
+                npcMoves--;
+            //System.out.println(npcMoves);
+        }
+    }
     
     public void triggerEvent(){
         for(Sprite s:loadedMap.getSpriteList()){
@@ -145,6 +195,9 @@ public class Blackwind extends JPanel{
                     //}catch(InterruptedException e){
                     //    System.out.println("Error Occurred in Thread");
                     //}
+                    //System.out.printf("%d/%s\n", s.getMapX(),s.getMapY());
+                    System.out.printf("%s",loadedMap.getTile(s.getMapX(), s.getMapY()).getName());
+                    lastEventTriggered = s.getName();
                     return;
                 }
             }catch(NullPointerException e){
@@ -158,10 +211,28 @@ public class Blackwind extends JPanel{
         qedMoveDirection = direction;
         qedMovement = true;
     }
+    public void queueNpcMovement(int direction, int distance, String npcName){
+        //System.out.printf("Direction:%d Distance:%d Name:%s", direction,distance,npcName);
+        this.npcName = npcName;
+        npcMoves = distance;
+        npcMoveDirection = direction;
+        npcMovement = true;
+        loadedMap.getSprite(npcName).move(direction);
+    }
     public boolean movementQueued(){
         if(!mc.isWalking()&&qedMoves!=0){
             return true;
         }
+        return false;
+    }
+    public boolean npcMoving(){
+        if(loadedMap.getSprite(npcName).isWalking())
+            return true;
+        return false;
+    }
+    public boolean npcMovementQueued(){
+        if(loadedMap.getSprite(npcName).isWalking()&&npcMoves!=0)
+            return true;
         return false;
     }
     
@@ -230,7 +301,8 @@ public class Blackwind extends JPanel{
         g.drawImage(mc.getSprite(), mc.getGlobalX(), mc.getGlobalY(), this);
         for(Sprite s:loadedMap.getSpriteList()){
             if(s.isDisplayed(mapOffsetX, mapOffsetY, displayWidth+1, displayHeight+1)){
-                g.drawImage(s.getSprite(), (s.getScreenX()-mapOffsetX)*Tile.tileSize-scrollX, (s.getScreenY()-mapOffsetY)*Tile.tileSize-scrollY, this);
+                //g.drawImage(s.getSprite(), (s.getScreenX()-mapOffsetX)*Tile.tileSize-scrollX, (s.getScreenY()-mapOffsetY)*Tile.tileSize-scrollY, this);
+                g.drawImage(s.getSprite(), (s.getGlobalX()-mapOffsetX*Tile.tileSize)-scrollX, (s.getGlobalY()-mapOffsetY*Tile.tileSize)-scrollY, this);
                 //System.out.printf("Sprite %s is displayed at %dx and %dy\nthis is with a map offset of %dx and %dy\n\n",s.getName(),s.getMapX(),s.getMapY(),mapOffsetX,mapOffsetY);
             }
         }
@@ -295,10 +367,16 @@ public class Blackwind extends JPanel{
         }
         if(!tileIsWalkable)
             return;
-        mc.move(direction);
+        mc.moveMC(direction);
     }
     public Joystick getKL(){return kb;}
+    
+    public void loadNewEvent(String eventName){
+        loadedMap.getSprite(lastEventTriggered).setEventFileName(eventName);
+        loadedMap.getSprite(lastEventTriggered).setEvent(EventReader.loadEvent(eventName));
+    }
 
+    public Map getMap(){return loadedMap;}
     public Battle getBattle(){return battle;}
     public PauseMenu getMenu(){return menu;}
     public TextBox getTextBox(){return textBox;}
@@ -347,7 +425,7 @@ public class Blackwind extends JPanel{
         public void advanceText(Blackwind b){
             try{
                 eventLine = currentEvent.nextSegment(b,inv, party);
-                if(eventLine.equals("adv!!")&&!mc.isWalking()&&qedMoves==0)
+                if(eventLine.equals("adv!!")&&!mc.isWalking()&&qedMoves==0&&!npcMoving()&&npcMoves==0)
                     advanceText(b);
                 else
                     if(eventLine.equals("adv!!"))

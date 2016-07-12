@@ -43,7 +43,7 @@ public class EventReader {
                 }
                 //while the file is not over
                 while((line=fileReader.readLine())!=null){
-                    System.out.println(line);
+                    //System.out.println(line);
                     if(line.charAt(0)!=';'){
                         //if the segment is a text event
                         if(line.equals("-text")){
@@ -70,6 +70,12 @@ public class EventReader {
                         }
                         else if(line.equals("-movemc")){
                             eve.addSegment(loadMCMovementSegment(fileReader.readLine()));
+                        }
+                        else if(line.equals("-movenpc")){
+                            eve.addSegment(loadSpriteMovementSegment(fileReader.readLine(),fileReader.readLine()));
+                        }
+                        else if(line.equals("-post")){
+                            eve.addSegment(new PostEventSegment(fileReader.readLine()));
                         }
                         //if the file is not labelled properly
                         else{
@@ -98,5 +104,9 @@ public class EventReader {
     public static PlayerMovingSegment loadMCMovementSegment(String movementVector){
         String[] xy = movementVector.split("/");
         return new PlayerMovingSegment(Integer.parseInt(xy[0]),Integer.parseInt(xy[1]));
+    }
+    public static SpriteMovingSegment loadSpriteMovementSegment(String spriteName, String moveVector){
+        String[] xy = moveVector.split("/");
+        return new SpriteMovingSegment(spriteName,Integer.parseInt(xy[0]),Integer.parseInt(xy[1]));
     }
 }

@@ -46,7 +46,7 @@ public class Sprite {
     int facingDirection, movingDirection;
     int aniCycle;
     boolean moving;
-    //globalX and globalY are where the sprite paints itself. mapX and mapY are the tile is is linked to. screenX and screenY represent where the sprite is onscreen
+    //globalX and globalY are where the sprite paints itself. mapX and mapY are the tile is is linked to. screenX and screenY represent where the sprite is onscreen in relation to loaded map tiles (used only in MC for now)
     int mapX, mapY, screenX, screenY, globalX, globalY;
     //these are usable during events, and for our own clarity
     int id;
@@ -90,43 +90,9 @@ public class Sprite {
     }
     public void setGlobalX(){globalX = screenX*Tile.tileSize;}
     public void setGlobalY(){globalY = screenY*Tile.tileSize;}
-    
-    /*public void move(int direction){
-        switch(movingDirection==Blackwind.STILL?direction:movingDirection){
-            case Blackwind.DOWN:
-                globalY+=pixelsMoved;
-                
-                break;
-            case Blackwind.UP:
-                globalY-=pixelsMoved;
-                
-                break;
-            case Blackwind.RIGHT:
-                
-                globalX+=pixelsMoved;
-                break;
-            case Blackwind.LEFT:
-                
-                globalX-=pixelsMoved;
-                break;
-        }
-        if(!moving){
-            facingDirection = direction;
-            movingDirection = direction;
-            moving = true;
-            switch(direction){
-                case Blackwind.DOWN:mapY++;break;
-                case Blackwind.UP:mapY--;break;
-                case Blackwind.LEFT:mapX--;break;
-                case Blackwind.RIGHT:mapX++;break;
-            }
-        }
-        if(globalX%Tile.tileSize==0&&globalY%Tile.tileSize==0){
-            moving=false;
-            movingDirection = Blackwind.STILL;
-        }
-    }*/
-    public void move(int direction){
+    public void setMapX(){mapX = globalX/32;}
+    public void setMapY(){mapY = globalY/32;}
+    public void moveMC(int direction){
         this.facingDirection = direction;
         movingDirection = direction;
         switch(direction){
@@ -136,9 +102,43 @@ public class Sprite {
             case Blackwind.LEFT: mapX--;break;
         }
         moving = true;
-        //moveTo();
     }
-    
+    public void move(int direction){
+        //System.out.println("Moving 1");
+        if(moving){
+            moveTo();
+            return;
+        }
+        //System.out.println("Moving 2");
+        this.facingDirection = direction;
+        movingDirection = direction;
+        switch(direction){
+            case Blackwind.UP:   mapY--;break;
+            case Blackwind.DOWN: mapY++;break;
+            case Blackwind.RIGHT:mapX++;break;
+            case Blackwind.LEFT: mapX--;break;
+        }
+        moving = true;
+        //System.out.println("Moving 3");
+        moveTo();
+    }
+    public void moveTo(){
+        //System.out.println("Moving 4");
+        switch(movingDirection){
+            case Blackwind.UP: globalY--;break;
+            case Blackwind.DOWN:globalY++;break;
+            case Blackwind.RIGHT:globalX++;break;
+            case Blackwind.LEFT:globalX--;break;
+        }
+        //System.out.printf("%d/%d",globalX,globalY);
+        if(globalY%32==0&&globalX%32==0){
+            setMapX();
+            setMapY();
+            System.out.println("Moving stopped: Destination reached");
+            moving=false;
+        }
+            
+    }
     
     public void toggleIsWalking(){
         if(moving){

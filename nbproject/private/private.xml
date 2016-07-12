@@ -4,13 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Joystick.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Map.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/Event.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/BattleEntityLoader.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/SpriteMovingSegment.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Sprite.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/MapEditor.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/EventSegment.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/PlayerMovingSegment.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/PostEventSegment.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Tile.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/EventReader.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Blackwind.java</file>
         </group>

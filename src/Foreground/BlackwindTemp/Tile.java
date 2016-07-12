@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
 public class Tile{
     //a tile is a 32-bit ground sprite. it has an ID saved, refencing a "tile dictionary" for all of its proper data, including walkable, image, and name
     //global controllers: number of tiles the game allows
-    private static int numberOfTiles = 3;
+    private static int numberOfTiles = 4;
     public static int tileSize = 32;
     //static controllers: tile dictionary + startup initailizers
     private static BufferedImage[] dictTileImages = new BufferedImage[numberOfTiles];
@@ -32,6 +32,7 @@ public class Tile{
             loadTile(0,"Void",false,"void");
             loadTile(1,"Floor",true,"floor2");
             loadTile(2,"Wall",false,"wall2");
+            loadTile(3,"Path",true,"testPath");
             
             System.out.println("Tiles Finished Loading Sucessfully");
         }catch(Exception e){

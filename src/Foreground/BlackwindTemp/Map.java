@@ -160,6 +160,15 @@ public class Map {
     }
     
     public Tile getTile(int x, int y){return mapTiles[x][y];}
+    public Sprite getSprite(String spriteName){
+        for(Sprite s: sprites){
+            if(s.getName().equals(spriteName)){
+                return s;
+            }
+        }
+        //System.out.printf("Didn't find Sprite %s\n",spriteName);
+        return null;
+    }
     public boolean tileWalkable(int x, int y, int direction){
         try{
             switch(direction){
