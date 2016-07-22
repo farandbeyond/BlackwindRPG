@@ -57,6 +57,11 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
         private static boolean spriteSelected = false;
         private static boolean spriteAltered = false;
         private static Sprite selectedSprite;
+        //Warp Tile Editor
+        private static Tile selectedTile;
+        private static boolean tileSelected = false;
+        private static int selectedX=0, selectedY=0;
+        
         //sprite editor buttons/text areas
         private static JButton newSprite;
         private static JComboBox<ImageIcon> spriteID;
@@ -64,11 +69,19 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
         private static JComboBox<Integer> spriteMapX;
         private static JComboBox<Integer> spriteMapY;
         private static JTextArea eventFileName;
+        //Warp Tile Editor buttons/text areas
+        private static JButton addWarp;
+        private static JButton removeWarp;
+        private static JButton saveTile;
+        private static JTextArea mapToLoad;
+        private static JComboBox<Integer> destinationX;
+        private static JComboBox<Integer> destinationY;
         
         
 	//Edit types for the Editor type drop down menu
 	public static final int EDIT_TILE = 0;
 	public static final int EDIT_SPRITES = 1;
+        public static final int EDIT_WARPS = 2;
 	//Edit Selectors
 	private static JComboBox<ImageIcon> tileSelecterLeft;
 	private static JComboBox<ImageIcon> tileSelecterRight;
@@ -85,6 +98,7 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 		editType = new JComboBox<String>();
 		editType.addItem("Tile Edit Mode");
                 editType.addItem("Sprite Edit Mode");
+                editType.addItem("Warp Placement Mode");
 		editType.setBounds(menuItemLeft,10,160,30);
 		add(editType);
 		//map eiditing details
@@ -130,6 +144,30 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                         spriteMapY.addItem(i);
                     spriteMapX.addItem(i);
                 }
+                //Warp Tile editing details
+                addWarp = new JButton();
+                removeWarp = new JButton();
+                saveTile = new JButton();
+                mapToLoad = new JTextArea();
+                destinationX = new JComboBox<>();
+                destinationY = new JComboBox<>();
+                
+                addWarp.setBounds(menuItemLeft,350,150,45);
+                removeWarp.setBounds(menuItemLeft,350,150,45);
+                removeWarp.setVisible(false);
+                saveTile.setBounds(menuItemLeft,400,150,45);
+                mapToLoad.setBounds(menuItemLeft, 450, 140, 30);
+                destinationX.setBounds(menuItemLeft,490,60,30);
+                destinationY.setBounds(menuItemRight,490,60,30);
+                
+                addWarp.setText("Create New WarpTile");
+                removeWarp.setText("Remove WarpTile");
+                saveTile.setText("Save Warp Data");
+                for(int i=2;i<=40;i++){
+                    if(i<=25)
+                        destinationY.addItem(i);
+                    destinationX.addItem(i);
+                }
                 //all the add's
 		add(tileSelecterLeft);
 		add(tileSelecterRight);
@@ -142,6 +180,13 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                 add(spriteMapX);
                 add(spriteMapY);
                 add(newSprite);
+                
+                add(addWarp);
+                add(removeWarp);
+                add(saveTile);
+                add(mapToLoad);
+                add(destinationX);
+                add(destinationY);
 	}
         public void paintComponent(Graphics g){
             //System.out.println("painting");
@@ -173,7 +218,32 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                 if(editType.getSelectedIndex()==EDIT_SPRITES){
                     for(Sprite s:loadedMap.getSpriteList())
                         g.drawImage(s.getSprite(), (s.getMapX()-1)*32, (s.getMapY()-1)*32, 32, 32, null);
-                }                
+                }
+                if(editType.getSelectedIndex()==EDIT_WARPS){
+                    if(selectedTile==null||selectedTile.getClass()== new Tile(0).getClass()){
+                        addWarp.setVisible(true);
+                        removeWarp.setVisible(false);
+                    }else{
+                        removeWarp.setVisible(true);
+                        addWarp.setVisible(false);
+                    }
+                    g.setColor(Color.orange);
+                    g.drawRect(selectedX*32+1, selectedY*32+1,30,30);
+                    for(int col = 0; col < loadedMap.getX(); col++){
+			for(int row = 0; row < loadedMap.getY(); row++){
+				Tile thisTile = loadedMap.getTile(col,row);
+                                try{
+                                    ((WarpTile)thisTile).getID();
+                                    g.setColor(Color.red);
+                                    g.drawRect(col*32+1, row*32+1, 30, 30);
+                                    g.drawRect(col*32+2, row*32+2, 28, 28);
+                                    g.setColor(Color.gray);
+                                }catch(ClassCastException e){
+                                    
+                                }
+			}
+		}
+                }
 	}
         
         public static void setupMenu(){
@@ -274,12 +344,45 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 			if(mapLoaded){
 				closeMap();
 			}
-		}else if(ae.getSource() == newSprite){
+		}
+                else if(ae.getSource() == newSprite){
                     System.out.println("new sprite");
                     Sprite s = new Sprite(0,"name",1,1,0,"eventName");
                     loadedMap.addSprite(s);
                     selectedSprite = s;
                     loadSpriteData();
+                }
+                else if(ae.getSource() == addWarp&&selectedTile!=null){
+                    selectedTile = new WarpTile(selectedTile.getID(),0,0,"");
+                    destinationX.setSelectedIndex(0);
+                    destinationY.setSelectedIndex(0);
+                    mapToLoad.setText("mapFile.txt");
+                    loadedMap.setTile(selectedX, selectedY, selectedTile);
+                }
+                else if(ae.getSource() == removeWarp&&selectedTile!=null){
+                    selectedTile = new Tile(selectedTile.getID());
+                    destinationX.setSelectedIndex(0);
+                    destinationY.setSelectedIndex(0);
+                    mapToLoad.setText("");
+                    loadedMap.setTile(selectedX, selectedY, selectedTile);
+                }
+                else if(ae.getSource() == saveTile&&selectedTile!=null){
+                    try{
+                        if(((WarpTile)selectedTile).getWarpX()!=destinationX.getSelectedIndex()+2){
+                            ((WarpTile)selectedTile).setWarpX(destinationX.getSelectedIndex()+2);
+                        }
+                        if(((WarpTile)selectedTile).getWarpY()!=destinationY.getSelectedIndex()+2){
+                            ((WarpTile)selectedTile).setWarpY(destinationY.getSelectedIndex()+2);
+                        }
+                        if(!((WarpTile)selectedTile).getNewMapName().equals(mapToLoad.getText())){
+                            ((WarpTile)selectedTile).setNewMapName(mapToLoad.getText());
+                        }
+                    }catch(ClassCastException e){
+                        System.out.println("Non-Warp Tile saved");
+                        
+                    }
+                    loadedMap.setTile(selectedX, selectedY, selectedTile);
+                    tileSelected = false;
                 }
 		repaint();
 	}
@@ -304,6 +407,50 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                 if(loadedMap.getY()!=mapHeight.getSelectedIndex()+3){
                     loadedMap.setHeight(mapHeight.getSelectedIndex()+3);
                     System.out.println(loadedMap.mapHeight);
+                }
+                //load menu stuff essential to current mode
+                //Tile editing
+                tileSelecterLeft.setVisible(false);
+                tileSelecterRight.setVisible(false);
+                mapWidth.setVisible(false);
+                mapHeight.setVisible(false);
+                //sprite editing
+                newSprite.setVisible(false);
+                spriteID.setVisible(false);
+                spriteName.setVisible(false);
+                spriteMapX.setVisible(false);
+                spriteMapY.setVisible(false);
+                eventFileName.setVisible(false);
+                //warp editing
+                addWarp.setVisible(false);
+                removeWarp.setVisible(false);
+                mapToLoad.setVisible(false);
+                destinationX.setVisible(false);
+                destinationY.setVisible(false);
+                switch(editType.getSelectedIndex()){
+                    case EDIT_TILE:
+                        selectedTile=null;
+                        tileSelecterLeft.setVisible(true);
+                        tileSelecterRight.setVisible(true);
+                        mapWidth.setVisible(true);
+                        mapHeight.setVisible(true);
+                        break;
+                    case EDIT_SPRITES:
+                        selectedTile=null;
+                        newSprite.setVisible(true);
+                        spriteID.setVisible(true);
+                        spriteName.setVisible(true);
+                        spriteMapX.setVisible(true);
+                        spriteMapY.setVisible(true);
+                        eventFileName.setVisible(true);
+                        break;
+                    case EDIT_WARPS:
+                        addWarp.setVisible(true);
+                        removeWarp.setVisible(true);
+                        mapToLoad.setVisible(true);
+                        destinationX.setVisible(true);
+                        destinationY.setVisible(true);
+                        break;
                 }
 		//Switch depending on what mode we are set on
 		switch(editType.getSelectedIndex()){
@@ -344,7 +491,23 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                                 }
                             }
                             
-                        }
+                        }break;
+                        case EDIT_WARPS:
+                            if(me.getButton()==MouseEvent.BUTTON1){
+                                if(selectedTile!=null){
+                                    if(selectedTile.getClass()==WarpTile.class){
+                                        destinationX.setSelectedIndex(((WarpTile)selectedTile).getWarpX()+2);
+                                        destinationY.setSelectedIndex(((WarpTile)selectedTile).getWarpY()+2);
+                                        mapToLoad.setText(((WarpTile)selectedTile).getNewMapName());
+                                    }
+                                }
+                                selectedX = squareX;
+                                selectedY = squareY;
+                                //System.out.println(selectedX+"/"+squareX);
+                                selectedTile = loadedMap.getTile(squareX, squareY);
+                                tileSelected = true;
+                            }
+                            break;
 		}
 		//Repaint every click
 		
@@ -362,6 +525,10 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 		editor = new MapEditor();
 		setupMenu();
                 newSprite.addActionListener(editor);
+                addWarp.addActionListener(editor);
+                removeWarp.addActionListener(editor);
+                saveTile.addActionListener(editor);
+                        
 		window = new JFrame("Editor");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);

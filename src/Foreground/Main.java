@@ -5,10 +5,14 @@
  */
 package Foreground;
 
+import Foreground.BlackwindTemp.Blackwind;
+
 /**
  *
  * @author Connor
  */
 public class Main {
-    
+    public static void main(String[] args){
+        Blackwind.main(args);
+    }
 }

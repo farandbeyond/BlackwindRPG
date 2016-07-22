@@ -46,11 +46,24 @@ public class Map {
                     //System.out.println(mapRow);
                 String[] testLen = contents.get(0).split(" ");
                 //tile writing
-                int[][] tileIDs = new int[contents.size()][testLen.length];
+                Tile[][] tileIDs = new Tile[contents.size()][testLen.length];
                 for(int x=0;x<tileIDs.length;x++){
-                    for(int y=0;y<testLen.length-1;y++){
+                    for(int y=0;y<testLen.length;y++){
+                        String tileInfo = contents.get(x).split(" ")[y];
                         //System.out.println(x+"/"+y);
-                        tileIDs[x][y] = Integer.parseInt(contents.get(x).split(" ")[y]);
+                        try{
+                            tileIDs[x][y] = new Tile(Integer.parseInt(tileInfo));
+                        }catch(NumberFormatException e){
+                            System.out.printf("Non-Basic Tile found at %d/%d\n",x,y);
+                            String[] tileDetails = tileInfo.split("/");
+                            if(tileInfo.split("/")[1].equals("w")){
+                                tileIDs[x][y] = new WarpTile(
+                                        Integer.parseInt(tileDetails[0]),
+                                        Integer.parseInt(tileDetails[3]),
+                                        Integer.parseInt(tileDetails[4]),
+                                        (tileDetails[2]));
+                            }
+                        }
                     }
                 }
                 Map m = new Map(tileIDs);
@@ -91,7 +104,7 @@ public class Map {
                     String line = "";
                     for(int y=0;y<m.getY();y++){
                         //System.out.println(x+"/"+y);
-                        line+=m.getTile(x, y).getID()+" ";
+                        line+=m.getTile(x, y).getDetails()+" ";
                     }
                     writeline.printf("%s%n",line);
                 }
@@ -129,6 +142,12 @@ public class Map {
                 this.mapTiles[x][y] =  new Tile(mapTiles[x][y]);
             }
         }
+        sprites = new ArrayList<>();
+    }
+    public Map(Tile[][] mapTiles){
+        mapWidth = mapTiles.length;
+        mapHeight = mapTiles[0].length;
+        this.mapTiles = mapTiles;
         sprites = new ArrayList<>();
     }
     public Map(){
@@ -191,7 +210,7 @@ public class Map {
     }
     
     public void changeTile(int x, int y, int tileID){
-        mapTiles[x][y]=new Tile(tileID);
+        mapTiles[x][y].setID(tileID);
     }
     public void setWidth(int w){
         int tilesDeleted=0;
@@ -226,6 +245,9 @@ public class Map {
         }
         mapHeight = h;
         System.out.printf("Height set to %d. %d tiles added/deleted by this\n", h,tilesDeleted);
+    }
+    public void setTile(int x, int y, Tile t){
+        mapTiles[x][y] = t;
     }
     public int getX(){return getWidth();}
     public int getY(){return getHeight();}

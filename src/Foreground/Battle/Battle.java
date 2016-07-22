@@ -570,7 +570,6 @@ public class Battle extends JPanel{
             Thread.sleep(1500);
         }
         Blackwind.gameState = Blackwind.MAP;
-        
     }
     //paint
     public void paint(Graphics g){

@@ -120,6 +120,8 @@ public class Blackwind extends JPanel{
                         shiftMap(mc.getDirection());
                     }else{
                         mc.animate(0);
+                        loadedMap.getTile(mc.getMapX()-1, mc.getMapY()-1).activate(this,mc, loadedMap, party, inv);
+                        //System.out.printf("%d/%d\n",mc.getMapX(),mc.getMapY());
                     }
                     repaint();
                     //Thread.sleep(fps);
@@ -181,6 +183,9 @@ public class Blackwind extends JPanel{
         }
     }
     
+    public void loadMap(String mapName){
+        loadedMap = Map.loadMap(mapName);
+    }
     public void triggerEvent(){
         for(Sprite s:loadedMap.getSpriteList()){
             try{
@@ -295,6 +300,8 @@ public class Blackwind extends JPanel{
         
     }
     public void paintMap(Graphics g){
+        loadDisplayArea(mapOffsetX,mapOffsetY);
+        loadMapImage();
         g.setColor(Color.MAGENTA);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         g.drawImage(shownMap.getSubimage(32+scrollX,32+scrollY,(32*displayWidth),(32*displayHeight)), 32, 32, this);
@@ -374,6 +381,10 @@ public class Blackwind extends JPanel{
     public void loadNewEvent(String eventName){
         loadedMap.getSprite(lastEventTriggered).setEventFileName(eventName);
         loadedMap.getSprite(lastEventTriggered).setEvent(EventReader.loadEvent(eventName));
+    }
+    public void setNewMapOffset(int mcMapX, int mcMapY){
+        mapOffsetX = mcMapX-10;
+        mapOffsetY = mcMapY-8;
     }
 
     public Map getMap(){return loadedMap;}
@@ -470,7 +481,8 @@ public class Blackwind extends JPanel{
         //Sprite.initialize();
         //Sprite wilson = new Sprite(0,5,5);
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
-        Map m = Map.loadMap("maxSize2.txt");
+        Map m = Map.loadMap("maxSize3.txt");
+        //m.setTile(5,5,new WarpTile(m.getTile(5,5).getID(),10,10,"maxSize2.txt"));
         Blackwind g = new Blackwind(m,0,0);
         
         frame.add(g);
