@@ -56,6 +56,7 @@ public class Map {
                         }catch(NumberFormatException e){
                             System.out.printf("Non-Basic Tile found at %d/%d\n",x,y);
                             String[] tileDetails = tileInfo.split("/");
+                            //warp tile
                             if(tileInfo.split("/")[1].equals("w")){
                                 tileIDs[x][y] = new WarpTile(
                                         Integer.parseInt(tileDetails[0]),
@@ -63,10 +64,19 @@ public class Map {
                                         Integer.parseInt(tileDetails[4]),
                                         (tileDetails[2]));
                             }
+                            //event tile
+                            if(tileInfo.split("/")[1].equals("e")){
+                                tileIDs[x][y] = new EventTile(
+                                        Integer.parseInt(tileDetails[0]),
+                                        (tileDetails[2]),
+                                        mapname.split(".txt")[0]);
+                            }
                         }
                     }
                 }
                 Map m = new Map(tileIDs);
+                m.setName(mapname.split(".txt")[0]);
+                System.out.println(m.getName());
                 //sprite loading
                 while((line=fileReader.readLine())!=null){
                     String spriteID = line;
@@ -78,7 +88,7 @@ public class Map {
                     String[] xy = spriteXY.split("/");
                     int x = Integer.parseInt(xy[0]);
                     int y = Integer.parseInt(xy[1]);
-                    m.addSprite(new Sprite(id,spriteName.split("=")[0],x,y,0,fileReader.readLine().split(" ")[0]));
+                    m.addSprite(new Sprite(id,spriteName.split("=")[0],x,y,0,fileReader.readLine().split(" ")[0],mapname));
                 }
                 
                 return m;
@@ -126,6 +136,7 @@ public class Map {
     }
     //int mapID;
     int mapWidth, mapHeight;
+    String mapName;
     //int totalSprites;
     Tile[][] mapTiles;
     ArrayList<Sprite> sprites;
@@ -249,6 +260,8 @@ public class Map {
     public void setTile(int x, int y, Tile t){
         mapTiles[x][y] = t;
     }
+    public void setName(String name){this.mapName = name;}
+    public String getName(){return mapName;}
     public int getX(){return getWidth();}
     public int getY(){return getHeight();}
     public ArrayList<Sprite> getSpriteList(){return sprites;}

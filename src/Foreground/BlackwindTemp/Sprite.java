@@ -70,7 +70,7 @@ public class Sprite {
         setGlobalX();
         setGlobalY();
     }
-    Sprite(int id, String name, int mapX, int mapY, int facingDirection,String eventName){
+    Sprite(int id, String name, int mapX, int mapY, int facingDirection,String eventName,String mapName){
         screenX = mapX;
         screenY = mapY;
         this.mapX = mapX;
@@ -83,7 +83,7 @@ public class Sprite {
         moving = false;
         movingDirection = Blackwind.DOWN;
         eventFileName = eventName;
-        setEvent(EventReader.loadEvent(eventName));
+        setEvent(EventReader.loadEvent(eventName,mapName));
         
         setGlobalX();
         setGlobalY();

@@ -5,12 +5,12 @@
         <group>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Joystick.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Map.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Menu/PauseMenu.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/MapEditor.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Tile.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/Events/EventReader.java</file>
             <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/Blackwind.java</file>
-            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/WarpTile.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Foreground/BlackwindTemp/EventTile.java</file>
+            <file>file:/C:/Users/Connor/Documents/NetBeansProjects/Blackwind/src/Background/Items/ItemLoader.java</file>
         </group>
     </open-files>
 </project-private>

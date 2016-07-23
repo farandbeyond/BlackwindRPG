@@ -21,10 +21,11 @@ import java.util.logging.Logger;
 public class EventReader {
     
     
-    public static Event loadEvent(String fileName){
+    public static Event loadEvent(String fileName, String mapNameRough){
         try {
-            
-            String filePath = String.format("Events/%s.txt",fileName);
+            String mapName = mapNameRough.split(".txt")[0];
+            System.out.println(String.format("Events/%s/%s.txt",mapName,fileName));
+            String filePath = String.format("Events/%s/%s.txt",mapName,fileName);
             InputStream input;
 
             input = new FileInputStream(filePath);
@@ -33,13 +34,13 @@ public class EventReader {
             BufferedReader fileReader = new BufferedReader(inputReader);
             String line;
             
-            Event eve = new Event(true);
+            Event eve = new Event(true,"");
             try{
                 //if file starts with the word repeatable:
                 if(fileReader.readLine().equals("repeatable")){
-                    eve = new Event(true);
+                    eve = new Event(true,"");
                 }else{
-                    eve = new Event(false);
+                    eve = new Event(false,"");
                 }
                 //while the file is not over
                 while((line=fileReader.readLine())!=null){
@@ -88,6 +89,7 @@ public class EventReader {
             }catch(NullPointerException e){
                 
             }
+            eve.setName(fileName.split(".txt")[0]);
             return eve;
         }catch (FileNotFoundException ex) {
             System.out.printf("File %s not found\n",fileName);

@@ -23,6 +23,8 @@ public class Inventory {
     //inventory managers
     public boolean canAdd(Item i){
         //if item exists in inventory
+        if(inventory.isEmpty())
+            return true;
         for(Item item:inventory){
             if(item.getId()==i.getId()){
                 if(item.getQuantity()+i.getQuantity()<=item.getMaxQuantity()){

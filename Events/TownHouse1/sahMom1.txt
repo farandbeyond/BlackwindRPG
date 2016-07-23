@@ -1,0 +1,26 @@
+!repeatable
+-text
+You know, being a stay-at-home parent
+is really a hard job
+-end
+-text
+You dont fight monsters, or do heavy lifting
+-end
+-text
+but dishes and cooking are hard in their own right.
+-end
+-text
+Some days, i wish i could leave the house,
+join a wandering group, and enjoy the wilderness
+-end
+-text
+hmm? your looking for an ally?
+I'm game.
+-end
+-pmem
+2
+-text
+these dishwater soaked hands will serve you well, hero
+-end
+-post
+sahMom2

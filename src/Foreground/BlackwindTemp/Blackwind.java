@@ -120,7 +120,8 @@ public class Blackwind extends JPanel{
                         shiftMap(mc.getDirection());
                     }else{
                         mc.animate(0);
-                        loadedMap.getTile(mc.getMapX()-1, mc.getMapY()-1).activate(this,mc, loadedMap, party, inv);
+                        if(gameState!=EVENT)
+                            loadedMap.getTile(mc.getMapX()-1, mc.getMapY()-1).activate(this,mc, loadedMap, party, inv);
                         //System.out.printf("%d/%d\n",mc.getMapX(),mc.getMapY());
                     }
                     repaint();
@@ -231,9 +232,13 @@ public class Blackwind extends JPanel{
         return false;
     }
     public boolean npcMoving(){
-        if(loadedMap.getSprite(npcName).isWalking())
-            return true;
-        return false;
+        try{
+            if(loadedMap.getSprite(npcName).isWalking())
+                return true;
+            return false;
+        }catch(NullPointerException e){
+            return false;
+        }
     }
     public boolean npcMovementQueued(){
         if(loadedMap.getSprite(npcName).isWalking()&&npcMoves!=0)
@@ -380,7 +385,7 @@ public class Blackwind extends JPanel{
     
     public void loadNewEvent(String eventName){
         loadedMap.getSprite(lastEventTriggered).setEventFileName(eventName);
-        loadedMap.getSprite(lastEventTriggered).setEvent(EventReader.loadEvent(eventName));
+        loadedMap.getSprite(lastEventTriggered).setEvent(EventReader.loadEvent(eventName,loadedMap.getName()));
     }
     public void setNewMapOffset(int mcMapX, int mcMapY){
         mapOffsetX = mcMapX-10;
@@ -430,13 +435,18 @@ public class Blackwind extends JPanel{
             }else{
                 eventLine = "cant be triggered again";
                 display = eventLine.split("\n");
-                currentEvent = new Event(false);
+                currentEvent = new Event(false,"");
             }
         }
         public void advanceText(Blackwind b){
             try{
                 eventLine = currentEvent.nextSegment(b,inv, party);
-                if(eventLine.equals("adv!!")&&!mc.isWalking()&&qedMoves==0&&!npcMoving()&&npcMoves==0)
+                if(
+                        eventLine.equals("adv!!")
+                        &&!mc.isWalking()
+                        &&qedMoves==0
+                        &&!npcMoving()
+                        &&npcMoves==0)
                     advanceText(b);
                 else
                     if(eventLine.equals("adv!!"))
@@ -481,8 +491,9 @@ public class Blackwind extends JPanel{
         //Sprite.initialize();
         //Sprite wilson = new Sprite(0,5,5);
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
-        Map m = Map.loadMap("maxSize3.txt");
+        Map m = Map.loadMap("Town.txt");
         //m.setTile(5,5,new WarpTile(m.getTile(5,5).getID(),10,10,"maxSize2.txt"));
+        //m.setTile(10,10,new EventTile(m.getTile(10,10).getID(),"tileEvent",m.getName()));
         Blackwind g = new Blackwind(m,0,0);
         
         frame.add(g);

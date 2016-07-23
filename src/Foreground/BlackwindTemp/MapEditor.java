@@ -347,7 +347,7 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
 		}
                 else if(ae.getSource() == newSprite){
                     System.out.println("new sprite");
-                    Sprite s = new Sprite(0,"name",1,1,0,"eventName");
+                    Sprite s = new Sprite(0,"name",1,1,0,"eventName",loadedMap.getName());
                     loadedMap.addSprite(s);
                     selectedSprite = s;
                     loadSpriteData();
@@ -421,6 +421,7 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                 spriteMapX.setVisible(false);
                 spriteMapY.setVisible(false);
                 eventFileName.setVisible(false);
+                saveTile.setVisible(false);
                 //warp editing
                 addWarp.setVisible(false);
                 removeWarp.setVisible(false);
@@ -445,6 +446,7 @@ public class MapEditor extends JPanel implements ActionListener, MouseListener{
                         eventFileName.setVisible(true);
                         break;
                     case EDIT_WARPS:
+                        saveTile.setVisible(true);
                         addWarp.setVisible(true);
                         removeWarp.setVisible(true);
                         mapToLoad.setVisible(true);

@@ -1,0 +1,14 @@
+repeatable
+-text
+Welcome! To the Unnamed Town!
+-end
+-text
+Legendary Hero!! Experience the full power of
+my game demo!
+-end
+-text
+Also, enjoy a potion.
+On the town, of course
+-end
+-item
+0x1

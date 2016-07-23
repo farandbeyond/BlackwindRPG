@@ -16,9 +16,11 @@ import java.util.ArrayList;
  */
 public class Event implements Runnable{
     ArrayList<EventSegment> segments;
+    String name;
     int currentSegment;
     boolean reTrigger, triggered;
-    public Event(boolean repeatable){
+    public Event(boolean repeatable,String name){
+        this.name = name;
         segments = new ArrayList<>();
         currentSegment = -1;
         reTrigger = repeatable;
@@ -39,6 +41,8 @@ public class Event implements Runnable{
         currentSegment = -1;
         triggered = true;
     }
+    public void setName(String name){this.name = name;}
+    public String getName(){return name;}
     public boolean reTriggerable(){return reTrigger;}
     public boolean triggered(){return triggered;}
 
