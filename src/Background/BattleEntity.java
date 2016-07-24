@@ -388,15 +388,19 @@ public class BattleEntity {
         return i<=getStat(StatID.MP);
     }
     public Weapon getWeapon(){
+        //System.out.println(equipment[0].getDescription());
         return (Weapon)equipment[0];
     }
     public Equipment getEquipment(int slot){
-        if(slot<4&&slot>0)
+        if(slot<4&&slot>0){
+            //System.out.println("Armor Slot");
             return equipment[slot];
-        if(slot==0)
+        }if(slot==0){
+            //System.out.println("Weapon Slot");
             return getWeapon();
+        }
+        System.out.println("invalid slot");
         return null;
-        
     }
     public boolean getIsDead(){return isDead;}
     public String getName(){return name;}

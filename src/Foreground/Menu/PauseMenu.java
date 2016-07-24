@@ -491,6 +491,7 @@ public class PauseMenu extends JPanel {
         options.toggleSelectorVisible();
     }
     private void equipmentOptions(BattleEntity target, int slot){
+        System.out.println(slot);
         resetEvents();
         while(!cancelEvent){
             repaint();
@@ -501,11 +502,13 @@ public class PauseMenu extends JPanel {
                 int save = menuPosition;
                 switch(menuPosition){
                     case StatusMenu.DESCRIPTION :
-                        if(target.getEquipment(save)!=null)
-                            setAssistText(target.getEquipment(save).getDescription());
-                        else
+                        if(target.getEquipment(slot)!=null){
+                            //System.out.println("Equipment is not null");
+                            setAssistText(target.getEquipment(slot).getDescription());
+                        }else{
+                            //System.out.println("Equipment is null");
                             setAssistText("Nothing Equipped");
-                        break;
+                        }break;
                     case StatusMenu.UNEQUIP     :
                         try{
                             if(inventoryView.canAdd(target.getEquipment(slot))){
