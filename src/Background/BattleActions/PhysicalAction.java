@@ -38,12 +38,21 @@ public class PhysicalAction extends BattleAction{
         rand = new Random();
     }
     public String execute(BattleEntity target){
+        rand.setSeed(System.currentTimeMillis());
         int damage = 0;
+        //System.out.println("Starting Damage:"+damage);
         if(getCaster().getWeapon()!=null){
             damage+=getCaster().getWeapon().attackDamage();
         }
-        damage+=baseDamage+rand.nextInt(rollDamage)+getCaster().getStat(damageStat)/2;
-        damage-=target.getStat(resistStat)/3;
+        //System.out.println("Weapon Damage:"+damage);
+        damage+=baseDamage;
+        //System.out.println("Skill Base Damage:"+damage);
+        damage+=rand.nextInt(rollDamage);
+        //System.out.println("Skill Random Damage:"+damage);
+        damage+=getCaster().getStat(damageStat)/2;
+        //System.out.println("Casting Stat Damage:"+damage);
+        damage-=target.getStat(resistStat)/2;
+        //System.out.println("Enemy Resistance Reduction:"+damage);
         if(ElementHandler.handler(element, target.getElement())<0)
             damage*=ElementHandler.handler(element, target.getElement());
         else{
@@ -51,6 +60,7 @@ public class PhysicalAction extends BattleAction{
             if(damage<=0)
                 damage = 1;
         }
+        //System.out.println("Element Damage Multiplier:"+damage);
         target.damage(damage);
         return String.format("%s dealt %d damage to %s with %s", getCaster().getName(),damage, target.getName(), getName());
     }

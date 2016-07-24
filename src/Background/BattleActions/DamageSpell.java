@@ -34,10 +34,15 @@ public class DamageSpell extends Spell{
     @Override
     public String cast(BattleEntity target) {
         int damage = 0;
+        //System.out.println("Starting Damage:"+damage);
+        rand.setSeed(System.currentTimeMillis());
         getCaster().useMp(getCost());
-        damage+=getCaster().getStat(StatID.INT)/3;
+        damage+=getCaster().getStat(StatID.INT)/2;
+        //System.out.println("Stat buffed Damage:"+damage);
         damage+=baseDamage+rand.nextInt(rollDamage);
+        //System.out.println("Skill buffed Damage:"+damage);
         damage-=target.getStat(StatID.RES);
+        //System.out.println("Enemy Resistance Debuffed Damage:"+damage);
         if(ElementHandler.handler(element, target.getElement())<0)
             damage*=ElementHandler.handler(element, target.getElement());
         else{
@@ -45,6 +50,7 @@ public class DamageSpell extends Spell{
             if(damage<=0)
                 damage = 1;
         }
+        //System.out.println("Element Modified Damage:"+damage);
         target.damage(damage);
         return String.format("%s dealt %d damage to %s with %s", getCaster().getName(),damage, target.getName(), getName());
     }

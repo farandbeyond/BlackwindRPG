@@ -132,6 +132,7 @@ public class Battle extends JPanel{
     //battle loop
     public void loop(){
         try{
+            checkForBattleOver();
             while(!battleOver){
                 resetEvents();
                 prepareActions();

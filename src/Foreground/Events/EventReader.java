@@ -78,6 +78,9 @@ public class EventReader {
                         else if(line.equals("-post")){
                             eve.addSegment(new PostEventSegment(fileReader.readLine()));
                         }
+                        else if(line.equals("-rest")){
+                            eve.addSegment(new RestSegment());
+                        }
                         //if the file is not labelled properly
                         else{
                             eve.addSegment(new TextSegment("Error Loading","","",""));

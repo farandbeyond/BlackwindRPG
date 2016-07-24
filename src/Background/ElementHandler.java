@@ -24,7 +24,7 @@ public class ElementHandler{
      * @param spellElement element of the spell, as the enumerator
      * @return double of the damage multiplier
      */
-    public static double handler(int targetElement, int spellElement){
+    public static double handler(int spellElement, int targetElement){
         
         if(targetElement==spellElement||targetElement==ElementHandler.NEUTRAL||spellElement==ElementHandler.NEUTRAL){
 //case 1: if either side is neutral or both elements are the same
@@ -74,7 +74,7 @@ public class ElementHandler{
         for(int spellElement=0;spellElement<7;spellElement++){
             for(int targetElement=0;targetElement<7;targetElement++){
                 System.out.println(elements[spellElement]+" Is attacking "+elements[targetElement]);
-                System.out.println(handler(targetElement,spellElement)+" Is the damage multiplier \n");
+                System.out.println(handler(spellElement,targetElement)+" Is the damage multiplier \n");
                 
             }
         }

@@ -1,0 +1,11 @@
+repeatable
+-text
+Oh no! Your hurt!
+-end
+-text
+Here, let me heal your wounds
+-end
+-rest
+-text
+There you go. Careful in the future
+-end

@@ -45,7 +45,7 @@ public class BattleEntityLoader {
                 for(int i=0;i<8;i++)
                     enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.RAISEGUARD));
                 for(int i=0;i<2;i++)
-                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),enemyToLoad.getStat(StatID.DEX)));
+                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),3));
                 break;
             case HEALBOT:
                 for(int i=0;i<7;i++){
@@ -62,10 +62,10 @@ public class BattleEntityLoader {
                     enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad, enemyToLoad.getStat(StatID.STR), 5));
                 break;
             case BAT:
-                for(int i=0;i<5;i++)
+                for(int i=0;i<2;i++)
                     enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.GUST));
-                for(int i=0;i<5;i++)
-                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),enemyToLoad.getStat(StatID.DEX)));
+                for(int i=0;i<8;i++)
+                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),3));
                 
         }
         return enemyToLoad;

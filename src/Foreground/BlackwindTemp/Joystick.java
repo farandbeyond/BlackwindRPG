@@ -32,7 +32,7 @@ public class Joystick implements KeyListener{
                     case KeyEvent.VK_D:game.move(Blackwind.RIGHT);break;
                     case KeyEvent.VK_ENTER:Blackwind.gameState = Blackwind.INVENTORY;break;
                     case KeyEvent.VK_O:game.triggerEvent();break;
-                    case KeyEvent.VK_B:Blackwind.gameState = Blackwind.BATTLE;break;
+                    //case KeyEvent.VK_B:Blackwind.gameState = Blackwind.BATTLE;break;
                 }break;
             case Blackwind.BATTLE:
                 switch(ke.getExtendedKeyCode()){
@@ -57,7 +57,7 @@ public class Joystick implements KeyListener{
                     case KeyEvent.VK_A:game.getMenu().leftEvent();break;
                     case KeyEvent.VK_S:game.getMenu().downEvent();break;
                     case KeyEvent.VK_D:game.getMenu().rightEvent();break;
-                    case KeyEvent.VK_ENTER:game.getMenu().menuEvent();break;
+                    //case KeyEvent.VK_ENTER:game.getMenu().menuEvent();break;
                 }break;
         }
     }

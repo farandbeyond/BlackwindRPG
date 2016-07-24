@@ -34,7 +34,7 @@ public class Blackwind extends JPanel{
     public static final int displayWidth=19, displayHeight=15;
     public static final int maxDisplayWidth=20, maxDisplayHeight=15;
     public static final int fps = 1000/100; //approx 100 updates per second
-    
+    public static final int encounterRate = 8;//this is a chance out of 100. 
     public static int gameState;
     public static final int MAP=0,INVENTORY=1, BATTLE=2,EVENT=3;
     //Joystick kb;
@@ -44,6 +44,9 @@ public class Blackwind extends JPanel{
     boolean qedMovement;
     int npcMoves, npcMoveDirection;
     boolean npcMovement;
+    boolean triggerBattle;
+    
+    Random rand;
     String npcName;
     String lastEventTriggered;
     Map loadedMap;
@@ -67,6 +70,7 @@ public class Blackwind extends JPanel{
         this.setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
         kb = new Joystick(this);
         textBox = new TextBox(0,364,640+16,180,this);
+        rand = new Random();
         //textBox.start();
         //player = mc;
         gameState = MAP;
@@ -82,6 +86,7 @@ public class Blackwind extends JPanel{
         lastEventTriggered = "";
         scrollX=0;
         scrollY=0;
+        triggerBattle = false;
         shownMap = new BufferedImage((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize,BufferedImage.TYPE_INT_RGB);
         loadedMap = m;
         mc = new Sprite(0,"Wilson",10+mapOffsetX,8+mapOffsetY,STILL);
@@ -120,8 +125,15 @@ public class Blackwind extends JPanel{
                         shiftMap(mc.getDirection());
                     }else{
                         mc.animate(0);
-                        if(gameState!=EVENT)
+                        if(gameState!=EVENT&&!triggerBattle)
                             loadedMap.getTile(mc.getMapX()-1, mc.getMapY()-1).activate(this,mc, loadedMap, party, inv);
+                        else if(triggerBattle){
+                            //System.out.println("Trigger Battle");
+                            triggerBattle = false;
+                            if(MapIDLoader.getMapID(loadedMap.getName())!=-1)
+                                gameState = BATTLE;
+                            
+                        }
                         //System.out.printf("%d/%d\n",mc.getMapX(),mc.getMapY());
                     }
                     repaint();
@@ -350,11 +362,16 @@ public class Blackwind extends JPanel{
     public void move(int direction){
         //repaint();
         //System.out.println(mc.isWalking()?"Walking":"Not Walking" + mc.isWalking());
-        if(mc.isWalking()){
+        if(mc.isWalking()||triggerBattle){
             //System.out.println("MC is walking");
             return;
         }
-        
+        rand.setSeed(System.currentTimeMillis());
+        int battleNumber = rand.nextInt(100);
+        //System.out.println(battleNumber);
+        if(battleNumber<encounterRate){
+            triggerBattle = true;
+        }
         //System.out.println("Moving");
         boolean tileIsWalkable = false;
         mc.setFacingDirection(direction);
@@ -407,8 +424,11 @@ public class Blackwind extends JPanel{
     }
     public void loadBattle(){
         //System.out.println("Opening menu");
-        Random rand = new Random();
-        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(rand.nextInt(5)),this);
+        int mapID = MapIDLoader.getMapID(loadedMap.getName());
+        if(mapID==-1)
+            return;
+        rand.setSeed(System.currentTimeMillis());
+        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(0,rand.nextInt(5)),this);
         battle.loop();
         //System.out.println("Closing menu");
     }
@@ -498,7 +518,7 @@ public class Blackwind extends JPanel{
         
         frame.add(g);
         g.inv.add(ItemLoader.loadItem(0, 10));
-        BattleEntity b = BattleEntityLoader.loadEntity(0);
+        BattleEntity b = BattleEntityLoader.loadEntity(1);
         b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));

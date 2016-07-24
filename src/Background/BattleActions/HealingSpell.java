@@ -36,6 +36,7 @@ public class HealingSpell extends Spell{
     @Override
     public String cast(BattleEntity target) {
         int heal = 0;
+        rand.setSeed(System.currentTimeMillis());
         getCaster().useMp(getCost());
         heal+=getCaster().getStat(StatID.INT)/3;
         heal+=baseHeal+rand.nextInt(rollHeal);
