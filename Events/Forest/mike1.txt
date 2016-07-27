@@ -1,0 +1,13 @@
+repeatable
+-text
+Damn monsters have this area covered
+-end
+-text
+as a side note, travellers who
+move through here sometimes drop stuff
+-end
+-text
+Anything you find is yours.
+I found a couple bombs earlier
+just to the left. I didn't take
+them, so go take a look.

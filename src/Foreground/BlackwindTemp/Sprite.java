@@ -20,15 +20,19 @@ public class Sprite {
     //a spritesheet dictionary will be put in up here soon. once connor is less lazy. until then, squares/circles
     public static final int COLUMNS = 10, ROWS = 5;
     
-    public static final int numberOfSprites = 1;
+    public static final int numberOfSprites = 4;
     public static String[] spriteNames;
     public static BufferedImage[] spriteSheets;
         
     public static void startUp(){
+        System.out.println("Loading Sprites");
         spriteNames = new String[numberOfSprites];
         spriteSheets = new BufferedImage[numberOfSprites];
         addSprite(0,"Test Dummy","testDummy");
-        
+        addSprite(1,"Male Villager","villager1");
+        addSprite(2,"Female Villager","villager2");
+        addSprite(3,"Slutty Villager","villager3");
+        System.out.println("Sprites Loaded Successfully");
     }
     public static void addSprite(int id, String name, String fileName){
         try{
@@ -44,7 +48,7 @@ public class Sprite {
     Event e;
     //moving direction and facing direction control which sprite the sprite paits itself as. moving when moving, facing when not.
     int facingDirection, movingDirection;
-    int aniCycle;
+    int aniCycle, cyclePause;
     boolean moving;
     //globalX and globalY are where the sprite paints itself. mapX and mapY are the tile is is linked to. screenX and screenY represent where the sprite is onscreen in relation to loaded map tiles (used only in MC for now)
     int mapX, mapY, screenX, screenY, globalX, globalY;
@@ -67,6 +71,7 @@ public class Sprite {
         moving = false;
         movingDirection = Blackwind.DOWN;
         
+        cyclePause = 0;
         setGlobalX();
         setGlobalY();
     }
@@ -85,6 +90,7 @@ public class Sprite {
         eventFileName = eventName;
         setEvent(EventReader.loadEvent(eventName,mapName));
         
+        cyclePause = 0;
         setGlobalX();
         setGlobalY();
     }
@@ -102,6 +108,7 @@ public class Sprite {
             case Blackwind.LEFT: mapX--;break;
         }
         moving = true;
+        aniCycle = 1;
     }
     public void move(int direction){
         //System.out.println("Moving 1");
@@ -119,11 +126,13 @@ public class Sprite {
             case Blackwind.LEFT: mapX--;break;
         }
         moving = true;
+        aniCycle = 1;
         //System.out.println("Moving 3");
         moveTo();
     }
     public void moveTo(){
         //System.out.println("Moving 4");
+        
         switch(movingDirection){
             case Blackwind.UP: globalY--;break;
             case Blackwind.DOWN:globalY++;break;
@@ -131,6 +140,7 @@ public class Sprite {
             case Blackwind.LEFT:globalX--;break;
         }
         //System.out.printf("%d/%d",globalX,globalY);
+        cycleSprite();
         if(globalY%32==0&&globalX%32==0){
             setMapX();
             setMapY();
@@ -172,8 +182,21 @@ public class Sprite {
         facingDirection = direction;
     }
     
+    public void cycleSprite(){
+        cyclePause++;
+        if(cyclePause == 8){
+            cyclePause = 0;
+            aniCycle++;
+        }
+        if(aniCycle >= 4 && cyclePause == 7){
+            cyclePause = 0;
+            aniCycle = 0;
+        }
+    }
     public BufferedImage animate(int sheetRow){
         //this is a temp thing. it will be updated soon
+        if(aniCycle!=0)
+            cycleSprite();
         return getSprite();
     }
     
@@ -224,10 +247,17 @@ public class Sprite {
     }
     
     public BufferedImage getSprite(){
-        return spriteSheets[id].getSubimage(1+(1+Tile.tileSize)*aniCycle, 1+(1+Tile.tileSize)*facingDirection, Tile.tileSize, Tile.tileSize);
+        return spriteSheets[id].getSubimage(
+                1+(1+Tile.tileSize)*aniCycle, 
+                1+(1+Tile.tileSize)*facingDirection, 
+                Tile.tileSize, 
+                Tile.tileSize);
         //for testing, you are represented by a void tile
         //return Tile.getImagesList()[0];
     }
     public static BufferedImage[] getSpritesheetList(){return spriteSheets;}
     
+    public static void main(String[] args){
+        Sprite.startUp();
+    }
 }

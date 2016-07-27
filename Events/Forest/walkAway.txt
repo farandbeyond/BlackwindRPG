@@ -1,0 +1,6 @@
+repeatable
+-text
+Hey! You can't go that way!
+-end
+-movemc
+0/1

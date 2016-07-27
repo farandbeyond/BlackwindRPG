@@ -11,7 +11,10 @@ package Foreground.BlackwindTemp;
  */
 public class MapIDLoader {
     public static int getMapID(String mapName){
+        //-1 means "non enounter area" in this context
         if(mapName.equals("Town")){
+            return -1;
+        }else if(mapName.equals("Forest")){
             return 0;
         }
         return -1;

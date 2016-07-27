@@ -9,7 +9,7 @@
 5 10 10 10 10 10 10 10 10 5 
 5 5 5 5 5 5 5 5 5 5 
 -
-0 --SpriteID
+1 --SpriteID
 Stay-at-home-Mom=--Sprite Name
 5/5/--spriteXY
 sahMom1 --eventName

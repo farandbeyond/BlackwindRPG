@@ -21,6 +21,7 @@ public class EnemyPartyLoader {
                 case 1:
                 case 2:
                 case 3:
+                    p.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.GOBLIN));break;
                 case 4:
                     p.addPartyMember(BattleEntityLoader.loadEntityWithSkills(BattleEntityLoader.BAT));break;
             }

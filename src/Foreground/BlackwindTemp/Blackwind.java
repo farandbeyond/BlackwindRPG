@@ -33,7 +33,7 @@ public class Blackwind extends JPanel{
     public static int pixelsMoved = 1;
     public static final int displayWidth=19, displayHeight=15;
     public static final int maxDisplayWidth=20, maxDisplayHeight=15;
-    public static final int fps = 1000/100; //approx 100 updates per second
+    public static final int fps = 1000/60; //approx 100 updates per second
     public static final int encounterRate = 8;//this is a chance out of 100. 
     public static int gameState;
     public static final int MAP=0,INVENTORY=1, BATTLE=2,EVENT=3;
@@ -89,7 +89,7 @@ public class Blackwind extends JPanel{
         triggerBattle = false;
         shownMap = new BufferedImage((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize,BufferedImage.TYPE_INT_RGB);
         loadedMap = m;
-        mc = new Sprite(0,"Wilson",10+mapOffsetX,8+mapOffsetY,STILL);
+        mc = new Sprite(1,"Wilson",10+mapOffsetX,8+mapOffsetY,STILL);
         loadDisplayArea(0,0);
         loadMapImage();
         
@@ -428,7 +428,7 @@ public class Blackwind extends JPanel{
         if(mapID==-1)
             return;
         rand.setSeed(System.currentTimeMillis());
-        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(0,rand.nextInt(5)),this);
+        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(mapID,rand.nextInt(5)),this);
         battle.loop();
         //System.out.println("Closing menu");
     }
