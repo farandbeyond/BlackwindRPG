@@ -59,13 +59,13 @@ public class BattleEntityLoader {
                 for(int i=0;i<2;i++)
                     enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.ENRAGE));
                 for(int i=0;i<8;i++)
-                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad, enemyToLoad.getStat(StatID.STR), 5));
+                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad, 4, 2));
                 break;
             case BAT:
                 for(int i=0;i<2;i++)
                     enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.GUST));
                 for(int i=0;i<8;i++)
-                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),3));
+                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),2));
                 
         }
         return enemyToLoad;

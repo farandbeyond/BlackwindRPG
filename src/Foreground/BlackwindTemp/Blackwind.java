@@ -518,9 +518,11 @@ public class Blackwind extends JPanel{
         
         frame.add(g);
         g.inv.add(ItemLoader.loadItem(0, 10));
+        g.inv.add(ItemLoader.loadItem(1, 4));
         BattleEntity b = BattleEntityLoader.loadEntity(1);
         b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.QUAKE));
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
         g.party.addPartyMember(b);
         
