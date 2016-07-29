@@ -146,7 +146,7 @@ public class PauseMenu extends JPanel {
                 case OptionsMenu.SPELLS:loadSpellsFromMainMenu();break;
                 case OptionsMenu.EQUIPMENT:loadEquipmentFromMainMenu();break;
                 case OptionsMenu.SWAPMEMBERS:loadSwapFromMainMenu();break;
-                case OptionsMenu.SAVE:setAssistText("Not Yet Implemented");
+                case OptionsMenu.SAVE:Blackwind.saveGame();
             }
         }
     }

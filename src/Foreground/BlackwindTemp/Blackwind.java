@@ -20,10 +20,16 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -34,7 +40,6 @@ import javax.swing.JPanel;
  */
 public class Blackwind extends JPanel{
     public static void newGame(Blackwind g){
-        Map.newGame();
         g.inv.add(ItemLoader.loadItem(0, 10));
         g.inv.add(ItemLoader.loadItem(1, 4));
         BattleEntity b = BattleEntityLoader.loadEntity(1);
@@ -45,7 +50,92 @@ public class Blackwind extends JPanel{
         g.party.addPartyMember(b);
     }
     public static void loadGame(){
-        
+        try{
+            System.out.println("loading maps");
+            File savedMaps = new File("save/maps");
+            File[] allMaps = savedMaps.listFiles();
+            for(File map:allMaps){
+                Map.saveMap(Map.loadMap(map.getName()),"local");
+            }
+            System.out.println("loaded maps");
+
+            System.out.println("loading party data");
+            String line = "";
+            ArrayList<String> contents = new ArrayList<>();
+            String filePath = "save/party.txt";
+            InputStream input = new FileInputStream(filePath);
+            InputStreamReader inputReader = new InputStreamReader(input);
+            BufferedReader fileReader = new BufferedReader(inputReader);
+            try{
+                while((line = fileReader.readLine())!=null){
+                   contents.add(line);
+                }
+            }catch(IOException o){
+                
+            }
+            //party = new Party(4);
+            try{
+                System.out.println(contents.size());
+                for(int i=0;i<4;i++){
+                    BattleEntity wilson = new BattleEntity(contents.get(0+13*i),contents.get(1+13*i),contents.get(2+13*i),
+                            contents.get(3+13*i),contents.get(4+13*i),contents.get(5+13*i),contents.get(6+13*i),contents.get(7+13*i),
+                            contents.get(8+13*i),contents.get(9+13*i),contents.get(10+13*i),contents.get(11+13*i),contents.get(12+13*i));
+                    party.addPartyMember(wilson);
+                    System.out.println(party.getMemberFromParty(i).getName());
+                }
+            }catch(IndexOutOfBoundsException i){
+                
+            }
+            
+            System.out.println("loaded party data");
+            
+            System.out.println("Loading inventory data");
+            line = "";
+            contents = new ArrayList<>();
+            filePath = "save/inventory.txt";
+            input = new FileInputStream(filePath);
+            inputReader = new InputStreamReader(input);
+            fileReader = new BufferedReader(inputReader);
+            try{
+                while((line = fileReader.readLine())!=null){
+                    if(!line.equals(""))
+                   contents.add(line);
+                }
+            }catch(IOException o){
+                
+            }
+            //inv = new Inventory(15);
+            for(String s:contents){
+                inv.add(ItemLoader.loadItem(Integer.parseInt(s.split("x")[0]),Integer.parseInt(s.split("x")[1])));
+            }
+            System.out.println("Loaded Inventory data");
+            
+            System.out.println("loading blackwind data");
+            line = "";
+            contents = new ArrayList<>();
+            filePath = "save/blackwind.txt";
+            input = new FileInputStream(filePath);
+            inputReader = new InputStreamReader(input);
+            fileReader = new BufferedReader(inputReader);
+            try{
+                while((line = fileReader.readLine())!=null){
+                    if(!line.equals(""))
+                   contents.add(line);
+                }
+            }catch(IOException o){
+                
+            }
+            mapOffsetX = Integer.parseInt(contents.get(0).split("/")[0]);
+            mapOffsetY = Integer.parseInt(contents.get(0).split("/")[1]);
+            mc.setMapX(Integer.parseInt(contents.get(1).split("/")[0]));
+            mc.setMapY(Integer.parseInt(contents.get(1).split("/")[1]));
+            loadedMap = Map.loadMap(contents.get(2)+".txt","local");
+            System.out.println("loaded blackwind data");
+            
+            
+        }catch(FileNotFoundException e){
+            
+        }
     }
     public static void saveGame(){
         //String filePath = String.format("%s/%s",folderName,loadedMapName);
@@ -57,12 +147,39 @@ public class Blackwind extends JPanel{
             for(File map:allMaps){
                 Map.saveMap(Map.loadMap(map.getName()),"save/maps");
             }
-            
+            System.out.println("Saved map data");
             //save party data
             FileWriter partyWrite = new FileWriter("save/party.txt", false);
             PrintWriter writeline = new PrintWriter(partyWrite);
+            for(int i=0;i<4;i++){
+                try{
+                    for(String s:party.getMemberFromParty(i).saveData()){
+                        //System.out.println(s);
+                        writeline.printf("%s%n", s);
+                    }
+                }catch(NullPointerException e){
+                    System.out.println("no member in slot "+i);
+                }
+            }
+            System.out.println("Saved party data");
+            writeline.close();
             
-            
+            System.out.println("Saving inventory data");
+            FileWriter invWrite = new FileWriter("save/inventory.txt", false);
+            writeline = new PrintWriter(invWrite);
+            for(Item i:inv.getItemList()){
+                writeline.printf("%dx%d%n", i.getId(),i.getQuantity());
+            }
+            System.out.println("Saved inventory data");
+            writeline.close();
+            System.out.println("Saving blackwind data");
+            FileWriter blackwindWrite  = new FileWriter("save/blackwind.txt",false);
+            writeline = new PrintWriter(blackwindWrite);
+            writeline.printf("%d/%d%n",mapOffsetX,mapOffsetY);
+            writeline.printf("%d/%d%n",mc.getMapX(),mc.getMapY());
+            writeline.printf("%s%n",loadedMap.getName());
+            writeline.close();
+            System.out.println("Finished saving");
         }catch(IOException e){
             System.out.println("Error Saving:");
             System.out.println(e);
@@ -79,8 +196,8 @@ public class Blackwind extends JPanel{
     public static final int MAP=0,INVENTORY=1, BATTLE=2,EVENT=3;
     //Joystick kb;
     //Sprite player;
-    int mapOffsetX, mapOffsetY, scrollX, scrollY;
-    int qedMoves, qedMoveDirection;
+    static int mapOffsetX, mapOffsetY, scrollX, scrollY;
+    static int qedMoves, qedMoveDirection;
     boolean qedMovement;
     int npcMoves, npcMoveDirection;
     boolean npcMovement;
@@ -92,15 +209,15 @@ public class Blackwind extends JPanel{
     static Map loadedMap;
     Tile[][] displayArea;
     BufferedImage shownMap;
-    Sprite mc;
+    static Sprite mc;
     Joystick kb;
     TextBox textBox;
     
     PauseMenu menu;
     Battle battle;
     
-    Party party;
-    Inventory inv;
+    static Party party;
+    static Inventory inv;
     Blackwind(Map m, int mapOffsetX, int mapOffsetY){
         this.setSize(640,480);
         this.setLayout(null);
@@ -452,6 +569,7 @@ public class Blackwind extends JPanel{
     }
 
     public Map getMap(){return loadedMap;}
+    //public Party getParty(){return party;}
     public Battle getBattle(){return battle;}
     public PauseMenu getMenu(){return menu;}
     public TextBox getTextBox(){return textBox;}
@@ -555,11 +673,11 @@ public class Blackwind extends JPanel{
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
         System.out.println("Starting new game");
         
+        //Map.newGame();
         Map m = Map.loadMap("Town.txt","local");
-        //m.setTile(5,5,new WarpTile(m.getTile(5,5).getID(),10,10,"maxSize2.txt"));
-        //m.setTile(10,10,new EventTile(m.getTile(10,10).getID(),"tileEvent",m.getName()));
         Blackwind g = new Blackwind(m,0,0);
-        newGame(g);
+        //newGame(g);
+        loadGame();
         frame.add(g);
         //g.getMenu().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
         //g.getBattle().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));

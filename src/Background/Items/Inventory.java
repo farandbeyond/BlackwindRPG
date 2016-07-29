@@ -92,6 +92,7 @@ public class Inventory {
     }   
     //gets
     public Item getItem(int i){return inventory.get(i);}
+    public ArrayList<Item> getItemList(){return inventory;}
     public int getInvSize(){return invSize;}
     public int getNumberOfItemsInInventory(){
         int items=0;

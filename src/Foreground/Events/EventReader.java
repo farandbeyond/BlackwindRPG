@@ -24,7 +24,7 @@ public class EventReader {
     public static Event loadEvent(String fileName, String mapNameRough){
         try {
             String mapName = mapNameRough.split(".txt")[0];
-            System.out.println(String.format("Events/%s/%s.txt",mapName,fileName));
+            //System.out.println(String.format("Events/%s/%s.txt",mapName,fileName));
             String filePath = String.format("Events/%s/%s.txt",mapName,fileName);
             InputStream input;
 

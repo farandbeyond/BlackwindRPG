@@ -26,6 +26,7 @@ public class Party {
     
     //party Ajustments
     public void addPartyMember(BattleEntity member){
+        System.out.printf("Trying to add %s to the party\n",member.getName());
         for(int i=0;i<maxPartySize;i++){
             if(party[i]==null){
                 party[i]=member;

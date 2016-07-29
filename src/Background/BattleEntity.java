@@ -11,6 +11,7 @@
 package Background;
 
 import Background.BattleActions.BattleAction;
+import Background.BattleActions.BattleActionLoader;
 import Background.BattleActions.Spell;
 import Background.DeBuffs.*;
 import Background.Items.*;
@@ -155,6 +156,34 @@ public class BattleEntity {
             equipment = new Equipment[4];
             //expRequiredToLevel=0;
         }
+    public BattleEntity(String name,String hp, String mp, String str, String dex, String vit, String ine, String res, String element, String levelData, String isDead, String actions, String equipment){
+        this.name = name;
+        stats = new Stat[9];
+        skills = new ArrayList<>();
+        effects = new ArrayList<>();
+        this.equipment = new Equipment[4];
+        stats[StatID.HP]=new Stat(Integer.parseInt(hp.split("-")[0].split("/")[0]),Double.parseDouble(hp.split("-")[1]),Double.parseDouble(hp.split("-")[2]));
+        stats[StatID.MAXHP]=new Stat(Integer.parseInt(hp.split("-")[0].split("/")[1]),Double.parseDouble(hp.split("-")[1]),Double.parseDouble(hp.split("-")[2]));
+        stats[StatID.MP]=new Stat(Integer.parseInt(mp.split("-")[0].split("/")[0]),Double.parseDouble(mp.split("-")[1]),Double.parseDouble(mp.split("-")[2]));
+        stats[StatID.MAXMP]=new Stat(Integer.parseInt(mp.split("-")[0].split("/")[1]),Double.parseDouble(mp.split("-")[1]),Double.parseDouble(mp.split("-")[2]));
+        stats[StatID.STR]=new Stat(Integer.parseInt(str.split("-")[0]),Double.parseDouble(str.split("-")[1]),Double.parseDouble(str.split("-")[2]));
+        stats[StatID.DEX]=new Stat(Integer.parseInt(dex.split("-")[0]),Double.parseDouble(dex.split("-")[1]),Double.parseDouble(dex.split("-")[2]));
+        stats[StatID.VIT]=new Stat(Integer.parseInt(vit.split("-")[0]),Double.parseDouble(vit.split("-")[1]),Double.parseDouble(vit.split("-")[2]));
+        stats[StatID.INT]=new Stat(Integer.parseInt(ine.split("-")[0]),Double.parseDouble(ine.split("-")[1]),Double.parseDouble(ine.split("-")[2]));
+        stats[StatID.RES]=new Stat(Integer.parseInt(res.split("-")[0]),Double.parseDouble(res.split("-")[1]),Double.parseDouble(res.split("-")[2]));
+        this.element = Integer.parseInt(element);
+        level = Integer.parseInt(levelData.split("-")[0]);
+        exp = Integer.parseInt(levelData.split("-")[1]);
+        expRequiredToLevel = Integer.parseInt(levelData.split("-")[2]);
+        this.isDead = isDead.equals("true")?true:false;
+        for(int i=1;i<actions.split("-").length;i++){
+            addSkill(BattleActionLoader.loadAction(Integer.parseInt(actions.split("-")[i])));
+        }
+        for(int i=0;i<4;i++){
+            if(!equipment.split("-")[i+1].equals("null"))
+                equip((Equipment)ItemLoader.loadItem(Integer.parseInt(equipment.split("-")[i+1]), 1),i);
+        }
+    }
     //effect controlling
     public void addEffect(Effect e){
         e.assign(this);
@@ -226,14 +255,14 @@ public class BattleEntity {
     }
     //equipment controlling
     public void equip(Equipment e, int equipSlot){
-        if(e.getClass()==ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1).getClass()&&equipSlot==0){
+        if(e.getClass()==Weapon.class&&equipSlot==0){
             equipment[0]=(Equipment)ItemLoader.loadItem(e.getId(), 1);
             equipment[0].equip(this);
             e.reduceQuantity();
             heal(0);
             return;
         }
-        if(e.getClass()==ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1).getClass()&&equipSlot>0&&equipSlot<4){
+        if(e.getClass()==Armor.class&&equipSlot>0&&equipSlot<4){
             equipment[equipSlot]=(Equipment)ItemLoader.loadItem(e.getId(), 1);
             equipment[equipSlot].equip(this);
             e.reduceQuantity();
@@ -420,6 +449,7 @@ public class BattleEntity {
     public String toString(){
         return name;
     }
+    
     public String[] saveData(){
         String[] saveData = new String[13];
         //0: name
@@ -495,9 +525,9 @@ public class BattleEntity {
          * @param statGrowth
          * @param growthOverflow 
          */
-        public Stat(int baseStat, int modifiedStat, double statGrowth, double growthOverflow) {
+        public Stat(int baseStat, double statGrowth, double growthOverflow) {
             this.baseStat = baseStat;
-            this.modifiedStat = modifiedStat;
+            this.modifiedStat = baseStat;
             this.statGrowth = statGrowth;
             this.growthOverflow = growthOverflow;
         }

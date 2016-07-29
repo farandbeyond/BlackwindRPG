@@ -98,6 +98,8 @@ public class Sprite {
     public void setGlobalY(){globalY = screenY*Tile.tileSize;}
     public void setMapX(){mapX = globalX/32;}
     public void setMapY(){mapY = globalY/32;}
+    public void setMapX(int newX){mapX = newX;}
+    public void setMapY(int newY){mapY = newY;}
     public void moveMC(int direction){
         this.facingDirection = direction;
         movingDirection = direction;

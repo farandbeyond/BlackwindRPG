@@ -77,7 +77,7 @@ public class Map {
                         try{
                             tileIDs[x][y] = new Tile(Integer.parseInt(tileInfo));
                         }catch(NumberFormatException e){
-                            System.out.printf("Non-Basic Tile found at %d/%d\n",x,y);
+                            //System.out.printf("Non-Basic Tile found at %d/%d\n",x,y);
                             String[] tileDetails = tileInfo.split("/");
                             //warp tile
                             if(tileInfo.split("/")[1].equals("w")){
