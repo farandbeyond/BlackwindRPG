@@ -13,13 +13,15 @@ import Background.BattleEntity;
  * @author Connor
  */
 public abstract class BattleAction {
+    private int skillID;
     private BattleEntity caster;
     private String name,description;
     public abstract String execute(BattleEntity target);
     public abstract int getCost();
     public abstract int getElement();
     public abstract boolean targetsAllies();
-    public BattleAction(BattleEntity caster,String name, String description){
+    public BattleAction(int skillID,BattleEntity caster,String name, String description){
+        this.skillID = skillID;
         this.name=name;
         this.description=description;
         this.caster=caster;
@@ -29,6 +31,7 @@ public abstract class BattleAction {
     public int getCasterStat(int statID){return caster.getStat(statID);}
     public String getName(){return name;}
     public String getDescription(){return description;}
+    public int getID(){return skillID;}
     public void setCaster(BattleEntity caster){this.caster = caster;}
     public BattleAction(BattleEntity caster){
         this.caster = caster;

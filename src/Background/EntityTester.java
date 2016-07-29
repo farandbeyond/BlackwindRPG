@@ -69,7 +69,12 @@ public class EntityTester {
         enemy.printHpAndMp();
         enemy.printAllEffects();
         enemy.printAllEffectDurations();
+        text("----------Test69----------");
+        text("check save data");
         
+        String[] saveData = wilson.saveData();
+        for(String s:saveData)
+            System.out.println(s);
     }
     public static void text(String text){
         System.out.println(text);

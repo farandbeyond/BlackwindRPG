@@ -19,8 +19,8 @@ public class PhysicalAction extends BattleAction{
     private int element;
     private int damageStat, resistStat;
     
-    public PhysicalAction(BattleEntity caster,String name, String description,int baseDamage, int rollDamage, int damageStat, int resistStat, int element){
-        super(caster,name,description);
+    public PhysicalAction(int id,BattleEntity caster,String name, String description,int baseDamage, int rollDamage, int damageStat, int resistStat, int element){
+        super(id,caster,name,description);
         this.damageStat=damageStat;
         this.resistStat=resistStat;
         this.baseDamage=baseDamage;
@@ -28,8 +28,8 @@ public class PhysicalAction extends BattleAction{
         this.element=element;
         rand = new Random();
     }
-    public PhysicalAction(String name, String description,int baseDamage, int rollDamage, int damageStat, int resistStat, int element){
-        super(null,name,description);
+    public PhysicalAction(int id,String name, String description,int baseDamage, int rollDamage, int damageStat, int resistStat, int element){
+        super(id,null,name,description);
         this.damageStat=damageStat;
         this.resistStat=resistStat;
         this.baseDamage=baseDamage;

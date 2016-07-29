@@ -17,15 +17,15 @@ import java.util.Random;
 public class DamageSpell extends Spell{
     private final int baseDamage, rollDamage, element;
     Random rand;
-    public DamageSpell(BattleEntity caster,String name, String description, int baseDamage, int rollDamage, int element, int cost){
-        super(caster,name,description,cost);
+    public DamageSpell(int id,BattleEntity caster,String name, String description, int baseDamage, int rollDamage, int element, int cost){
+        super(id,caster,name,description,cost);
         this.baseDamage=baseDamage;
         this.rollDamage=rollDamage;
         this.element=element;
         rand = new Random();
     }
-    public DamageSpell(String name, String description,int baseDamage, int rollDamage, int element, int cost){
-        super(null,name,description,cost);
+    public DamageSpell(int id,String name, String description,int baseDamage, int rollDamage, int element, int cost){
+        super(id,null,name,description,cost);
         this.baseDamage=baseDamage;
         this.rollDamage=rollDamage;
         this.element=element;

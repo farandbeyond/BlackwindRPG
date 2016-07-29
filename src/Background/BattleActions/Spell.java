@@ -13,8 +13,8 @@ import Background.BattleEntity;
  */
 public abstract class Spell extends BattleAction{
     private int cost;
-    public Spell(BattleEntity e, String name, String description,int cost){
-        super(e,name, description);
+    public Spell(int id,BattleEntity e, String name, String description,int cost){
+        super(id,e,name, description);
         this.cost=cost;
     }
     public abstract String cast(BattleEntity target);

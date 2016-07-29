@@ -9,6 +9,7 @@ package Foreground.BlackwindTemp;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -26,14 +27,36 @@ import javax.swing.JPanel;
  */
 public class Map {
     public static String loadedMapName = "unnamed.txt";
+    public static void newGame(){
+        System.out.println("moving maps to local");
+        try{
+            File mapsFolder = new File("maps");
+            File[] allMaps = mapsFolder.listFiles();
+            for(File f:allMaps){
+                if(f.isFile()){
+                    System.out.printf("Moving %s to local...", f.getName());
+                    saveMap(loadMap(f.getName()),"local");
+                }else{
+                    System.out.println("Folder found: "+f.getName());
+                }
+            }
+            System.out.println("Finished moving files");
+        }catch(Exception e){
+            System.out.println("Error Occurred moving files");
+            System.out.println(e);
+        }
+    }
     public static Map loadMap(String mapname){
+        return loadMap(mapname,"maps");
+    }
+    public static Map loadMap(String mapname, String folderName){
         loadedMapName= mapname;
         //try{
             try{
                 //setup
                 String line = "";
                 ArrayList<String> contents = new ArrayList<>();
-                String filePath = String.format("maps/%s",mapname);
+                String filePath = String.format("%s/%s",folderName,mapname);
                 InputStream input = new FileInputStream(filePath);
                 InputStreamReader inputReader = new InputStreamReader(input);
                 BufferedReader fileReader = new BufferedReader(inputReader);
@@ -104,9 +127,12 @@ public class Map {
         //}
     }
     public static void saveMap(Map m){
+        saveMap(m,"maps");
+    }
+    public static void saveMap(Map m, String folderName){
         //try{
             try{
-                String filePath = String.format("maps/%s",loadedMapName);
+                String filePath = String.format("%s/%s",folderName,loadedMapName);
                 FileWriter path = new FileWriter(filePath, false);
                 PrintWriter writeline = new PrintWriter(path);
                 //System.out.printf("%d/%d",m.getX(),m.getY());
@@ -268,6 +294,7 @@ public class Map {
     
     public static void main(String[] args){
         Tile.startUp();
-        Map m = new Map();
+        //Map m = new Map();
+        newGame();
     }
 }

@@ -18,15 +18,15 @@ public class HealingSpell extends Spell{
     private final int baseHeal, rollHeal;
     private final boolean revives;
     Random rand;
-    public HealingSpell(BattleEntity caster,String name, String description, int baseHeal, int rollHeal,boolean revives, int cost){
-        super(caster,name,description,cost);
+    public HealingSpell(int id,BattleEntity caster,String name, String description, int baseHeal, int rollHeal,boolean revives, int cost){
+        super(id,caster,name,description,cost);
         this.baseHeal=baseHeal;
         this.rollHeal=rollHeal;
         this.revives=revives;
         rand = new Random();
     }
-    public HealingSpell(String name, String description,int baseHeal, int rollHeal,boolean revives, int cost){
-        super(null,name,description,cost);
+    public HealingSpell(int id,String name, String description,int baseHeal, int rollHeal,boolean revives, int cost){
+        super(id,null,name,description,cost);
         this.baseHeal=baseHeal;
         this.rollHeal=rollHeal;
         this.revives=revives;

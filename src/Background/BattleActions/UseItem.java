@@ -15,8 +15,8 @@ import Background.Items.Item;
 public class UseItem extends BattleAction{
 
     Item item;
-    public UseItem(BattleEntity caster, Item i){
-        super(caster,i.getName(),"Uses the item");
+    public UseItem(int id,BattleEntity caster, Item i){
+        super(id,caster,i.getName(),"Uses the item");
         item = i;
     }
     @Override

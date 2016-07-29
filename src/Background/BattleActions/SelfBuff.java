@@ -15,11 +15,11 @@ import Background.StatID;
  */
 public class SelfBuff extends EffectSpell{
 
-    public SelfBuff(BattleEntity caster, String name, String description, int cost, Effect effect) {
-        super(caster, name, description, cost, effect);
+    public SelfBuff(int id,BattleEntity caster, String name, String description, int cost, Effect effect) {
+        super(id,caster, name, description, cost, effect);
     }
-     public SelfBuff(String name, String description, int cost, Effect effect) {
-        super(null, name, description, cost, effect);
+     public SelfBuff(int id,String name, String description, int cost, Effect effect) {
+        super(id,null, name, description, cost, effect);
     }
         public String cast(BattleEntity target) {
         getCaster().useMp(getCost());

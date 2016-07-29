@@ -24,10 +24,10 @@ public class BattleActionTester {
         BattleEntity tester = BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY);
         BattleEntity target = BattleEntityLoader.loadEntity(BattleEntityLoader.ENEMYONE);
         BattleAction[] actions = new BattleAction[10];
-        actions[0]=new DamageSpell(tester,"Fireball","deals 15-20 firedamage",15,5,ElementHandler.FIRE,12);
-        actions[1]=new HealingSpell(tester,"Cure","heals 10-15 hp",10,5,false,10);
-        actions[2]=new PhysicalAction(tester,"Slice","A quick slash dealing 10-15dmg",10,5,StatID.STR,StatID.VIT,ElementHandler.NEUTRAL);
-        actions[3]=new EffectSpell(tester,"Bravery","25% Str buff",0,Effect.effectLoader(Effect.BUFF, StatID.STR, Buff.TWENTYFIVEP, tester.getName()));
+        actions[0]=new DamageSpell(0,tester,"Fireball","deals 15-20 firedamage",15,5,ElementHandler.FIRE,12);
+        actions[1]=new HealingSpell(0,tester,"Cure","heals 10-15 hp",10,5,false,10);
+        actions[2]=new PhysicalAction(0,tester,"Slice","A quick slash dealing 10-15dmg",10,5,StatID.STR,StatID.VIT,ElementHandler.NEUTRAL);
+        actions[3]=new EffectSpell(0,tester,"Bravery","25% Str buff",0,Effect.effectLoader(Effect.BUFF, StatID.STR, Buff.TWENTYFIVEP, tester.getName()));
         text("----------Test02----------");
         text("Using battleActions on the target");
         tester.printAllStats();

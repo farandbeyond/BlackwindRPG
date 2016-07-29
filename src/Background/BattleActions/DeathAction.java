@@ -13,8 +13,8 @@ import Background.BattleEntity;
  */
 public class DeathAction extends BattleAction{
 
-    public DeathAction(BattleEntity caster, String name, String description) {
-        super(caster, name, description);
+    public DeathAction(int id,BattleEntity caster, String name, String description) {
+        super(id,caster, name, description);
     }
 
     @Override

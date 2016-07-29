@@ -20,6 +20,10 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,6 +33,42 @@ import javax.swing.JPanel;
  * @author Connor
  */
 public class Blackwind extends JPanel{
+    public static void newGame(Blackwind g){
+        Map.newGame();
+        g.inv.add(ItemLoader.loadItem(0, 10));
+        g.inv.add(ItemLoader.loadItem(1, 4));
+        BattleEntity b = BattleEntityLoader.loadEntity(1);
+        b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.QUAKE));
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
+        g.party.addPartyMember(b);
+    }
+    public static void loadGame(){
+        
+    }
+    public static void saveGame(){
+        //String filePath = String.format("%s/%s",folderName,loadedMapName);
+        try{
+            //save map data
+            Map.saveMap(loadedMap,"local");
+            File localMaps = new File("local");
+            File[] allMaps = localMaps.listFiles();
+            for(File map:allMaps){
+                Map.saveMap(Map.loadMap(map.getName()),"save/maps");
+            }
+            
+            //save party data
+            FileWriter partyWrite = new FileWriter("save/party.txt", false);
+            PrintWriter writeline = new PrintWriter(partyWrite);
+            
+            
+        }catch(IOException e){
+            System.out.println("Error Saving:");
+            System.out.println(e);
+        }
+    }
+    
     public static final int STILL=0,DOWN=1, UP=2, RIGHT=3, LEFT=4;
     public static int pixelsMoved = 1;
     public static final int displayWidth=19, displayHeight=15;
@@ -49,7 +89,7 @@ public class Blackwind extends JPanel{
     Random rand;
     String npcName;
     String lastEventTriggered;
-    Map loadedMap;
+    static Map loadedMap;
     Tile[][] displayArea;
     BufferedImage shownMap;
     Sprite mc;
@@ -197,8 +237,10 @@ public class Blackwind extends JPanel{
     }
     
     public void loadMap(String mapName){
-        loadedMap = Map.loadMap(mapName);
+        Map.saveMap(loadedMap,"local");
+        loadedMap = Map.loadMap(mapName,"local");
     }
+    
     public void triggerEvent(){
         for(Sprite s:loadedMap.getSpriteList()){
             try{
@@ -511,21 +553,14 @@ public class Blackwind extends JPanel{
         //Sprite.initialize();
         //Sprite wilson = new Sprite(0,5,5);
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
-        Map m = Map.loadMap("Town.txt");
+        System.out.println("Starting new game");
+        
+        Map m = Map.loadMap("Town.txt","local");
         //m.setTile(5,5,new WarpTile(m.getTile(5,5).getID(),10,10,"maxSize2.txt"));
         //m.setTile(10,10,new EventTile(m.getTile(10,10).getID(),"tileEvent",m.getName()));
         Blackwind g = new Blackwind(m,0,0);
-        
+        newGame(g);
         frame.add(g);
-        g.inv.add(ItemLoader.loadItem(0, 10));
-        g.inv.add(ItemLoader.loadItem(1, 4));
-        BattleEntity b = BattleEntityLoader.loadEntity(1);
-        b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
-        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
-        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.QUAKE));
-        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
-        g.party.addPartyMember(b);
-        
         //g.getMenu().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
         //g.getBattle().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
         //g.getBattle().sendEngine(g);

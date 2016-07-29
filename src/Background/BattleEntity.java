@@ -417,10 +417,50 @@ public class BattleEntity {
     public int getStat(int StatID)          {return stats[StatID].getModifiedStat();}
     public double getStatGrowth(int StatID) {return stats[StatID].getStatGrowth();}
     public double getGrowthOverflow(int StatID){return stats[StatID].getGrowthOverflow();}
-    
     public String toString(){
         return name;
     }
+    public String[] saveData(){
+        String[] saveData = new String[13];
+        //0: name
+        //1: hp/maxHP-growth-overflow
+        //2: mp/maxMP-growth-overflow
+        //3: str-growth-overflow
+        //4: dex-growth-overflow
+        //5: vit-growth-overflow
+        //6: int-growth-overflow
+        //7: res-growth-overflow
+        //8: element
+        //9: level-exp-exp2level
+        //10: isDead
+        //11: (for BattleAction b:list) id-id2...
+        //12: weaponID-armor1ID-armor2ID-armor3ID
+        saveData[0] = name;
+        saveData[1] = String.format("%d/%d-%f-%f", getStat(StatID.HP),getStat(StatID.MAXHP),getStatGrowth(StatID.MAXHP),getGrowthOverflow(StatID.MAXHP));
+        saveData[2] = String.format("%d/%d-%f-%f", getStat(StatID.MP),getStat(StatID.MAXMP),getStatGrowth(StatID.MAXMP),getGrowthOverflow(StatID.MAXMP));
+        saveData[3] = String.format("%d-%f-%f", getStat(StatID.STR),getStatGrowth(StatID.STR),getGrowthOverflow(StatID.STR));
+        saveData[4] = String.format("%d-%f-%f", getStat(StatID.DEX),getStatGrowth(StatID.DEX),getGrowthOverflow(StatID.DEX));
+        saveData[5] = String.format("%d-%f-%f", getStat(StatID.VIT),getStatGrowth(StatID.VIT),getGrowthOverflow(StatID.VIT));
+        saveData[6] = String.format("%d-%f-%f", getStat(StatID.INT),getStatGrowth(StatID.INT),getGrowthOverflow(StatID.INT));
+        saveData[7] = String.format("%d-%f-%f", getStat(StatID.RES),getStatGrowth(StatID.RES),getGrowthOverflow(StatID.RES));
+        saveData[8] = String.format("%d",element);
+        saveData[9] = String.format("%d-%d-%d", level,exp,expRequiredToLevel);
+        saveData[10] = String.format("%b",isDead);
+        saveData[11] = "";
+        for(BattleAction b:skills){
+            saveData[11]+=String.format("-%d",b.getID());
+        }
+        saveData[12] = "";
+        for(Equipment e:equipment){
+            try{
+                saveData[12]+="-"+e.getId();
+            }catch(NullPointerException err){
+                saveData[12]+="-null";
+            }
+        }
+        return saveData;
+    }
+    
     private class Stat{
         private Random rand = new Random();
         int baseStat;
@@ -447,6 +487,19 @@ public class BattleEntity {
             statGrowth=0;
             modifiedStat=baseStat;
             growthOverflow=0;
+        }
+        /**
+         * intended when loading a battle entity from a file
+         * @param baseStat
+         * @param modifiedStat
+         * @param statGrowth
+         * @param growthOverflow 
+         */
+        public Stat(int baseStat, int modifiedStat, double statGrowth, double growthOverflow) {
+            this.baseStat = baseStat;
+            this.modifiedStat = modifiedStat;
+            this.statGrowth = statGrowth;
+            this.growthOverflow = growthOverflow;
         }
         //sets
         public void setBaseStat(int stat){

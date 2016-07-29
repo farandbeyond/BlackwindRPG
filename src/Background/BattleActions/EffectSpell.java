@@ -19,12 +19,12 @@ import Background.StatID;
 public class EffectSpell extends Spell{
     private Effect effect;
     
-    public EffectSpell(BattleEntity caster,String name, String description,int cost, Effect effect){
-        super(caster,name,description,cost);
+    public EffectSpell(int id,BattleEntity caster,String name, String description,int cost, Effect effect){
+        super(id,caster,name,description,cost);
         this.effect=effect;
     }
-    public EffectSpell(String name, String description,int cost, Effect effect){
-        super(null,name,description,cost);
+    public EffectSpell(int id,String name, String description,int cost, Effect effect){
+        super(id,null,name,description,cost);
         this.effect=effect;
     }
     @Override
