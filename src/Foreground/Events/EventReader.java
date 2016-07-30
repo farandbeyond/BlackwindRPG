@@ -81,6 +81,10 @@ public class EventReader {
                         else if(line.equals("-rest")){
                             eve.addSegment(new RestSegment());
                         }
+                        else if(line.equals("-battle")){
+                            String Line = fileReader.readLine();
+                            eve.addSegment(new BattleSegment(Integer.parseInt(Line.split("/")[0]),Integer.parseInt(Line.split("/")[1]),Integer.parseInt(Line.split("/")[2])));
+                        }
                         //if the file is not labelled properly
                         else{
                             eve.addSegment(new TextSegment("Error Loading","","",""));

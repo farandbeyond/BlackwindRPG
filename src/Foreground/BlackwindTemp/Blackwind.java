@@ -40,6 +40,7 @@ import javax.swing.JPanel;
  */
 public class Blackwind extends JPanel{
     public static void newGame(Blackwind g){
+        Map.newGame();
         g.inv.add(ItemLoader.loadItem(0, 10));
         g.inv.add(ItemLoader.loadItem(1, 4));
         BattleEntity b = BattleEntityLoader.loadEntity(1);
@@ -55,7 +56,9 @@ public class Blackwind extends JPanel{
             File savedMaps = new File("save/maps");
             File[] allMaps = savedMaps.listFiles();
             for(File map:allMaps){
-                Map.saveMap(Map.loadMap(map.getName()),"local");
+                Map.saveMap(
+                        Map.loadMap(map.getName()
+                                ,"save/maps"),"local");
             }
             System.out.println("loaded maps");
 
@@ -145,7 +148,9 @@ public class Blackwind extends JPanel{
             File localMaps = new File("local");
             File[] allMaps = localMaps.listFiles();
             for(File map:allMaps){
-                Map.saveMap(Map.loadMap(map.getName()),"save/maps");
+                Map.saveMap(
+                        Map.loadMap(map.getName(),"local"),
+                        "save/maps");
             }
             System.out.println("Saved map data");
             //save party data
@@ -202,6 +207,8 @@ public class Blackwind extends JPanel{
     int npcMoves, npcMoveDirection;
     boolean npcMovement;
     boolean triggerBattle;
+    public static boolean eventBattle;
+    static Party eventBattleParty;
     
     Random rand;
     String npcName;
@@ -233,6 +240,7 @@ public class Blackwind extends JPanel{
         gameState = MAP;
         this.mapOffsetX=mapOffsetX;
         this.mapOffsetY=mapOffsetY;
+        eventBattle = false;
         qedMoves = 0;
         qedMoveDirection = 0;
         qedMovement = false;
@@ -583,14 +591,33 @@ public class Blackwind extends JPanel{
         //System.out.println("Closing menu");
     }
     public void loadBattle(){
-        //System.out.println("Opening menu");
-        int mapID = MapIDLoader.getMapID(loadedMap.getName());
-        if(mapID==-1)
-            return;
-        rand.setSeed(System.currentTimeMillis());
-        battle = new Battle(party, inv,EnemyPartyLoader.loadParty(mapID,rand.nextInt(5)),this);
+        if(eventBattle)
+            battle = new Battle(party,inv,eventBattleParty,this);
+        else{
+            System.out.println("Starting battle");
+            int mapID = MapIDLoader.getMapID(loadedMap.getName());
+            if(mapID==-1)
+                return;
+            rand.setSeed(System.currentTimeMillis());
+            battle = new Battle(party, inv,EnemyPartyLoader.loadParty(mapID,rand.nextInt(5)),this);
+        }
+        System.out.println("Looping battle");
         battle.loop();
-        //System.out.println("Closing menu");
+        System.out.println("Ending battle");
+        eventBattle = false;
+    }
+    public void prepBattle(int enemyID1, int enemyID2, int enemyID3){
+        eventBattle = true;
+        eventBattleParty = new Party(3);
+        eventBattleParty.addPartyMember(BattleEntityLoader.loadEntityWithSkills(enemyID1));
+        eventBattleParty.addPartyMember(BattleEntityLoader.loadEntityWithSkills(enemyID2));
+        eventBattleParty.addPartyMember(BattleEntityLoader.loadEntityWithSkills(enemyID3));
+        //System.out.println("Starting battle");
+        //battle = new Battle(party, inv,enemyParty,this);
+        //System.out.println("Looping battle");
+        //battle.loop();
+        //System.out.println("Ending battle");
+        //eventBattle = false;
     }
     //public void menuEvent(){System.exit(0);}
     public class TextBox{
@@ -673,11 +700,11 @@ public class Blackwind extends JPanel{
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
         System.out.println("Starting new game");
         
-        //Map.newGame();
-        Map m = Map.loadMap("Town.txt","local");
+        
+        Map m = Map.loadMap("Town.txt");
         Blackwind g = new Blackwind(m,0,0);
-        //newGame(g);
-        loadGame();
+        newGame(g);
+        //loadGame();
         frame.add(g);
         //g.getMenu().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));
         //g.getBattle().setPreferredSize(new Dimension((displayWidth+2)*Tile.tileSize, (displayHeight+2)*Tile.tileSize));

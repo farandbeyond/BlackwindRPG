@@ -131,6 +131,7 @@ public class Battle extends JPanel{
     }
     //battle loop
     public void loop(){
+        repaint();
         try{
             checkForBattleOver();
             while(!battleOver){
@@ -570,7 +571,10 @@ public class Battle extends JPanel{
             setAssistText("Fled battle");
             Thread.sleep(1500);
         }
-        Blackwind.gameState = Blackwind.MAP;
+        if(Blackwind.eventBattle)
+            Blackwind.gameState = Blackwind.EVENT;
+        else
+            Blackwind.gameState = Blackwind.MAP;
     }
     //paint
     public void paint(Graphics g){

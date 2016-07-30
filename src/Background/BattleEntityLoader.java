@@ -40,6 +40,9 @@ public class BattleEntityLoader {
     }
     public static BattleEntity loadEntityWithSkills(int entityID){
         BattleEntity enemyToLoad = loadEntity(entityID);
+        if(enemyToLoad == null){
+            return null;
+        }
         switch(entityID){
             case ENEMYONE:
                 for(int i=0;i<8;i++)
