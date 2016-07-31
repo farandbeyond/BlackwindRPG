@@ -1,5 +1,16 @@
 repeatable
 -text
-Sorry, the way is blocked.
-Developers only.
+let me see if youve spoken to the town crier
+-end
+-check 1
+0
+-text
+yes, looks like you have
+-end
+-mark 1
+-text
+no, you havent huh
+-end
+-text
+you should, he always carries a potion for travellers
 -end

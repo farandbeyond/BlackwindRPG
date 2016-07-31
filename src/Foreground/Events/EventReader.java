@@ -44,7 +44,7 @@ public class EventReader {
                 }
                 //while the file is not over
                 while((line=fileReader.readLine())!=null){
-                    //System.out.println(line);
+                    System.out.println(line);
                     if(line.charAt(0)!=';'){
                         //if the segment is a text event
                         if(line.equals("-text")){
@@ -84,6 +84,15 @@ public class EventReader {
                         else if(line.equals("-battle")){
                             String Line = fileReader.readLine();
                             eve.addSegment(new BattleSegment(Integer.parseInt(Line.split("/")[0]),Integer.parseInt(Line.split("/")[1]),Integer.parseInt(Line.split("/")[2])));
+                        }
+                        else if(line.equals("-trigger")){
+                            eve.addSegment(new FlagTriggerSegment(Integer.parseInt(fileReader.readLine())));
+                        }
+                        else if(line.split(" ")[0].equals("-check")){
+                            eve.addSegment(new FlagCheckSegment(Integer.parseInt(line.split(" ")[1]),Integer.parseInt(fileReader.readLine())));
+                        }
+                        else if(line.split(" ")[0].equals("-mark")){
+                            eve.addSegment(new FalseMarkerSegment(Integer.parseInt(line.split(" ")[1])));
                         }
                         //if the file is not labelled properly
                         else{

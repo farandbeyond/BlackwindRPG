@@ -12,3 +12,5 @@ On the town, of course
 -end
 -item
 0x1
+-trigger
+0

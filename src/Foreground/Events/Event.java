@@ -19,28 +19,61 @@ public class Event implements Runnable{
     String name;
     int currentSegment;
     boolean reTrigger, triggered;
+    boolean sent;
     public Event(boolean repeatable,String name){
         this.name = name;
         segments = new ArrayList<>();
         currentSegment = -1;
         reTrigger = repeatable;
         triggered = false;
+        sent = false;
     }
     public void addSegment(EventSegment e){
         segments.add(e);
     }
     public String nextSegment(Blackwind b,Inventory i, Party p){
-        
         currentSegment++;
         //System.out.println(currentSegment);
-        return segments.get(currentSegment).activate(b,i,p);
+        String segmentData = segments.get(currentSegment).activate(b,i,p);
+        if(segmentData.equals("falseFlag!!")){
+            System.out.println("False Flag Found!");
+            findSegment(FalseMarkerSegment.class,((FlagCheckSegment)segments.get(currentSegment)).getMarkID());
+            segmentData="adv!!";
+            //currentSegment++;
+        }
+        return segmentData;
+    }
+    
+    public EventSegment getActiveSegment(){
+        return segments.get(currentSegment);
+    }
+    public int getCurrentSegment(){
+        return currentSegment;
+    }
+    public void findSegment(Class eventType, int markID){
+        if(segments.get(currentSegment).getClass()==eventType){
+            System.out.println("Mark found");
+            if(((FalseMarkerSegment)getActiveSegment()).getMarkID()==markID){
+                System.out.println("Match found");
+                //currentSegment++;
+                //System.out.println(segments.get(currentSegment));
+                sent = true;
+                return;
+            }
+        }
+        currentSegment++;
+        //System.out.println(currentSegment);
         
+        //currentSegment++;
+        findSegment(eventType, markID);
     }
     
     public void reset(){
         currentSegment = -1;
         triggered = true;
     }
+    public boolean getSent(){return sent;}
+    public void deSend(){sent = false;}
     public void setName(String name){this.name = name;}
     public String getName(){return name;}
     public boolean reTriggerable(){return reTrigger;}

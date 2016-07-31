@@ -648,14 +648,22 @@ public class Blackwind extends JPanel{
         public void advanceText(Blackwind b){
             try{
                 eventLine = currentEvent.nextSegment(b,inv, party);
+                //System.out.println(currentEvent.getActiveSegment().getClass());
+                if(currentEvent.getActiveSegment().getClass()==FalseMarkerSegment.class&&!currentEvent.getSent()){
+                    //System.out.println(currentEvent.getCurrentSegment());
+                    //System.out.println("Event is over, due to false marker");
+                    throw new IndexOutOfBoundsException("Event End");
+                }
                 if(
                         eventLine.equals("adv!!")
                         &&!mc.isWalking()
                         &&qedMoves==0
                         &&!npcMoving()
-                        &&npcMoves==0)
+                        &&npcMoves==0){
+                    //System.out.println("Advancing text");
+                    currentEvent.deSend();
                     advanceText(b);
-                else
+                }else
                     if(eventLine.equals("adv!!"))
                         display = "\n\n\n".split("\n");
                     else
@@ -674,6 +682,7 @@ public class Blackwind extends JPanel{
             g.drawRect(x, y, width, height);
             try{
                 for(int i=0;i<display.length;i++){
+                    //System.out.println(display[i]);
                     g.drawString(display[i], x+30, y+30+30*i);
                     //System.out.println(i);
                 }
@@ -695,6 +704,7 @@ public class Blackwind extends JPanel{
         // ^^ using this size means the display area can be as large as 20*15
         Tile.startUp();
         Sprite.startUp();
+        EventFlags.startUp();
         //Sprite.initialize();
         //Sprite wilson = new Sprite(0,5,5);
         //Game g = new Game(Map.loadMap("bigTest.txt"),wilson);
