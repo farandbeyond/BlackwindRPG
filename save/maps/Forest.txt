@@ -1,8 +1,8 @@
 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
 2 2 2 2 1 1 1 1 1 1 1 1 2 2 1 1 2 2 1 1 1 1 1 1 2 
 2 2 2 2 1 1 1 1 1 1 1 1 2 2 1 1 2 2 1 3/e/give2 1 1 1 1 2 
-1 1/e/walkAway 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 1 1 1 1 1 1 2 
-1 1/e/walkAway 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 1 1 1 1 1 1 2 
+1 1/e/walkAway 1 1 1 1 1 1 1 1 1 1 1/e/boss 1 1 1 2 2 1 1 1 1 1 1 2 
+1 1/e/walkAway 1 1 1 1 1 1 1 1 1 1 1/e/boss 1 1 1 2 2 1 1 1 1 1 1 2 
 2 2 2 2 1 1 1 1 1 1 1 1 2 2 1 1 2 2 1 1 1 1 1 1 2 
 2 2 2 2 1 1 1 1 1 1 1 1 2 2 1 1 2 2 1 1 1 1 1 1 2 
 0 0 2 2 2 2 2 2 2 2 2 1 2 2 1 1 2 2 2 2 1 1 2 2 2 
@@ -19,11 +19,11 @@
 0 0 2 2 2 2 2 2 2 2 2 2 3/e/give4 2 2 1 2 2 1 1 1 1 1 1 2 
 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
 -
-1 --SpriteID
-Mike=--Sprite Name
-11/19/--spriteXY
-Mike1 --eventName
 3 --SpriteID
 DevBlocker=--Sprite Name
 3/5/--spriteXY
 dBlock1 --eventName
+1 --SpriteID
+Mike=--Sprite Name
+11/19/--spriteXY
+battle1 --eventName

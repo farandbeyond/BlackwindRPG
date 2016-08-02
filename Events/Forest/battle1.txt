@@ -7,3 +7,16 @@ fight me!
 -text
 That was a good fight
 -end
+-check 1
+2
+-text
+I got nothing else to give. fight me anytime though
+-end
+-mark 1
+-text
+here, take this. for a good win
+-end
+-item
+301x2
+-trigger
+2

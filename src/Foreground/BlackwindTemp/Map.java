@@ -51,6 +51,7 @@ public class Map {
     }
     public static Map loadMap(String mapname, String folderName){
         loadedMapName= mapname;
+        System.out.println(mapname);
         //try{
             try{
                 //setup

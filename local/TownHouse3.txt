@@ -5,3 +5,7 @@
 5 10 10 10 10 5 
 5 5 5 5 5 5 
 -
+3 --SpriteID
+Girl=--Sprite Name
+2/2/--spriteXY
+girl --eventName

@@ -1,0 +1,24 @@
+!repeatable
+-check 1
+1
+-mark 1
+-movemc
+0/-5
+-text
+Who dares walk into my forest!
+-end
+-battle
+102/104/102
+-movenpc
+DevBlocker
+0/5
+-text
+Wow, you killed the hobgoblin. congrats.
+Ive come from the next town, he was blocking
+the path. Thanks for clearing him out.
+-end
+-movenpc
+DevBlocker
+0/-5
+-trigger
+1

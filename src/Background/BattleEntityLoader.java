@@ -22,7 +22,8 @@ public class BattleEntityLoader {
             ENEMYONE=100,
             HEALBOT=101,
             GOBLIN=102,
-            BAT=103;
+            BAT=103,
+            HOBGOBLIN=104;
             
     public static BattleEntity loadEntity(int entityID){
         switch(entityID){                          //hp,    mp,   str,   dex,   vit,   int,   res,     name,    element            level/xp
@@ -32,9 +33,10 @@ public class BattleEntityLoader {
             case ROLAND:     return new BattleEntity(30,3.3,05,1.0,10,1.3, 5,1.4,13,2.4, 3,0.3, 9,0.4,"Roland",ElementHandler.NEUTRAL,1,0); 
                                                    //hp,mp,str,dex,vit,int,res   name             element          intendedLevel, expDropped
             case ENEMYONE:   return new BattleEntity(20,10, 6,  6,  6,  6,  6,"Training Dummy",ElementHandler.EARTH,1,50);
-            case HEALBOT:    return new BattleEntity(10,50, 5,  5,  3, 15, 10,"Soraka",        ElementHandler.LIGHT,1,20);
-            case GOBLIN:     return new BattleEntity(25,10, 7,  3,  8,  2,  2,"Goblin",        ElementHandler.FIRE, 1,25);
-            case BAT:        return new BattleEntity(10,10, 4,  14, 6,  5,  8,"Bat",           ElementHandler.AIR,  1,10);
+            case HEALBOT:    return new BattleEntity(10,50, 5,  5,  3, 15, 10,"Soraka",        ElementHandler.LIGHT,1,40);
+            case GOBLIN:     return new BattleEntity(25,10, 7,  3,  8,  2,  2,"Goblin",        ElementHandler.FIRE, 1,35);
+            case BAT:        return new BattleEntity(10,10, 4,  14, 6,  5,  8,"Bat",           ElementHandler.AIR,  1,20);
+            case HOBGOBLIN:  return new BattleEntity(40,20, 12, 7,  12, 4,  2,"Hobgoblin",     ElementHandler.FIRE, 3,500);
         }
         return null;
     }
@@ -69,7 +71,13 @@ public class BattleEntityLoader {
                     enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.GUST));
                 for(int i=0;i<8;i++)
                     enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad,enemyToLoad.getStat(StatID.STR),2));
-                
+                break;
+            case HOBGOBLIN:
+                for(int i=0;i<2;i++)
+                    enemyToLoad.addSkill(BattleActionLoader.loadAction(BattleActionLoader.ENRAGE));
+                for(int i=0;i<8;i++)
+                    enemyToLoad.addSkill(BattleActionLoader.loadAttack(enemyToLoad, 10, 6));
+                break;
         }
         return enemyToLoad;
     }

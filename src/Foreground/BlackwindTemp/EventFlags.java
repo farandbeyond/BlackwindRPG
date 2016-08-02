@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * @author Connor
  */
 public class EventFlags {
-    static int numberOfFlags = 1;
+    static int numberOfFlags = 3;
     private static boolean[] flags;
     public static void startUp(){
         flags = new boolean[numberOfFlags];

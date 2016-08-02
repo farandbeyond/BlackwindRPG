@@ -52,6 +52,7 @@ public class Blackwind extends JPanel{
     }
     public static void loadGame(){
         try{
+            EventFlags.loadGame();
             System.out.println("loading maps");
             File savedMaps = new File("save/maps");
             File[] allMaps = savedMaps.listFiles();
@@ -144,13 +145,15 @@ public class Blackwind extends JPanel{
         //String filePath = String.format("%s/%s",folderName,loadedMapName);
         try{
             //save map data
+            EventFlags.saveGame();
             Map.saveMap(loadedMap,"local");
+            String formerMap = loadedMap.getName();
             File localMaps = new File("local");
             File[] allMaps = localMaps.listFiles();
             for(File map:allMaps){
                 Map.saveMap(
-                        Map.loadMap(map.getName(),"local"),
-                        "save/maps");
+                        Map.loadMap(map.getName(),"local")
+                        ,"save/maps");
             }
             System.out.println("Saved map data");
             //save party data
@@ -184,6 +187,7 @@ public class Blackwind extends JPanel{
             writeline.printf("%d/%d%n",mc.getMapX(),mc.getMapY());
             writeline.printf("%s%n",loadedMap.getName());
             writeline.close();
+            Map.loadedMapName = formerMap;
             System.out.println("Finished saving");
         }catch(IOException e){
             System.out.println("Error Saving:");
@@ -290,14 +294,16 @@ public class Blackwind extends JPanel{
                         shiftMap(mc.getDirection());
                     }else{
                         mc.animate(0);
-                        if(gameState!=EVENT&&!triggerBattle)
-                            loadedMap.getTile(mc.getMapX()-1, mc.getMapY()-1).activate(this,mc, loadedMap, party, inv);
-                        else if(triggerBattle){
-                            //System.out.println("Trigger Battle");
-                            triggerBattle = false;
-                            if(MapIDLoader.getMapID(loadedMap.getName())!=-1)
-                                gameState = BATTLE;
-                            
+                        if(gameState!=EVENT){
+                            if(!triggerBattle)
+                                loadedMap.getTile(mc.getMapX()-1, mc.getMapY()-1).activate(this,mc, loadedMap, party, inv);
+                            else if(triggerBattle){
+                                //System.out.println("Trigger Battle");
+                                triggerBattle = false;
+                                if(MapIDLoader.getMapID(loadedMap.getName())!=-1)
+                                    gameState = BATTLE;
+
+                            }
                         }
                         //System.out.printf("%d/%d\n",mc.getMapX(),mc.getMapY());
                     }
@@ -577,7 +583,7 @@ public class Blackwind extends JPanel{
     }
 
     public Map getMap(){return loadedMap;}
-    //public Party getParty(){return party;}
+    public Party getParty(){return party;}
     public Battle getBattle(){return battle;}
     public PauseMenu getMenu(){return menu;}
     public TextBox getTextBox(){return textBox;}
