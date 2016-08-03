@@ -37,11 +37,11 @@ public class PauseMenuTester {
         party.addPartyMember(BattleEntityLoader.loadEntity(BattleEntityLoader.TESTENTITY));
         party.getMemberFromParty(0).checkForLevelUp();
 
-        party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
+        party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIRE));
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.CURE));
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
         party.getMemberFromParty(0).addSkill(BattleActionLoader.loadAction(BattleActionLoader.SLICE));
-        party.getMemberFromParty(1).addSkill(BattleActionLoader.loadAction(BattleActionLoader.GUST));
+        party.getMemberFromParty(1).addSkill(BattleActionLoader.loadAction(BattleActionLoader.WIND));
 
         party.getMemberFromParty(1).checkForLevelUp();
         party.getMemberFromParty(0).equip((Equipment)ItemLoader.loadItem(ItemLoader.LEATHERARMOR, 1), 1);

@@ -45,8 +45,8 @@ public class Blackwind extends JPanel{
         g.inv.add(ItemLoader.loadItem(1, 4));
         BattleEntity b = BattleEntityLoader.loadEntity(1);
         b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
-        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIREBALL));
-        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.QUAKE));
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIRE));
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.EARTH));
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
         g.party.addPartyMember(b);
     }
@@ -176,6 +176,7 @@ public class Blackwind extends JPanel{
             FileWriter invWrite = new FileWriter("save/inventory.txt", false);
             writeline = new PrintWriter(invWrite);
             for(Item i:inv.getItemList()){
+                System.out.printf("%dx%d%n", i.getId(),i.getQuantity());
                 writeline.printf("%dx%d%n", i.getId(),i.getQuantity());
             }
             System.out.println("Saved inventory data");

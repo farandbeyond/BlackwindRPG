@@ -28,10 +28,12 @@ public class ItemLoader {
             LEATHERARMOR = 300,
             LEATHERGLOVES=301,
             CURESCROLL = 400,
-            FIREBALLSCROLL=401,
-            ICEBLASTSCROLL=402,
-            QUAKESCROLL=403,
-            GUSTSCROLL=404;
+            FIRESCROLL=401,
+            WATERSCROLL=402,
+            EARTHSCROLL=403,
+            WINDSCROLL=404,
+            LIGHTSCROLL=405,
+            DARKSCROLL=406;
     
     public static Item loadItem(int itemID, int quantity){
         switch(itemID){
@@ -48,10 +50,12 @@ public class ItemLoader {
             case LEATHERARMOR   :return new Armor(itemID,       "Leather Armor","Basic Armor",                          quantity,10,StatID.VIT,2,StatID.MAXHP,10,300);
             case LEATHERGLOVES  :return new Armor(itemID,       "Leather Gloves","Dextrous Armor",                      quantity,10,StatID.DEX,5,StatID.VIT,1,500);
             case CURESCROLL     :return new SkillTeaching(itemID,"Cure Scroll", "Teaches the 'Cure' Skill",             quantity,15,BattleActionLoader.CURE,1500);
-            case FIREBALLSCROLL :return new SkillTeaching(itemID,"Fireball Scroll","Teaches the 'Fireball' Skill",      quantity,15,BattleActionLoader.FIREBALL,1500);
-            case ICEBLASTSCROLL :return new SkillTeaching(itemID,"Ice Blast Scroll","Teaches the 'Ice Blast' Skill",    quantity,15,BattleActionLoader.ICEBLAST,1500);
-            case QUAKESCROLL    :return new SkillTeaching(itemID,"Quake Scroll","Teaches the 'Quake' Skill",            quantity,15,BattleActionLoader.QUAKE,1500);
-            case GUSTSCROLL     :return new SkillTeaching(itemID,"Gust Scroll","Teaches the 'Gust' Skill",              quantity,15,BattleActionLoader.GUST,1500);
+            case FIRESCROLL :return new SkillTeaching(itemID,"Kasai Scroll","Teaches the 'Kasai' Skill",                quantity,15,BattleActionLoader.FIRE,1500);
+            case WATERSCROLL :return new SkillTeaching(itemID,"Mizu Scroll","Teaches the 'Mizu' Skill",                 quantity,15,BattleActionLoader.WATER,1500);
+            case EARTHSCROLL    :return new SkillTeaching(itemID,"Setchi Scroll","Teaches the 'Setchi' Skill",          quantity,15,BattleActionLoader.EARTH,1500);
+            case WINDSCROLL     :return new SkillTeaching(itemID,"Kaze Scroll","Teaches the 'Kaze' Skill",              quantity,15,BattleActionLoader.WIND,1500);
+            case LIGHTSCROLL     :return new SkillTeaching(itemID,"Hikari Scroll","Teaches the 'Hikari' Skill",         quantity,15,BattleActionLoader.LIGHT,1500);
+            case DARKSCROLL     :return new SkillTeaching(itemID,"Yami Scroll","Teaches the 'Yami' Skill",              quantity,15,BattleActionLoader.DARK,1500);
         }
         return null;
     }
