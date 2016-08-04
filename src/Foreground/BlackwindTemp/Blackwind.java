@@ -136,6 +136,7 @@ public class Blackwind extends JPanel{
             mc.setMapX(Integer.parseInt(contents.get(1).split("/")[0]));
             mc.setMapY(Integer.parseInt(contents.get(1).split("/")[1]));
             loadedMap = Map.loadMap(contents.get(2)+".txt","local");
+            gold = Integer.parseInt(contents.get(3));
             System.out.println("loaded blackwind data");
             
             
@@ -189,6 +190,7 @@ public class Blackwind extends JPanel{
             writeline.printf("%d/%d%n",mapOffsetX,mapOffsetY);
             writeline.printf("%d/%d%n",mc.getMapX(),mc.getMapY());
             writeline.printf("%s%n",loadedMap.getName());
+            writeline.printf("%d%n",gold);
             writeline.close();
             Map.loadedMapName = formerMap;
             System.out.println("Finished saving");
