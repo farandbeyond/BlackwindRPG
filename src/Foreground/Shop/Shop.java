@@ -228,7 +228,7 @@ public class Shop extends JPanel{
                     displayedInv = i;
                     currOffset = 0;
                     selectorPosition = 0;
-                    selectorMaxPos = 9;
+                    selectorMaxPos = displayedInv.getNumberOfItemsInInventory()<9?displayedInv.getNumberOfItemsInInventory()-1:9;
                     selectorVisible = true;
                     setMaxOffset();
                 }
