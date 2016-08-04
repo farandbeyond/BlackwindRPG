@@ -40,4 +40,4 @@ bDude1 --eventName
 2 --SpriteID
 Forest Man=--Sprite Name
 25/2/--spriteXY
-fMan1 --eventName
+fMan2 --eventName

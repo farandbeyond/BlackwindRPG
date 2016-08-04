@@ -23,6 +23,15 @@ public class Joystick implements KeyListener{
     @Override
     public void keyPressed(KeyEvent ke) {
         switch(Blackwind.gameState){
+            case Blackwind.SHOP:
+                switch(ke.getExtendedKeyCode()){
+                    case KeyEvent.VK_O:game.getShop().confirmEvent();break;
+                    case KeyEvent.VK_P:game.getShop().cancelEvent();break;
+                    case KeyEvent.VK_W:game.getShop().upEvent();break;
+                    case KeyEvent.VK_A:game.getShop().leftEvent();break;
+                    case KeyEvent.VK_S:game.getShop().downEvent();break;
+                    case KeyEvent.VK_D:game.getShop().rightEvent();break;
+                }break;
             case Blackwind.MAP:
                 //System.out.println("Map Command");
                 switch(ke.getExtendedKeyCode()){

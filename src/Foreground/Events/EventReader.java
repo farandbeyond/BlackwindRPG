@@ -88,6 +88,8 @@ public class EventReader {
                         else if(line.equals("-trigger")){
                             eve.addSegment(new FlagTriggerSegment(Integer.parseInt(fileReader.readLine())));
                         }
+                        else if(line.equals("-shop"))
+                            eve.addSegment(new ShopTriggerSegment());
                         else if(line.split(" ")[0].equals("-check")){
                             eve.addSegment(new FlagCheckSegment(Integer.parseInt(line.split(" ")[1]),Integer.parseInt(fileReader.readLine())));
                         }

@@ -476,6 +476,7 @@ public class PauseMenu extends JPanel {
             statusView.updateSelectorPosition(menuPosition);
             if(confirmEvent){
                 int save = menuPosition;
+                menuPosition = 0;
                 options.toggleSelectorVisible();
                 //statusView.toggleSelectorVisible();
                 equipmentOptions(target,save);
@@ -500,6 +501,7 @@ public class PauseMenu extends JPanel {
             if(confirmEvent){
                 resetEvents();
                 int save = menuPosition;
+                menuPosition = 0;
                 switch(menuPosition){
                     case StatusMenu.DESCRIPTION :
                         if(target.getEquipment(slot)!=null){
@@ -640,6 +642,7 @@ public class PauseMenu extends JPanel {
             g.setFont(new Font("Courier New", Font.BOLD, 20));
             g.setColor(Color.black);
             g.drawString(assistText, 15, 25);
+            g.drawString(Blackwind.gold+"g", 500, 460);
         }catch(NullPointerException e){
         }
     }

@@ -29,6 +29,11 @@ public abstract class Item {
     public void reduceQuantity(){
         quantity--;
     }
+    public void reduceQuantity(int i){
+        quantity-= i;
+        if(quantity<0)
+            quantity = 0;
+    }
     public boolean restock(int numberToRestock){
         quantity+=numberToRestock;
         if(quantity>maxQuantity){

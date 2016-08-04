@@ -13,6 +13,7 @@ import Background.Party.*;
 import Foreground.Battle.*;
 import Foreground.Events.*;
 import Foreground.Menu.*;
+import Foreground.Shop.Shop;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -47,6 +48,7 @@ public class Blackwind extends JPanel{
         b.equip((Equipment)ItemLoader.loadItem(ItemLoader.BRONZESWORD, 1), 0);
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.FIRE));
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.EARTH));
+        b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.WATER));
         b.addSkill(BattleActionLoader.loadAction(BattleActionLoader.BRAVERY));
         g.party.addPartyMember(b);
     }
@@ -203,7 +205,7 @@ public class Blackwind extends JPanel{
     public static final int fps = 1000/60; //approx 100 updates per second
     public static final int encounterRate = 8;//this is a chance out of 100. 
     public static int gameState;
-    public static final int MAP=0,INVENTORY=1, BATTLE=2,EVENT=3;
+    public static final int MAP=0,INVENTORY=1, BATTLE=2,EVENT=3,SHOP=4;
     //Joystick kb;
     //Sprite player;
     static int mapOffsetX, mapOffsetY, scrollX, scrollY;
@@ -221,13 +223,14 @@ public class Blackwind extends JPanel{
     static Map loadedMap;
     Tile[][] displayArea;
     BufferedImage shownMap;
+    static Shop shop;
     static Sprite mc;
     Joystick kb;
     TextBox textBox;
     
     PauseMenu menu;
     Battle battle;
-    
+    public static int gold;
     static Party party;
     static Inventory inv;
     Blackwind(Map m, int mapOffsetX, int mapOffsetY){
@@ -263,13 +266,18 @@ public class Blackwind extends JPanel{
         loadDisplayArea(0,0);
         loadMapImage();
         
+        gold = 500;
         party = new Party(4);
         inv = new Inventory(15);
         menu = new PauseMenu(party, inv,this);
         battle = new Battle(party, inv, party,this);
         
+        ArrayList<Integer> items = new ArrayList<>();
+        shop = new Shop(items,this);
+        
         this.add(menu);
         this.add(battle);
+        this.add(shop);
     }
     
     public void loadDisplayArea(int offX, int offY){
@@ -314,6 +322,8 @@ public class Blackwind extends JPanel{
                     loadMenu();
                 }else if(gameState==BATTLE){
                     loadBattle();
+                }else if(gameState==SHOP){
+                    loadShop();
                 }
                 Thread.sleep(fps);
             }
@@ -388,7 +398,7 @@ public class Blackwind extends JPanel{
                     //    System.out.println("Error Occurred in Thread");
                     //}
                     //System.out.printf("%d/%s\n", s.getMapX(),s.getMapY());
-                    System.out.printf("%s",loadedMap.getTile(s.getMapX(), s.getMapY()).getName());
+                    //System.out.printf("%s",loadedMap.getTile(s.getMapX(), s.getMapY()).getName());
                     lastEventTriggered = s.getName();
                     return;
                 }
@@ -484,6 +494,7 @@ public class Blackwind extends JPanel{
             case MAP:paintMap(g);break;
             case INVENTORY:menu.paint(g);break;
             case BATTLE:battle.paint(g);break;
+            case SHOP:shop.paint(g);break;
         }
         if(gameState==EVENT){
             textBox.paint(g);
@@ -585,6 +596,8 @@ public class Blackwind extends JPanel{
 
     public Map getMap(){return loadedMap;}
     public Party getParty(){return party;}
+    public static Inventory getInventory(){return inv;}
+    public Shop getShop(){return shop;}
     public Battle getBattle(){return battle;}
     public PauseMenu getMenu(){return menu;}
     public TextBox getTextBox(){return textBox;}
@@ -592,6 +605,15 @@ public class Blackwind extends JPanel{
     
     public void confirmEvent(){}
     public void cancelEvent(){}
+    public void prepShop(ArrayList<Integer> items){
+        shop = new Shop(items,this);
+        gameState = SHOP;
+    }
+    public void loadShop(){
+        //500 will be changed to "gold" later. testing for now
+        shop.loop(gold);
+        gameState = EVENT;
+    }
     public void loadMenu(){
         //System.out.println("Opening menu");
         menu.run(party, inv);
@@ -644,8 +666,9 @@ public class Blackwind extends JPanel{
         public void loadEvent(Event e,Blackwind b){
             if(!e.triggered()||e.reTriggerable()){
                 currentEvent = e;
-                eventLine = currentEvent.nextSegment(b,inv, party);
-                display = eventLine.split("\n");
+                advanceText(b);
+                //eventLine = currentEvent.nextSegment(b,inv, party);
+                //display = eventLine.split("\n");
             }else{
                 eventLine = "cant be triggered again";
                 display = eventLine.split("\n");

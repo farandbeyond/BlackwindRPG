@@ -567,6 +567,18 @@ public class Battle extends JPanel{
                     }
                 }
             }
+            int goldGained = 0;
+            for(int i=0;i<3;i++){
+                try{
+                    goldGained+=enemies.getMemberFromParty(i).getLevel();
+                }catch(NullPointerException e){
+                    
+                }
+            }
+            setAssistText("Found "+goldGained+"g");
+            repaint();
+            Blackwind.gold+=goldGained;
+            Thread.sleep(1000);
         }else{
             setAssistText("Fled battle");
             Thread.sleep(1500);

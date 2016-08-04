@@ -1,4 +1,8 @@
 repeatable
 -text
-go away
+This is the shop
+-end
+-shop
+-text
+See you
 -end

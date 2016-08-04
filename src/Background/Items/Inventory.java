@@ -83,6 +83,21 @@ public class Inventory {
             }
         }
     }
+    public boolean contains(int itemID){
+        for(Item i:inventory){
+            if(i.getId()==itemID)
+                return true;
+        }
+        return false;
+    }
+    public int getLocationOf(int itemID){
+        for(int i=0;i<inventory.size()-1;i++){
+            if(inventory.get(i).getId()==itemID)
+                return i;
+        }
+        System.out.println("Selected ID is not contained within inventory");
+        return -1;
+    }
     //prints
     public void printAllItems(){
         for(Item i:inventory){
